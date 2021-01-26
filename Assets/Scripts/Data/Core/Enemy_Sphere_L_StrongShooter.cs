@@ -4,9 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Sphere_L_StrongShooter : Enemy_Sphere_L
+public class Enemy_Sphere_L_StrongShooter : Enemy_Boss_Default
 {
-    public Enemy_Sphere_L_StrongShooter(string prefabName, string name, Transform parent, float health, float maxHealth) : base ( prefabName,  name,  parent,  health,  maxHealth)
+    public Enemy_Sphere_L_StrongShooter(string prefabName, string name, Transform parent, float health, float maxHealth) : base ( name, prefabName,  parent, maxHealth)
     {
     }
 

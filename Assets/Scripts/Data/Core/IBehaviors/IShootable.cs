@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-interface IShootable
+﻿interface IShootable
 {
-    void Shoot(GameObject cannon);
+    void Shoot(UnityEngine.GameObject cannon, UnityEngine.Quaternion pointingAngle, float shootingSpeed, Constants.BulletType bulletType);
 }

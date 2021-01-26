@@ -7,36 +7,87 @@ namespace Entities
 {
     public abstract class Entity
     {
-        protected string _name;
-
+        protected string        _name;
         protected GameObject    _body;
         protected GameObject    _avatar;
         protected GameObject    _skin;
-        protected float         _hitpoint;
-        protected float         _hitpointMax;
+        protected float         _health;
+        protected float         _maxHealth;
         protected float         _damage;
         protected bool          _isAlive;
+        protected bool          _isSingleton;
 
         public string       Name    { get { return _name; } }
-        public GameObject   Form    { get { return _body; } }
+        public GameObject   Body    { get { return _body; } }
         public GameObject   Skin    { get { return _skin; } }
         public GameObject   Avatar  { get { return _avatar; } }
-        public float        Health  { get { return _hitpoint; } }
+        public float        Health  { get { return _health; } }
         public float        Damage  { get { return _damage; } }
+        public bool         IsAlive { get { return _isAlive; } }
 
-        protected GameObject SetForm(string prefabName)
+        //protected abstract void Singletonize(string debugMessage = null);
+        //protected abstract void CreateBody(string name = null, string prefabName = null);
+        //protected abstract void CreateAvatar();
+        //protected abstract void CreateMechanic();
+        //protected abstract void GameplaySetup();
+
+        protected GameObject GetBodyPrefab(string prefabName)
         {
             return Resources.Load<GameObject>("Prefabs/" + prefabName);
         }
 
-        protected void CreateAvatar()
+        protected GameObject GetSkinPrefab(string skinName)
         {
-            _avatar = Object.Instantiate(_body);
-            _avatar.name = _name;
+            return Resources.Load<GameObject>("Prefabs/Skins/" + skinName);
         }
-        protected GameObject ChangeSkin(string name)
+
+        public void SetBodyActive(bool status)
         {
-            return Resources.Load<GameObject>("Prefabs/Skins/" + name);
+            _body.SetActive(status);
+        }
+
+        public Vector3 GetPosition { get { return _body.transform.position; } }
+
+        public void SetPosition(Vector3 newPosition)
+        {
+            _body.transform.position = newPosition;
+        }
+
+        public void SetRotation(Quaternion quaternion)
+        {
+            _body.transform.rotation = quaternion;
+        }
+
+        public void SetMaxHealth(float maxHealth)
+        {
+            _maxHealth = maxHealth;
+        }
+
+        public void SetHealth(float health)
+        {
+            _health = health;
+        }
+
+        public void ModifyHealth(float value)
+        {
+            _health += value;
+        }
+
+        public float GetDamage{ get { return _damage; } }
+
+        public void SetDamage(float damage)
+        {
+            _damage = damage;
+        }
+
+        public void Revive()
+        {
+            _isAlive = true;
+        }
+
+        public void Suicide()
+        {
+            _isAlive = false;
         }
     }
 }

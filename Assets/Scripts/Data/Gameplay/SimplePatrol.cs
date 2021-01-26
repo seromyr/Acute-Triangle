@@ -22,7 +22,9 @@ public class SimplePatrol : MonoBehaviour
 
     private float orginalPosition;
 
-    void Start()
+    private bool isPatrolling;
+
+    private void Start()
     {
         //frequency = 0.5f;
         //distanceModifier = 2f;
@@ -39,21 +41,29 @@ public class SimplePatrol : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        amplitude = Mathf.Sin(Time.time / frequency + offset) * distanceModifier;
-        switch (direction)
+        if (isPatrolling)
         {
-            case Direction.Right:
-                sineWave = new Vector3(amplitude + orginalPosition, transform.position.y, transform.position.z);
-                break;
-            case Direction.Forward:
-                sineWave = new Vector3(transform.position.x, transform.position.y, amplitude + orginalPosition);
-                break;
-        }
+            amplitude = Mathf.Sin(Time.time / frequency + offset) * distanceModifier;
+            switch (direction)
+            {
+                case Direction.Right:
+                    sineWave = new Vector3(amplitude + orginalPosition, transform.position.y, transform.position.z);
+                    break;
+                case Direction.Forward:
+                    sineWave = new Vector3(transform.position.x, transform.position.y, amplitude + orginalPosition);
+                    break;
+            }
 
-        // use localPosition because this is a child object
-        transform.localPosition = sineWave;
+            // use localPosition because this is a child object
+            transform.localPosition = sineWave;
+        }
+    }
+
+    public void SetPatrollingStatus(bool status)
+    {
+        isPatrolling = status;
     }
 
     public void SetPatrolDistance(float value)

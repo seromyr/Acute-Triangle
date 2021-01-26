@@ -19,20 +19,20 @@ public class VictoryCondition : MonoBehaviour
         VictoryCondition_02();
 
         // Test
-        scenario.EnemyList[0].Avatar.transform.LookAt(GameManager.player.Avatar.transform);
+        //scenario.EnemyList[0].Body.transform.LookAt(Player.main.Body.transform);
     }
 
-    private void VictoryCondition_01()
-    {
-        // Kill all enemies
-        if (scenario.Remaining == 0)
-        {
-            GameManager.main.WinGame();
-            Debug.Log("Enemy defeated");
-            Destroy(GetComponent<VictoryCondition>());
-            scenario.EnemyList.Clear();
-        }
-    }
+    //private void VictoryCondition_01()
+    //{
+    //    // Kill all enemies
+    //    if (scenario.Remaining == 0)
+    //    {
+    //        GameManager.main.WinGame();
+    //        Debug.Log("Enemy defeated");
+    //        Destroy(GetComponent<VictoryCondition>());
+    //        scenario.EnemyList.Clear();
+    //    }
+    //}
 
     private void VictoryCondition_02()
     {

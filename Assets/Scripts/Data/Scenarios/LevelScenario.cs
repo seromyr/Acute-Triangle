@@ -17,12 +17,19 @@ public class LevelScenario : MonoBehaviour
 
     private void Awake()
     {
+        // Create a list of enemy to use in any level
         _enemyList = new List<EnemyEntity>();
+
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer");
     }
 
     private void Start()
     {
+        // Clear the enemy list to clean garbage
+        _enemyList.Clear();
+
+        // Get current scene name to load level scenario
         currentScene = SceneManager.GetActiveScene().name;
         switch (currentScene)
         {
@@ -35,133 +42,196 @@ public class LevelScenario : MonoBehaviour
             case Map.LV002:
                 BuildScenario_02();
                 break;
+            case Map.LV003:
+                BuildScenario_03();
+                break;
         }
     }
 
+    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
     private void BuildScenario_00()
     {
+        // Add enemy into the list
         _enemyList.Add
         (
-            new Enemy_Sphere_L
+            new Enemy_Boss_Default
             (
-                EnemySkin.Sphere_Large,
+                // Boss name
                 "Boss",
+                // Boss appearance
+                Enemy.Sphere_Large,
+                // Boss placemenent
                 enemyContainer.transform,
-                30,
+                // Boss health
                 30
             )
         );
 
-        _enemyList[0].Avatar.transform.position = new Vector3(0, 1, 7);
-        _enemyList[0].Patrol(Direction.Right, 8, 0.4f);
-        GameManager.player.Avatar.transform.position = new Vector3(0, 0.5f, 0);
+        // Because this level only has 1 boss, so the boss id automatically known as 0
+        // Add shooter in front
+        _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.Euler(new Vector3(0, 0, 0)), 500, BulletType.Destructible);
+
+        // Enable self rotation mode
+        var selfRotation = _enemyList[0].Body.AddComponent<SelfRotation>();
+        selfRotation.SetRotationParameters(250);
+
+        // Set default position
+        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+
+        // Set patrol parameter
+        _enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
     }
 
+    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
     private void BuildScenario_01()
     {
         _enemyList.Add
         (
-            new Enemy_Sphere_L
+            new Enemy_Boss_Default
             (
-                EnemySkin.Sphere_Large,
+                // Boss name
                 "Boss",
+                // Boss appearance
+                Enemy.Sphere_Large,
+                // Boss container
                 enemyContainer.transform,
-                30,
+                // Boss health
                 30
             )
         );
 
-        _enemyList[0].Avatar.transform.position = new Vector3(0, 1, 4);
-        _enemyList[0].Patrol(Direction.Right, 0, 1);
+        // Because this level only has 1 boss, so the boss id automatically known as 0
 
-        for (int i = 1; i < 17; i++)
+        // Add 6 shooters
+        // Starting shooter angle
+        float angle = 195;
+        for (int i = 0; i < 6; i++)
         {
-            _enemyList.Add
-            (
-                new Enemy_Cube_S
-                (
-                    EnemySkin.Cube_Small,
-                    EnemyName.Cube_Small + " " + i,
-                    enemyContainer.transform,
-                    10,
-                    10
-                )
-            );
-
-            _enemyList[i].Avatar.transform.position = new Vector3(-10.2f + i * 1.2f, 1, -4);
+            _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.Euler(new Vector3(0, angle, 0)), 2, BulletType.Indestructible);
+            angle += 30;
         }
 
-        for (int i = 17 ; i < 33; i++)
-        {
-            _enemyList.Add
-            (
-                new Enemy_Cube_S
-                (
-                    EnemySkin.Cube_Small,
-                    EnemyName.Cube_Small + " " + i,
-                    enemyContainer.transform,
-                    10,
-                    10
-                )
-            );
+        _enemyList[0].Body.transform.position = new Vector3(24, 0.5f, 21.25f);
 
-            _enemyList[i].Avatar.transform.position = new Vector3(-11.4f + i * 1.2f - 18, 1, -2.8f);
+        // No self rotation
+
+        // Set patrol parameter
+        _enemyList[0].Patrol(true, Direction.Forward, 7, 1f);
+
+        // Add destroyable cubes
+        // Cluster 01 - 2 rows 4 collumns
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                _enemyList.Add
+                (
+                    new Enemy_SmallDestructableObstacle
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Small,
+                        // Container
+                        enemyContainer.transform,
+                        // Health
+                        10
+                    )
+                );
+
+                // Set default position
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
+
+            }
         }
 
-        for (int i = 33; i < 49; i++)
+        // Cluster 02 - 6 rows 7 collumns
+        for (int i = 0; i < 7; i++)
         {
-            _enemyList.Add
-            (
-                new Enemy_Cube_S
+            for (int j = 0; j < 6; j++)
+            {
+                _enemyList.Add
                 (
-                    EnemySkin.Cube_Small,
-                    EnemyName.Cube_Small + " " + i,
-                    enemyContainer.transform,
-                    10,
-                    10
-                )
-            );
+                    new Enemy_SmallDestructableObstacle
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Small,
+                        // Container
+                        enemyContainer.transform,
+                        // Health
+                        10
+                    )
+                );
 
-            _enemyList[i].Avatar.transform.position = new Vector3(-12.6f + i * 1.2f - 36, 1, -1.6f);
+                // Set default position
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
+
+            }
         }
 
-        for (int i = 49; i < 65; i++)
+        // Cluster 03 - 5 rows 3 collumns
+        for (int i = 0; i < 3; i++)
         {
-            _enemyList.Add
-            (
-                new Enemy_Cube_S
+            for (int j = 0; j < 5; j++)
+            {
+                _enemyList.Add
                 (
-                    EnemySkin.Cube_Small,
-                    EnemyName.Cube_Small + " " + i,
-                    enemyContainer.transform,
-                    10,
-                    10
-                )
-            );
+                    new Enemy_SmallDestructableObstacle
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Small,
+                        // Container
+                        enemyContainer.transform,
+                        // Health
+                        10
+                    )
+                );
 
-            _enemyList[i].Avatar.transform.position = new Vector3(-13.8f + i * 1.2f - 54, 1, -0.4f);
+                // Set default position
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
+
+            }
         }
-
-        GameManager.player.Avatar.transform.position = new Vector3(0, 0.5f, -7);
     }
 
     private void BuildScenario_02()
     {
         _enemyList.Add
         (
-            new Enemy_Sphere_L
+            new Enemy_Boss_Default
             (
-                EnemySkin.Sphere_Large,
                 "Boss",
+                Enemy.Sphere_Large,
                 enemyContainer.transform,
-                30,
                 30
             )
         );
         _enemyList[0].Avatar.transform.position = new Vector3(0, 1, 7);
-        _enemyList[0].Patrol(Direction.Right, 8, 0.4f);
-        _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/WeakCannon"));
-        GameManager.player.Avatar.transform.position = new Vector3(0, 0.5f, -7);
+        _enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
+        //_enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/WeakCannon"));
+        Player.main.Body.transform.position = new Vector3(0, 0.5f, -7);
+    }
+
+    private void BuildScenario_03()
+    {
+        _enemyList.Add
+        (
+            new Enemy_Boss_Default
+            (
+                "Boss",
+                Enemy.Sphere_Large,
+                enemyContainer.transform,
+                30
+            )
+        );
+        _enemyList[0].Avatar.transform.position = new Vector3(0, 1, 7);
+        _enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
+        //_enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/WeakCannon"));
+        Player.main.Body.transform.position = new Vector3(0, 0.5f, -7);
     }
 
     private bool BossCheck()
