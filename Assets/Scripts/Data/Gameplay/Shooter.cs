@@ -1,27 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Constants;
 
 public class Shooter : MonoBehaviour
 {
-    private GameObject destroyableBullet;
+    public BulletType bulletType;
+    private GameObject bullet;
     private float time;
-
     private float speed;
-    void Start()
+    private float size;
+    private float bulletSpeed;
+
+    public void SetShootingParameters(float _shootSpeed, float _size , float _bulletSpeed, BulletType _bulletType)
     {
-        destroyableBullet = Resources.Load<GameObject>("Prefabs/KillAbleBullet");
-        time = Time.time;
-        speed = 10;
+        speed = _shootSpeed;
+        bulletType = _bulletType;
+        size = _size;
+        bulletSpeed = _bulletSpeed;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
+    {
+        // Decide which type of bullet this shooter will fire
+        switch (bulletType)
+        {
+            case BulletType.Destructible:
+                bullet = Resources.Load<GameObject>("Prefabs/DestructableBullet");
+                break;
+            case BulletType.Indestructible:
+                bullet = Resources.Load<GameObject>("Prefabs/IndestructableBullet");
+                break;
+        }
+
+        time = Time.time;
+    }
+
+    private void Update()
     {
         if (Time.time >= time + 1/speed)
         {
-            var meNew = Instantiate(destroyableBullet, transform.position + transform.forward, transform.rotation);
-            meNew.GetComponent<SelfMovingFoward>().direction = transform.position;
+            var thisBullet = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
+            thisBullet.transform.localScale *= size;
+            thisBullet.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
             time = Time.time;
         }
     }
