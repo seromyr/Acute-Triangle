@@ -74,7 +74,12 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         // This enemy does not move.
     }
 
-    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, BulletType bulletType)
+    public override void Chase(bool isChasing, float speed)
+    {
+        // This enemy does not move.
+    }
+
+    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         // This enemy does not shoot.
     }

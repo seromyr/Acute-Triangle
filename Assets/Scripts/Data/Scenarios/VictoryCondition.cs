@@ -8,9 +8,17 @@ public class VictoryCondition : MonoBehaviour
 {
     private LevelScenario scenario;
 
+    // Cheat
+    private Transform enemyContainer;
+
     private void Awake()
     {
         scenario = GetComponent<LevelScenario>();
+    }
+
+    private void Start()
+    {
+        enemyContainer = GameObject.Find("EnemyContainer").transform;
     }
 
     private void Update()
@@ -19,6 +27,16 @@ public class VictoryCondition : MonoBehaviour
         VictoryCondition_02();
 
         // Test
+
+        //Debug.LogError(enemyContainer.childCount);
+
+
+
+        if (enemyContainer.childCount == 1)
+        {
+            scenario.EnemyList[0].DestroyShield();
+        }
+
         //scenario.EnemyList[0].Body.transform.LookAt(Player.main.Body.transform);
     }
 

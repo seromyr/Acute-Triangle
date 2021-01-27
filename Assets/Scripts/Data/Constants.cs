@@ -60,7 +60,8 @@
         public const string PLAYER = "Player";
         public const int FLOOR_LAYER = 8;
         public const string BULLET = "Bullet";
-        public const float ENEMY_BULLET_SPEED = 20f;
+        public const float ENEMY_BULLET_SPEED_FAST = 20f;
+        public const float ENEMY_BULLET_SPEED_SLOW = 5f;
         public const int BOSS_00_HEALTH = 50;
         //public const string MAINMENU = "MainMenu";
         //public const string INGAMEMENU = "IngameMenu";
@@ -85,6 +86,7 @@
         public const string BOSS_00 = "Enemy/Boss_Level_00";
         public const string Sphere_Large = "Enemy/Sphere_L";
         public const string Cube_Small = "Enemy/Cube_S";
+        public const string Cone = "Enemy/Cone";
     }
 
     public static class EnemyName

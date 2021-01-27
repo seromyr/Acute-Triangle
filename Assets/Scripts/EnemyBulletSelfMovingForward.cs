@@ -8,6 +8,6 @@ public class EnemyBulletSelfMovingForward : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.forward * Time.deltaTime * Constants.GeneralConst.ENEMY_BULLET_SPEED);
+        transform.Translate(Vector3.forward * Time.deltaTime * Constants.GeneralConst.ENEMY_BULLET_SPEED_FAST);
     }
 }

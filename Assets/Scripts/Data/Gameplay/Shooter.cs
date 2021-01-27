@@ -9,11 +9,15 @@ public class Shooter : MonoBehaviour
     private GameObject bullet;
     private float time;
     private float speed;
+    private float size;
+    private float bulletSpeed;
 
-    public void SetShootingParameters(float _speed, BulletType _bulletType)
+    public void SetShootingParameters(float _shootSpeed, float _size , float _bulletSpeed, BulletType _bulletType)
     {
-        speed = _speed;
+        speed = _shootSpeed;
         bulletType = _bulletType;
+        size = _size;
+        bulletSpeed = _bulletSpeed;
     }
 
     private void Start()
@@ -30,15 +34,15 @@ public class Shooter : MonoBehaviour
         }
 
         time = Time.time;
-        //speed = 10;
     }
 
     private void Update()
     {
         if (Time.time >= time + 1/speed)
         {
-            var meNew = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
-            //meNew.GetComponent<EnemyBulletSelfMovingForward>().direction = transform.position;
+            var thisBullet = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
+            thisBullet.transform.localScale *= size;
+            thisBullet.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
             time = Time.time;
         }
     }

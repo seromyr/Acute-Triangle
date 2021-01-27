@@ -6,11 +6,18 @@ using Constants;
 public class EnemyBulletMechanic : MonoBehaviour
 {
     public BulletType bulletType;
+    private float bulletSpeed;
 
     private void FixedUpdate()
     {
-        // Automatically moving forward
-        transform.Translate(Vector3.forward * Time.deltaTime * GeneralConst.ENEMY_BULLET_SPEED);
+        // Automatically moving forward after firing
+        //transform.Translate(Vector3.forward * Time.deltaTime * GeneralConst.ENEMY_BULLET_SPEED);
+        MoveForward(bulletSpeed);
+    }
+
+    private void MoveForward(float _speed)
+    {
+        transform.Translate(Vector3.forward * Time.deltaTime * _speed);
     }
 
     // This object will self-destruct if collides with bullet tagged objecct
@@ -22,10 +29,14 @@ public class EnemyBulletMechanic : MonoBehaviour
         }
     }
 
-
     // This object will self-destruct if collide with any game object
     private void OnTriggerEnter(Collider other)
     {
         Destroy(gameObject);
+    }
+
+    public void SetMovingSpeed(float speed)
+    {
+        bulletSpeed = speed;
     }
 }

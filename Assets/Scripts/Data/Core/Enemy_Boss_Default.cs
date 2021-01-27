@@ -14,6 +14,9 @@ public class Enemy_Boss_Default : EnemyEntity
     // Boss patrol mechanic, can be customized in Level Scenario if used
     protected SimplePatrol simplePatrol;
 
+    // Boss chase mechanic, can be customized in Level Scenario if used
+    protected SimpleChase simpleChase;
+
     // Event handler to handle boss death event
     public event EventHandler OnDestroy;
 
@@ -26,6 +29,7 @@ public class Enemy_Boss_Default : EnemyEntity
         // Load up mechanics
         mechanic = _body.AddComponent<Enemy_Mechanic>();
         simplePatrol = _body.AddComponent<SimplePatrol>();
+        simpleChase = _body.AddComponent<SimpleChase>();
 
         // Wire up the events
         mechanic.OnBulletHit += TakeDamage;
@@ -72,7 +76,7 @@ public class Enemy_Boss_Default : EnemyEntity
         mechanic.KillSelf(2);
     }
 
-    // Patrol parameter setting if used in Level Scenario
+    // Patrol parameter setup if used in Level Scenario
     public override void Patrol(bool isPatrolling, Direction direction, float distance, float speed)
     {
         simplePatrol.SetPatrollingStatus(isPatrolling);
@@ -81,11 +85,21 @@ public class Enemy_Boss_Default : EnemyEntity
         simplePatrol.SetPatrolSpeed(speed);
     }
 
+    // Chase parameter setup if used in Level Scenario
+    public override void Chase(bool isChasing, float speed)
+    {
+        if (isChasing)
+        {
+            simpleChase.StarChase();
+            simpleChase.SetChaseSpeed(speed);
+        }
+    }
+
     // Shooting parameter setting used in level scenario
     // This method create boss shooters
-    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, BulletType bulletType)
+    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         var thisShooter = UnityEngine.Object.Instantiate(cannon, GetPosition, pointingAngle, _body.transform);
-        thisShooter.GetComponent<Shooter>().SetShootingParameters(shootingSpeed, bulletType);
+        thisShooter.GetComponent<Shooter>().SetShootingParameters(shootingSpeed, bulletSize, bulletSpeed, bulletType);
     }
 }

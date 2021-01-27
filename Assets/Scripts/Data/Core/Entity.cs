@@ -17,19 +17,13 @@ namespace Entities
         protected bool          _isAlive;
         protected bool          _isSingleton;
 
-        public string       Name    { get { return _name; } }
-        public GameObject   Body    { get { return _body; } }
-        public GameObject   Skin    { get { return _skin; } }
-        public GameObject   Avatar  { get { return _avatar; } }
-        public float        Health  { get { return _health; } }
-        public float        Damage  { get { return _damage; } }
-        public bool         IsAlive { get { return _isAlive; } }
-
-        //protected abstract void Singletonize(string debugMessage = null);
-        //protected abstract void CreateBody(string name = null, string prefabName = null);
-        //protected abstract void CreateAvatar();
-        //protected abstract void CreateMechanic();
-        //protected abstract void GameplaySetup();
+        public string       Name      { get { return _name;           } }
+        public GameObject   Body      { get { return _body;           } }
+        public Transform    Transform { get { return _body.transform; } }
+        public GameObject   Avatar    { get { return _avatar;         } }
+        public float        Health    { get { return _health;         } }
+        public float        Damage    { get { return _damage;         } }
+        public bool         IsAlive   { get { return _isAlive;        } }
 
         protected GameObject GetBodyPrefab(string prefabName)
         {
