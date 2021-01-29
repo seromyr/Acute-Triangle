@@ -248,10 +248,10 @@ public class GameManager : MonoBehaviour
         // Show lose panel
         UI_LosePanel.main.gameObject.SetActive(true);
 
-        desinationState = GameState.START;
-        StartCoroutine(SwitchState(GameState.LOADING, 2.5f));
-        UI_InGameMenu_Mechanic.main.SendInstruction("GAME OVER");
-        StartCoroutine(UI_LoadingScreen_Mechanic.main.RequestFadeOut(5, 4.5f));
+        //desinationState = GameState.START;
+        //StartCoroutine(SwitchState(GameState.LOADING, 2.5f));
+        //UI_InGameMenu_Mechanic.main.SendInstruction("GAME OVER");
+        //StartCoroutine(UI_LoadingScreen_Mechanic.main.RequestFadeOut(5, 4.5f));
     }
 
     private IEnumerator SwitchState(GameState state, float delay)
@@ -318,6 +318,12 @@ public class GameManager : MonoBehaviour
 
         gameState = GameState.LOSE;
         UI_InGameMenu_Mechanic.main.SendInstruction("You died");
+    }
+
+    public void RetryLevel()
+    {
+        desinationState = GameState.NEXT;
+        StartCoroutine(SwitchState(GameState.LOADING, 0.5f));
     }
 
     public void QuitGame()

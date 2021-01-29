@@ -25,7 +25,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     private void Awake()
     {
         // Make the Main Menu a Singleton
-        SingletonMaker();
+        Singletonize();
 
         // Canvas
         canvas = GetComponent<Canvas>();
@@ -41,7 +41,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         mainMenuBkg.gameObject.SetActive(false);
     }
 
-    private void SingletonMaker()
+    private void Singletonize()
     {
         if (main == null)
         {

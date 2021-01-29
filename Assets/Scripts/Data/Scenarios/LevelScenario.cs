@@ -69,7 +69,7 @@ public class LevelScenario : MonoBehaviour
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
         // Add shooter in front
-        _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.Euler(new Vector3(0, 0, 0)), 500, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.Euler(new Vector3(0, 0, 0)), 50, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
 
         // Enable self rotation mode
         var selfRotation = _enemyList[0].Body.AddComponent<SelfRotation>();

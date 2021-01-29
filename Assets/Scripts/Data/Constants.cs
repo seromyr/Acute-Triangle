@@ -3,7 +3,7 @@
     public static class Version
     {
         public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.1.1.1c";
+        public const string CURRENTVERSION = "0.1.1.1e";
     }
 
     public enum GameState
@@ -61,6 +61,7 @@
         public const int FLOOR_LAYER = 8;
         public const string BULLET = "Bullet";
         public const float ENEMY_BULLET_SPEED_FAST = 20f;
+        public const float ENEMY_BULLET_SPEED_MODERATE = 10f;
         public const float ENEMY_BULLET_SPEED_SLOW = 5f;
         public const int BOSS_00_HEALTH = 50;
         //public const string MAINMENU = "MainMenu";
@@ -69,7 +70,7 @@
 
     public static class PlayerAttributes
     {
-        public const float PLAYER_MAXHEALTH = 10f;
+        public const float PLAYER_MAXHEALTH = 12f;
         public const float PLAYER_DAMAGE = 1f;
         public const float PLAYER_MOVESPEED = 10f;
     }

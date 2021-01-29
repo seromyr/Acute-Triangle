@@ -64,7 +64,7 @@ public class Player : Entity
     private void CreateAvatar()
     {
         // Using default skin
-        _avatar = UnityEngine.Object.Instantiate(GetSkinPrefab(PlayerSkin.DEFAULT), _body.transform);
+        _avatar = UnityEngine.Object.Instantiate(GetSkinPrefab(PlayerSkin._01), _body.transform);
         _avatar.name = PlayerSkin.DEFAULT;
     }
 
