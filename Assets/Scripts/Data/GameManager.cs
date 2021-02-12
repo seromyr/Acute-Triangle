@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
 
         // Subcribe to player died event
         Player.main.OnZeroHealth += LoseGame;
+
     }
 
     private void SingletonizeGameManager()
