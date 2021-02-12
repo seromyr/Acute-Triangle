@@ -3,7 +3,7 @@
     public static class Version
     {
         public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.2.0.0";
+        public const string CURRENTVERSION = "0.2.0.1";
     }
 
     public enum GameState
