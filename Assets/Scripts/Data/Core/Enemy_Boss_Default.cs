@@ -8,35 +8,22 @@ using Constants;
 // This template is used to create customized boss for each level in Level Scenario used in every level
 public class Enemy_Boss_Default : EnemyEntity
 {
-    // Mechanic component, used to define take damage ability
-    protected Enemy_Mechanic mechanic;
-
-    // Boss patrol mechanic, can be customized in Level Scenario if used
-    protected SimplePatrol simplePatrol;
-
-    // Boss chase mechanic, can be customized in Level Scenario if used
-    protected SimpleChase simpleChase;
-
     // Event handler to handle boss death event
     public event EventHandler OnDestroy;
 
     // Constructor, declared in Level Scenario
-    public Enemy_Boss_Default(string name, string prefabName, Transform parent, float maxHealth)
+    public Enemy_Boss_Default(string name, string prefabName, Transform parent, float maxHealth, EventHandler OnDeadCallback)
     {
         // Initialize boss game object
         CreateBody(name, prefabName, parent);
 
-        // Load up mechanics
-        mechanic = _body.AddComponent<Enemy_Mechanic>();
-        simplePatrol = _body.AddComponent<SimplePatrol>();
-        simpleChase = _body.AddComponent<SimpleChase>();
-
-        // Wire up the events
-        mechanic.OnBulletHit += TakeDamage;
-        OnDestroy += DestroySelf;
-
         // Set up gameplay parameters
         GameplaySetup(maxHealth);
+
+        // Wire up the events
+        Mechanic.OnBulletHit += TakeDamage;
+        OnDestroy += DestroySelf;
+        OnDestroy += OnDeadCallback;
     }
 
     public override void TakeDamage(object sender, EventArgs e)
@@ -64,35 +51,16 @@ public class Enemy_Boss_Default : EnemyEntity
         Debug.Log(_name + " was killed");
 
         // Play dead effect
-        mechanic.PlayExplosionFX();
+        Mechanic.PlayExplosionFX();
 
         // Cannot take damage anymore
-        mechanic.OnBulletHit -= TakeDamage;
+        Mechanic.OnBulletHit -= TakeDamage;
 
-        // Cannot destroy self anymore
-        OnDestroy -= DestroySelf;
+        // Clear event subscriptions
+        OnDestroy = delegate { };
 
         // Self-destruct after 2 seconds
-        mechanic.KillSelf(2);
-    }
-
-    // Patrol parameter setup if used in Level Scenario
-    public override void Patrol(bool isPatrolling, Direction direction, float distance, float speed)
-    {
-        simplePatrol.SetPatrollingStatus(isPatrolling);
-        simplePatrol.SetPatrolDirection(direction);
-        simplePatrol.SetPatrolDistance(distance);
-        simplePatrol.SetPatrolSpeed(speed);
-    }
-
-    // Chase parameter setup if used in Level Scenario
-    public override void Chase(bool isChasing, float speed)
-    {
-        if (isChasing)
-        {
-            simpleChase.StarChase();
-            simpleChase.SetChaseSpeed(speed);
-        }
+        Mechanic.KillSelf(2);
     }
 
     // Shooting parameter setting used in level scenario

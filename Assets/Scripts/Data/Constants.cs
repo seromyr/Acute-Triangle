@@ -3,7 +3,7 @@
     public static class Version
     {
         public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.1.1.1e";
+        public const string CURRENTVERSION = "0.2.0.0";
     }
 
     public enum GameState
@@ -29,6 +29,24 @@
     {
         Destructible,
         Indestructible
+    }
+
+    public enum Feature
+    {
+        AggressiveRadius,
+        Fear,
+        Retreat,
+        HardShells,
+        PowerChargers,
+        MoveToWaypoints,
+        SelfRotation,
+        SummonClones,
+        SummonMinions,
+        Switches,
+        Patrol,
+        Chase,
+        SelfPhase,
+        Shield
     }
 
     public static class SceneName

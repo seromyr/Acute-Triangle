@@ -9,11 +9,10 @@ using UnityEngine;
 
 public class Enemy_SmallDestructableObstacle : EnemyEntity
 {
-    // Mechanic component, used to define take damage ability
-    private Enemy_Mechanic mechanic;
-
     // Event handler to handle death event
     public event EventHandler OnDestroy;
+
+    // 
 
     // Constructor, declared in Level Scenario
     public Enemy_SmallDestructableObstacle(string name, string prefabName, Transform parent, float maxHealth)
@@ -21,15 +20,13 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         // Initialize obstacle game object
         CreateBody(name, prefabName, parent);
 
-        // Load up mechanics
-        mechanic = _body.AddComponent<Enemy_Mechanic>();
-
-        // Wire up the events
-        mechanic.OnBulletHit += TakeDamage;
-        OnDestroy += DestroySelf;
-
         // Set up gameplay parameters
         GameplaySetup(maxHealth);
+
+        // Wire up the events
+        Mechanic.OnBulletHit += TakeDamage;
+        OnDestroy += DestroySelf;
+
     }
 
     public override void TakeDamage(object sender, EventArgs e)
@@ -57,26 +54,16 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         Debug.Log(_name + " was killed");
 
         // Play dead effect
-        mechanic.PlayExplosionFX();
+        Mechanic.PlayExplosionFX();
 
         // Cannot take damage anymore
-        mechanic.OnBulletHit -= TakeDamage;
+        Mechanic.OnBulletHit -= TakeDamage;
 
-        // Cannot destroy self anymore
-        OnDestroy -= DestroySelf;
+        // Clear event subscriptions
+        OnDestroy = delegate { };
 
         // Self-destruct after 2 seconds
-        mechanic.KillSelf(2);
-    }
-
-    public override void Patrol(bool isPatrolling, Direction direction, float distance, float speed)
-    {
-        // This enemy does not move.
-    }
-
-    public override void Chase(bool isChasing, float speed)
-    {
-        // This enemy does not move.
+        Mechanic.KillSelf(2);
     }
 
     public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)

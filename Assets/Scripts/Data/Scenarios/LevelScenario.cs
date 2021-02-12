@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Constants;
@@ -7,13 +8,10 @@ using UnityEngine.SceneManagement;
 public class LevelScenario : MonoBehaviour
 {
     private List<EnemyEntity> _enemyList;
-    public List<EnemyEntity> EnemyList { get { return _enemyList; } }
-    public bool BossIsAlive { get { return BossCheck(); } }
 
     private GameObject enemyContainer;
-    public int Remaining { get { return enemyContainer.transform.childCount; } }
 
-    private string currentScene;
+    private int bossCount;
 
     private void Awake()
     {
@@ -30,7 +28,7 @@ public class LevelScenario : MonoBehaviour
         _enemyList.Clear();
 
         // Get current scene name to load level scenario
-        currentScene = SceneManager.GetActiveScene().name;
+        string currentScene = SceneManager.GetActiveScene().name;
         switch (currentScene)
         {
             case Map.LV000:
@@ -63,11 +61,15 @@ public class LevelScenario : MonoBehaviour
                 // Boss placemenent
                 enemyContainer.transform,
                 // Boss health
-                30
+                30,
+                // Register dead event action
+                BossCountMonitor
             )
         );
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
+        bossCount = 1;
+
         // Add shooter in front
         _enemyList[0].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.Euler(new Vector3(0, 0, 0)), 50, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
 
@@ -79,10 +81,13 @@ public class LevelScenario : MonoBehaviour
         _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
 
         // Set patrol parameter
-        _enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
+        //_enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
+        _enemyList[0].Features.Add(Feature.Patrol);
+        _enemyList[0].Features.SetPatrolParams(true, Direction.Right, 8, 0.4f);
+
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
+    // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
     private void BuildScenario_01()
     {
         _enemyList.Add
@@ -96,12 +101,14 @@ public class LevelScenario : MonoBehaviour
                 // Boss container
                 enemyContainer.transform,
                 // Boss health
-                30
+                30,
+                // Boss dead event handler
+                BossCountMonitor
             )
         );
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
-
+        bossCount = 1;
         // Add 6 shooters
         // Starting shooter angle
         float angle = 195;
@@ -116,7 +123,8 @@ public class LevelScenario : MonoBehaviour
         // No self rotation
 
         // Set patrol parameter
-        _enemyList[0].Patrol(true, Direction.Forward, 7, 1f);
+        _enemyList[0].Features.Add(Feature.Patrol);
+        _enemyList[0].Features.SetPatrolParams(true, Direction.Forward, 7, 1f);
 
         // Add destroyable cubes
         // Cluster 01 - 2 rows 4 collumns
@@ -198,7 +206,7 @@ public class LevelScenario : MonoBehaviour
         }
     }
     
-    // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
+    // Scenario 03 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
     private void BuildScenario_02()
     {
         _enemyList.Add
@@ -212,35 +220,90 @@ public class LevelScenario : MonoBehaviour
                 // Boss container
                 enemyContainer.transform,
                 // Boss health
-                30
+                30,
+                // Boss dead event handler
+                BossCountMonitor
             )
         );
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
+        bossCount = 1;
         _enemyList[0].SetPosition(new Vector3(0, 0.5f, 7));
-        _enemyList[0].Patrol(false, Direction.Right, 8, 0.4f);
 
-        // Create minions
-        _enemyList[0].CreateMinions("Minion", "Prefabs/Enemy/Cone", enemyContainer.transform);
-        for (int i = 0; i < 10; i++)
-        {
-            _enemyList[0].minionList.Add
-                (
-                    new Enemy_Minion
-                    (
-                        "Minion " + i,
-                        Enemy.Cone,
-                        enemyContainer.transform,
-                        5
-                    )
-                );
-            _enemyList[0].minionList[_enemyList[0].minionList.Count - 1].SetPosition(new Vector3(-5 + i , 0.25f, 5));
-            _enemyList[0].minionList[_enemyList[0].minionList.Count - 1].Chase(true, 1);
-            _enemyList[0].minionList[_enemyList[0].minionList.Count - 1].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
-        }
+        // Add Minion Summoning feature
+        _enemyList[0].Features.Add(Feature.SummonMinions);
 
+        // Set maximum number of minions this boss has
+        _enemyList[0].Features.minionCount = 10;
+
+        // Local count down tick for the timer to work
+        int tick = 10;
+        _enemyList[0].Features.Timer.SetTimer(1f, tick, () => { tick--; _enemyList[0].Features.SpawnMinion(enemyContainer.transform); });
     }
 
+    #region Scenario Stuff
+    private void BossCountMonitor(object sender, EventArgs e)
+    {
+        bossCount--;
+        
+        // Victory Condition
+        if (bossCount == 0)
+        {
+            GameManager.main.WinGame();
+            Debug.Log("No boss left");
+            _enemyList.Clear();
+        }
+    }
+    #endregion
+
+    #region Deprecated
+    private void CreateMinions()
+    {
+        //// Create minions
+        //_enemyList[0].Features.CreateMinions("Minion", "Prefabs/Enemy/Cone", enemyContainer.transform);
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    _enemyList[0].Features.MinionList.Add
+        //        (
+        //            new Enemy_Minion
+        //            (
+        //                "Minion " + i,
+        //                Enemy.Cone,
+        //                enemyContainer.transform,
+        //                5,
+        //                // Register dead event action
+        //                (object Sender, EventArgs e) => { }
+        //            )
+        //        );
+        //    _enemyList[0].Features.MinionList[_enemyList[0].Features.MinionCount - 1].SetPosition(new Vector3(-5 + i, 0.25f, 5));
+        //    _enemyList[0].Features.MinionList[_enemyList[0].Features.MinionCount - 1].Features.Add(Feature.Chase);
+        //    _enemyList[0].Features.MinionList[_enemyList[0].Features.MinionCount - 1].Features.SetChaseParams(true, 1);
+        //    _enemyList[0].Features.MinionList[_enemyList[0].Features.MinionCount - 1].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        //}
+    }
+
+    private void SpawnMinion(int minionCount, EnemyEntity boss)
+    {
+        //boss.Features.MinionList.Add
+        //        (
+        //            new Enemy_Minion
+        //            (
+        //                "Minion " + minionCount,
+        //                Enemy.Cone,
+        //                enemyContainer.transform,
+        //                5,
+        //                // Register dead event action
+        //                (object Sender, EventArgs e) => { }
+        //            )
+        //        );
+        //int minionID = boss.Features.MinionCount - 1;
+
+        //boss.Features.MinionList[minionID].SetPosition(new Vector3(-5 + minionCount, 0.25f, 5));
+        //boss.Features.MinionList[minionID].Features.Add(Feature.Chase);
+        //boss.Features.MinionList[minionID].Features.SetChaseParams(true, 1);
+        //boss.Features.MinionList[minionID].Shoot(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+    }
+    #endregion
     /*
     private void BuildScenario_03()
     {
@@ -257,10 +320,4 @@ public class LevelScenario : MonoBehaviour
         _enemyList[0].Avatar.transform.position = new Vector3(0, 0.5f, 7);
         _enemyList[0].Patrol(true, Direction.Right, 8, 0.4f);
     }*/
-
-    private bool BossCheck()
-    {
-        // This is quite heavy on performance
-        return enemyContainer.transform.Find("Boss");
-    }
 }
