@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Enemy_Sphere_L_StrongShooter : Enemy_Boss_Default
 {
-    public Enemy_Sphere_L_StrongShooter(string prefabName, string name, Transform parent, float health, float maxHealth, EventHandler OnDeadCallback) : base ( name, prefabName,  parent, maxHealth, OnDeadCallback)
+    public Enemy_Sphere_L_StrongShooter(string prefabName, string name, Transform parent, string material, float health, float maxHealth, EventHandler OnDeadCallback) : base ( name, prefabName,  parent, material, maxHealth, OnDeadCallback)
     {
     }
 

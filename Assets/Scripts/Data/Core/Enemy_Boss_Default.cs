@@ -12,10 +12,10 @@ public class Enemy_Boss_Default : EnemyEntity
     public event EventHandler OnDestroy;
 
     // Constructor, declared in Level Scenario
-    public Enemy_Boss_Default(string name, string prefabName, Transform parent, float maxHealth, EventHandler OnDeadCallback)
+    public Enemy_Boss_Default(string name, string prefabName, Transform parent, string material, float maxHealth, EventHandler OnDeadCallback)
     {
         // Initialize boss game object
-        CreateBody(name, prefabName, parent);
+        CreateBody(name, prefabName, parent, material);
 
         // Set up gameplay parameters
         GameplaySetup(maxHealth);
@@ -61,13 +61,5 @@ public class Enemy_Boss_Default : EnemyEntity
 
         // Self-destruct after 2 seconds
         Mechanic.KillSelf(2);
-    }
-
-    // Shooting parameter setting used in level scenario
-    // This method create boss shooters
-    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
-    {
-        var thisShooter = UnityEngine.Object.Instantiate(cannon, GetPosition, pointingAngle, _body.transform);
-        thisShooter.GetComponent<Shooter>().SetShootingParameters(shootingSpeed, bulletSize, bulletSpeed, bulletType);
     }
 }

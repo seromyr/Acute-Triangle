@@ -31,8 +31,9 @@
         Indestructible
     }
 
-    public enum Feature
+    public enum Mechanic
     {
+        Shoot,
         AggressiveRadius,
         Fear,
         Retreat,
@@ -102,8 +103,8 @@
 
     public static class Enemy
     {
-        public const string BOSS_00 = "Enemy/Boss_Level_00";
         public const string Sphere_Large = "Enemy/Sphere_L";
+        public const string Sphere_Core = "Enemy/Sphere_C";
         public const string Cube_Small = "Enemy/Cube_S";
         public const string Cone = "Enemy/Cone";
     }
