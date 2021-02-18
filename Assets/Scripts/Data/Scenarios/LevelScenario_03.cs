@@ -63,11 +63,11 @@ public class LevelScenario_03 : MonoBehaviour
         _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
 
         // Set maximum number of minions this boss has
-        _enemyList[0].Mechanics.minionCount = 10;
+        _enemyList[0].Mechanics.SetMaximumMinion(10);
 
         // Local count down tick for the timer to work
         int tick = 10;
-        _enemyList[0].Mechanics.Timer.SetTimer(1f, tick, () => { tick--; _enemyList[0].Mechanics.SpawnMinion(enemyContainer.transform); });
+        _enemyList[0].Mechanics.SummonTimer.SetTimer(1f, tick, () => { tick--; _enemyList[0].Mechanics.SpawnMinion(enemyContainer.transform); });
     }
 
     #region Scenario Stuff

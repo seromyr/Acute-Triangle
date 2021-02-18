@@ -52,7 +52,7 @@ public class Features
                 return;   
                 
             case Mechanic.SummonMinions:
-                CreateTimerMechanic();
+                CreateTimerMechanic(out summonTimer);
                 CreateMinionSummoningMechanic();
                 return;
 
@@ -68,6 +68,8 @@ public class Features
                 return;
 
             case Mechanic.SelfPhase:
+                CreateTimerMechanic(out phaseTimer);
+                CreateSelfPhaseMechanic();
                 return;
 
             case Mechanic.Shield:
@@ -77,9 +79,9 @@ public class Features
     }
 
     #region Timer
-    private void CreateTimerMechanic()
+    private void CreateTimerMechanic(out Timer featureTimer)
     {
-        timer = body.AddComponent<Timer>();
+        featureTimer = body.AddComponent<Timer>();
     }
     #endregion
 
@@ -164,13 +166,13 @@ public class Features
     #endregion
 
     #region Summon Minions
-    // Timer mechanic, can be used for anything
-    private Timer timer;
-    public Timer Timer { get { return timer; } }
+    // Timer instance, used for summoning minions with delay in between
+    private Timer summonTimer;
+    public Timer SummonTimer { get { return summonTimer; } }
 
-    // Summon minion mechanic
+    // Summon minion mechanic, can be customized in Level Scenario if used
     private List<EnemyEntity> minionList;
-    public int minionCount;
+    private int minionCount;
 
     private void CreateMinionSummoningMechanic()
     {
@@ -210,7 +212,7 @@ public class Features
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
         minionList[minionID].Mechanics.SetChaseParams(true, 1);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.SetShootingParams(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
     }
 
     private void OnMinionDeath(object sender, EventArgs e)
@@ -226,6 +228,11 @@ public class Features
             body.GetComponent<Enemy_HitMonitor>().SetDamageAcceptance(true);
         }
     }
+
+    public void SetMaximumMinion(int minionCount)
+    {
+        this.minionCount = minionCount;
+    }
     #endregion
 
     #region Agressive Proximity
@@ -234,6 +241,9 @@ public class Features
     private ProximityMonitor proximityMonitor;
     public ProximityMonitor ProximityMonitor { get { return proximityMonitor; } }
 
+    //private Material shaderMaterial;
+
+    //private Color color_1, color_2;
 
     private void CreateAggressiveMechanic()
     {
@@ -242,11 +252,14 @@ public class Features
         proximityMonitor.OnExitProximity += StopAggressive;
 
         //Create Aggressive Proximity Indicator
-        GameObject aggroProxInd = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        aggroProxInd.transform.SetParent(body.transform);
-        aggroProxInd.transform.localScale = new Vector3(7, 0.1f, 7);
-        aggroProxInd.transform.localPosition = new Vector3(0, -0.45f, 0f);
-        aggroProxInd.transform.GetComponentInChildren<SphereCollider>().enabled = false;
+        GameObject aggroProxInd = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Disc"), body.transform);
+        //shaderMaterial = aggroProxInd.GetComponent<MeshRenderer>().material;
+
+        ////color_1 = shaderMaterial.GetColorArray;
+        //MaterialPropertyBlock mbox = new MaterialPropertyBlock();
+        //mbox.SetColor("Color 1", Color.red);
+
+        //aggroProxInd.GetComponent<MeshRenderer>().SetPropertyBlock(mbox);
 
         body.TryGetComponent(out meshRenderer);
 
@@ -275,6 +288,9 @@ public class Features
     #region Shoot
     // Shooter manager
     private List<GameObject> cannons;
+    private int cannonCount;
+    private float cannonAngle;
+
     public List<GameObject> Cannons { get { return cannons; } }
 
     private void CreateShootingMechanic()
@@ -287,11 +303,73 @@ public class Features
 
     // Shooting parameter setting used in level scenario
     // This method create boss shooters
-    public void SetShootingParams(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateCannon(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
-        cannons.Add(UnityEngine.Object.Instantiate(cannon, body.transform.position, pointingAngle, body.transform));
-        cannons[cannons.Count - 1].GetComponent<Shooter>().SetShootingParameters(shootingSpeed, bulletSize, bulletSpeed, bulletType);
+        cannons.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), body.transform.position, pointingAngle, body.transform));
+        cannons[cannons.Count - 1].GetComponent<Shooter>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
     }
+
+    public void CreateMultipleCannons(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    {
+        this.cannonCount = cannonCount;
+        this.cannonAngle = cannonAngle;
+        float initialAngle = _initialAngle;
+        for (int i = 0; i < this.cannonCount; i++)
+        {
+            CreateCannon(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSize, bulletSpeed, bulletType);
+            initialAngle += this.cannonAngle;
+        }
+    }
+
+    public void SetShootingStatus(bool isShooting)
+    {
+        
+        for (int i = 0; i < cannons.Count; i++)
+        {
+            switch (isShooting)
+            {
+                case true:
+                    cannons[i].GetComponent<Shooter>().ResumeShooting();
+                    break;
+                case false:
+                    cannons[i].GetComponent<Shooter>().PauseShooting();
+                    break;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Phase In / Phase Out
+    // Boss Phase In / Phase Out mechanic, can be customized in Level Scenario if used
+
+    // Timer instance, used for delay between phases
+    private Timer phaseTimer;
+    public Timer PhaseTimer { get { return phaseTimer; } }
+
+    private MeshRenderer meshRendererPointer;
+    private Collider colliderPointer;
+
+    private void CreateSelfPhaseMechanic()
+    {
+        meshRendererPointer = body.GetComponent<MeshRenderer>();
+        colliderPointer = body.GetComponent<Collider>();
+    }
+    public void Phase(bool value)
+    {
+
+        //Component[] comps = body.GetComponents<Component>();
+
+        //foreach (Component c in comps)
+        //{
+        //    c. = value;
+        //}
+        //body.GetComponent<Timer>().enabled = true;
+        meshRendererPointer.enabled = value;
+        colliderPointer.enabled = value;
+        SetShootingStatus(value);
+    }
+
     #endregion
 }
 
@@ -303,15 +381,31 @@ public class Timer : MonoBehaviour
     private bool loop;
     private int count;
 
+    private int pauseCount;
+
     public void SetLoop(bool value)
     {
         loop = value;
     }
 
-    public void SetTimer(float timer, int count, Action timerCallback)
+    public void PauseTimer()
     {
-        // Set time
-        this.timer = referenceTimer = timer;
+        pauseCount = count;
+        Debug.LogError("pauseCount: " + pauseCount);
+        count = 0;
+    }
+
+    public void ResumeTimer()
+    {
+        count = pauseCount;
+        pauseCount = count;
+        Debug.LogWarning("count: " + count);
+    }
+
+    public void SetTimer(float delay, int count, Action timerCallback)
+    {
+        // Set delay between each tick
+        this.timer = referenceTimer = delay;
 
         // Set loop
         loop = false;

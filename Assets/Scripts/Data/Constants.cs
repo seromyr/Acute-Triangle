@@ -3,7 +3,7 @@
     public static class Version
     {
         public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.2.0.1";
+        public const string CURRENTVERSION = "0.2.0.2";
     }
 
     public enum GameState
@@ -70,7 +70,6 @@
         public const string LV007 = "Level 07";
         public const string LV008 = "Level 08";
         public const string LV009 = "Level 09";
-        public const string LV010 = "Level 10";
     }
 
     public static class GeneralConst

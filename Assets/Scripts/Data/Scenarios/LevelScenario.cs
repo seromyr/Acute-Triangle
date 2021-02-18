@@ -25,6 +25,24 @@ public class LevelScenario : MonoBehaviour
             case Map.LV003:
                 gameObject.AddComponent<LevelScenario_04>();
                 break;
+            case Map.LV004:
+                gameObject.AddComponent<LevelScenario_05>();
+                break;
+            case Map.LV005:
+                gameObject.AddComponent<LevelScenario_06>();
+                break;
+            case Map.LV006:
+                gameObject.AddComponent<LevelScenario_07>();
+                break;
+            case Map.LV007:
+                gameObject.AddComponent<LevelScenario_08>();
+                break;
+            case Map.LV008:
+                gameObject.AddComponent<LevelScenario_09>();
+                break;
+            case Map.LV009:
+                gameObject.AddComponent<LevelScenario_10>();
+                break;
         }
     }
 }
