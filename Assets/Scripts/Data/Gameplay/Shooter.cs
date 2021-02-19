@@ -7,17 +7,29 @@ public class Shooter : MonoBehaviour
 {
     public BulletType bulletType;
     private GameObject bullet;
-    private float time;
-    private float speed;
-    private float size;
+    private float fireRate;
+    private float bulletSize;
     private float bulletSpeed;
+    private Timer timer;
+    private bool isShooting;
 
-    public void SetShootingParameters(float _shootSpeed, float _size , float _bulletSpeed, BulletType _bulletType)
+    public void SetShootingParameters(float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType, bool isShooting = true)
     {
-        speed = _shootSpeed;
-        bulletType = _bulletType;
-        size = _size;
-        bulletSpeed = _bulletSpeed;
+        this.fireRate = fireRate;
+        this.bulletType = bulletType;
+        this.bulletSize = bulletSize;
+        this.bulletSpeed = bulletSpeed;
+        this.isShooting = isShooting;
+    }
+
+    public void PauseShooting()
+    {
+        timer.PauseTimer();
+    }
+
+    public void ResumeShooting()
+    {
+        timer.ResumeTimer();
     }
 
     private void Start()
@@ -33,17 +45,15 @@ public class Shooter : MonoBehaviour
                 break;
         }
 
-        time = Time.time;
+        timer = gameObject.AddComponent<Timer>();
+        timer.SetTimer(fireRate, 1, () => { InstantiatBullet(); });
+        timer.SetLoop(true);
     }
 
-    private void Update()
+    private void InstantiatBullet()
     {
-        if (Time.time >= time + 1/speed)
-        {
-            var thisBullet = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
-            thisBullet.transform.localScale *= size;
-            thisBullet.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
-            time = Time.time;
-        }
+        var bulletInstance = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
+        bulletInstance.transform.localScale *= bulletSize;
+        bulletInstance.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
     }
 }

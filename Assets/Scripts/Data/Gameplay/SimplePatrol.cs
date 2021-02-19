@@ -12,10 +12,10 @@ public class SimplePatrol : MonoBehaviour
     private float amplitude;
 
     [SerializeField]
-    private float distanceModifier;
+    private float patrolDistance;
 
     [SerializeField]
-    private float frequency;
+    private float patrolSpeed;
 
     [SerializeField]
     private float offset;
@@ -23,6 +23,9 @@ public class SimplePatrol : MonoBehaviour
     private float orginalPosition;
 
     private bool isPatrolling;
+
+    // Local time
+    private float localTime;
 
     private void Start()
     {
@@ -41,11 +44,18 @@ public class SimplePatrol : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Delta time updates per frame so it should be calculated in Update
+        if (isPatrolling) localTime += Time.deltaTime;
+    }
+
     private void FixedUpdate()
     {
         if (isPatrolling)
         {
-            amplitude = Mathf.Sin(Time.time / frequency + offset) * distanceModifier;
+            amplitude = Mathf.Sin(localTime / patrolSpeed + offset) * patrolDistance;
+
             switch (direction)
             {
                 case Direction.Right:
@@ -61,23 +71,23 @@ public class SimplePatrol : MonoBehaviour
         }
     }
 
-    public void SetPatrollingStatus(bool status)
+    public void SetPatrollingStatus(bool isPatrolling)
     {
-        isPatrolling = status;
+        this.isPatrolling = isPatrolling;
     }
 
-    public void SetPatrolDistance(float value)
+    public void SetPatrolDistance(float patrolDistance)
     {
-        distanceModifier = value;
+        this.patrolDistance = patrolDistance;
     }
 
-    public void SetPatrolSpeed(float value)
+    public void SetPatrolSpeed(float patrolSpeed)
     {
-        frequency = value;
+        this.patrolSpeed = patrolSpeed;
     }
 
-    public void SetPatrolDirection(Direction _direction)
+    public void SetPatrolDirection(Direction direction)
     {
-        direction = _direction;
+        this.direction = direction;
     }
 }

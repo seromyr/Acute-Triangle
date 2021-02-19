@@ -14,12 +14,12 @@ public class Player : Entity
     private PlayerMechanic _mechanic;
     private bool           _allowPlayerControl;
     private AudioSource    _soundplayer;
-    private Vector3        _startPosition;
+    private Vector3        startPosition;
 
     #region Accessors
     public PlayerMechanic Mechanic { get { return _mechanic; } }
 
-    public Vector3 StartPostion { set { _startPosition = value; } }
+
     #endregion
 
     // Player constructor
@@ -82,7 +82,14 @@ public class Player : Entity
         SetHealth(_maxHealth);
         SetDamage(PlayerAttributes.PLAYER_DAMAGE);
         Revive();
-        _startPosition = Vector3.zero;
+
+        // Default player position in scene
+        SetStartPostion(Vector3.zero);
+    }
+
+    public void SetStartPostion(Vector3 startPosition)
+    {
+        this.startPosition = startPosition;
     }
 
     // Reset player parameters
@@ -91,9 +98,9 @@ public class Player : Entity
         SetRotation(Quaternion.identity);
 
         // Allow to reset player position by using override parameter
-        if (GetPosition != _startPosition)
+        if (GetPosition != startPosition)
         {
-            SetPosition(_startPosition);
+            SetPosition(startPosition);
         }
 
         SetHealth(_maxHealth);
@@ -103,7 +110,6 @@ public class Player : Entity
     // Damage taking method
     public void TakeDamage(int damageTaken)
     {
-        //_health -= damageTaken;
         ModifyHealth(-damageTaken);
 
         //Dispatch the event that player has died
