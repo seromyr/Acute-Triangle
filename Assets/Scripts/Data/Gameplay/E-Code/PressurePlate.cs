@@ -5,19 +5,43 @@ using UnityEngine;
 public class PressurePlate : MonoBehaviour
 {
     public GameObject effectedObject;
-    public bool xMove, yMove, zMove, xDirection, yDirection, zDirection;
-    public float pressureTimer, releaseTimer, moveAmount;
+    //public bool xMove, yMove, zMove, xDirection, yDirection, zDirection;
+    public float pressureTimer, releaseTimer, moveXAmount, moveYAmount, moveZAmount;
     public float maxTimeOn;
 
     float timeMark;
-    bool moved;
+    bool moved, playerOn, ResetPos;
 
     // Start is called before the first frame update
     void Start()
     {
         moved = false;
+        playerOn = false;
+        ResetPos = false;
     }
 
+    private void Update()
+    {
+        if (ResetPos)
+        {
+            if (Time.time > timeMark)
+            {
+                ResetObject();
+                moved = false;
+                ResetPos = false;
+            }
+        }
+    }
+
+    void MoveObject()
+    { 
+        effectedObject.transform.Translate(moveXAmount, moveYAmount, moveZAmount);      
+    }
+
+    void ResetObject()
+    {
+        effectedObject.transform.Translate(-moveXAmount, -moveYAmount, -moveZAmount);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -29,14 +53,29 @@ public class PressurePlate : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            playerOn = true;
             if (!moved)
             {
                 if(Time.time > timeMark)
                 {
                     moved = true;
-                    effectedObject.transform.Translate(0f, 0f, 0f);
+                    MoveObject();
                 }
             }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (playerOn)
+            {
+                timeMark = Time.time + releaseTimer;
+                playerOn = false;
+                ResetPos = true;
+            }
+
         }
     }
 }
