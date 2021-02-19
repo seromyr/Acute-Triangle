@@ -30,11 +30,11 @@ public class LevelScenario_04 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 04 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-4-boss-navel]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -5));
+        Player.main.SetPosition(new Vector3(0, 0, -0));
 
         // Add enemy into the list
         _enemyList.Add
@@ -44,11 +44,11 @@ public class LevelScenario_04 : MonoBehaviour
                 // Boss name
                 "Boss",
                 // Boss appearance
-                Enemy.Sphere_Large,
+                Enemy.Sphere_Medium_Red,
                 // Boss placemenent
                 enemyContainer.transform,
                 // Boss material
-                "Shader Graphs_Boss_01_Shader",
+                "default",
                 // Boss health
                 30,
                 // Register dead event action
@@ -59,41 +59,52 @@ public class LevelScenario_04 : MonoBehaviour
         // Because this level only has 1 boss, so the boss id automatically known as 0
         bossCount = 1;
 
+        // Enable hardshells mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.HardShells);
+
+        // Boss takes no damage until the shells split apart
+        _enemyList[0].Mechanic.SetDamageAcceptance(false);
+
         // Enable self rotation mode
         _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        _enemyList[0].Mechanics.SetRotationParameters(66f);
 
         // Set default position
         _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
 
-        // Set patrol parameter
-        _enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        _enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
 
-        _enemyList[0].Mechanics.Add(Mechanic.SelfPhase);
+        //// Set patrol parameter
+        //_enemyList[0].Mechanics.Add(Mechanic.Patrol);
+        //_enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
+
+        //_enemyList[0].Mechanics.Add(Mechanic.SelfPhase);
 
         _enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
+        _enemyList[0].Mechanics.SetAgressiveDiameteMutiplierr(2f);
         _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += In;
         _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += Out;
 
         //Add cannons
-        cannonCount = 6;
-        float cannonAngle = 60;
-        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
-        // Default boss cannon state
-        //EnableAllShooters(null, null);
+        //cannonCount = 6;
+        //float cannonAngle = 60;
+        //_enemyList[0].Mechanics.Add(Mechanic.Shoot);
+        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+         //Default boss state
+        //Out(null, null);
 
 
     }
 
     private void In(object sender, EventArgs e)
     {
-        _enemyList[0].Mechanics.Phase(false);
+        //_enemyList[0].Mechanics.CloseShells();
+        isWeaken = true;
     }
 
     private void Out(object sender, EventArgs e)
     {
-        _enemyList[0].Mechanics.Phase(true);
+        //_enemyList[0].Mechanics.SplitShells(3f);
+        isWeaken = false;
         //_enemyList[0].Mechanics.PhaseTimer.SetTimer(1, 1, () => _enemyList[0].Mechanics.Phase(true));
     }
 
@@ -130,6 +141,20 @@ public class LevelScenario_04 : MonoBehaviour
             _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= Out;
 
             _enemyList.Clear();
+        }
+    }
+
+    private bool isWeaken = false;
+
+    private void FixedUpdate()
+    {
+        if (isWeaken)
+        {
+            _enemyList[0].Mechanics.CloseShells();
+        }
+        else
+        {
+            _enemyList[0].Mechanics.SplitShells(3f);
         }
     }
     #endregion

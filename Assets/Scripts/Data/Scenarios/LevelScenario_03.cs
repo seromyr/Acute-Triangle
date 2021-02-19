@@ -40,7 +40,7 @@ public class LevelScenario_03 : MonoBehaviour
                 // Boss name
                 "Boss",
                 // Boss appearance
-                Enemy.Sphere_Large,
+                Enemy.Sphere_Large_Black,
                 // Boss container
                 enemyContainer.transform,
                 // Boss material

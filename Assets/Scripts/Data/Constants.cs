@@ -102,10 +102,10 @@
 
     public static class Enemy
     {
-        public const string Sphere_Large = "Enemy/Sphere_L";
-        public const string Sphere_Core = "Enemy/Sphere_C";
-        public const string Cube_Small = "Enemy/Cube_S";
-        public const string Cone = "Enemy/Cone";
+        public const string Sphere_Large_Black = "Enemy/Sphere_L_Black";
+        public const string Sphere_Medium_Red = "Enemy/Sphere_M_Red";
+        public const string Cube_Medium_Black = "Enemy/Cube_M_Black";
+        public const string Triangle_Medium_Black = "Enemy/Triangle_Medium_Black";
     }
 
     public static class EnemyName

@@ -41,7 +41,7 @@ public class LevelScenario_02 : MonoBehaviour
                 // Boss name
                 "Boss",
                 // Boss appearance
-                Enemy.Sphere_Large,
+                Enemy.Sphere_Large_Black,
                 // Boss container
                 enemyContainer.transform,
                 // Boss material
@@ -82,7 +82,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
-                        Enemy.Cube_Small,
+                        Enemy.Cube_Medium_Black,
                         // Container
                         enemyContainer.transform,
                         // Material
@@ -110,7 +110,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
-                        Enemy.Cube_Small,
+                        Enemy.Cube_Medium_Black,
                         // Container
                         enemyContainer.transform,
                         // Material
@@ -138,7 +138,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
-                        Enemy.Cube_Small,
+                        Enemy.Cube_Medium_Black,
                         // Container
                         enemyContainer.transform,
                         // Material

@@ -19263,7 +19263,7 @@ GameObject:
   - component: {fileID: 2329721598907625607}
   - component: {fileID: 2329721598907625606}
   m_Layer: 0
-  m_Name: Sphere_L
+  m_Name: Sphere_L_Black
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19277,7 +19277,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2329721598907625601}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 2329721598828259231}

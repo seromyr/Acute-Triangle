@@ -36,6 +36,7 @@ public class Features
                 return;
 
             case Mechanic.HardShells:
+                CreateHardShellsMechanic();
                 return;
 
             case Mechanic.PowerChargers:
@@ -101,6 +102,11 @@ public class Features
         simplePatrol.SetPatrolDirection(direction);
         simplePatrol.SetPatrolDistance(distance);
         simplePatrol.SetPatrolSpeed(speed);
+    }
+
+    public void SetPatrollingStatus(bool status)
+    {
+        simplePatrol.SetPatrollingStatus(status);
     }
     #endregion
 
@@ -199,7 +205,7 @@ public class Features
                     new Enemy_Minion
                     (
                         "Minion " + minionID,
-                        Enemy.Cone,
+                        Enemy.Triangle_Medium_Black,
                         enemyContainer,
                         "default",
                         5,
@@ -241,6 +247,8 @@ public class Features
     private ProximityMonitor proximityMonitor;
     public ProximityMonitor ProximityMonitor { get { return proximityMonitor; } }
 
+    private GameObject aggressiveDisc;
+
     //private Material shaderMaterial;
 
     //private Color color_1, color_2;
@@ -252,7 +260,18 @@ public class Features
         proximityMonitor.OnExitProximity += StopAggressive;
 
         //Create Aggressive Proximity Indicator
-        GameObject aggroProxInd = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Disc"), body.transform);
+        aggressiveDisc = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Disc"), body.transform);
+        
+        //Set aggressive proximity visual always at ground height
+        Vector3 newPos = Vector3.zero;
+        newPos.x = body.transform.position.x * body.transform.localScale.z + body.transform.position.x;
+        newPos.y = -body.transform.position.y * body.transform.localScale.y + body.transform.position.y + 0.05f;
+        newPos.z = body.transform.position.z * body.transform.localScale.z + body.transform.position.z;
+
+        aggressiveDisc.transform.position = aggressiveDisc.transform.InverseTransformPoint(newPos);
+
+
+
         //shaderMaterial = aggroProxInd.GetComponent<MeshRenderer>().material;
 
         ////color_1 = shaderMaterial.GetColorArray;
@@ -272,15 +291,19 @@ public class Features
     private void StartAggressive(object sender, EventArgs e)
     {
         proximityMonitor.SetAggressiveStatus(true);
-        simplePatrol.SetPatrollingStatus(false);
         //Debug.LogError("Enter");
     }
 
     private void StopAggressive(object sender, EventArgs e)
     {
         proximityMonitor.SetAggressiveStatus(false);
-        simplePatrol.SetPatrollingStatus(true);
         //Debug.LogWarning("Exit");
+    }
+
+    public void SetAgressiveDiameteMutiplierr(float diameter)
+    {
+        aggressiveDisc.transform.localScale *= diameter;
+        proximityMonitor.SetAggressiveDistance(diameter * 7f);
     }
 
     #endregion
@@ -368,6 +391,46 @@ public class Features
         meshRendererPointer.enabled = value;
         colliderPointer.enabled = value;
         SetShootingStatus(value);
+    }
+
+    #endregion
+
+    #region Hard Shells
+    // Boss hard shell mechanic, can be customized in Level Scenario if used
+
+    // Shell pieces
+    private List<GameObject> shells;
+
+    private void CreateHardShellsMechanic()
+    {
+        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shells"));
+        shells.transform.parent = body.transform;
+
+        this.shells = new List<GameObject>();
+        foreach (Transform child in shells.transform)
+        {
+            this.shells.Add(child.gameObject);
+        }
+    }
+
+    public void SplitShells(float distance)
+    {
+        for (int i = 0; i < shells.Count; i++)
+        {
+            if ((shells[i].transform.localPosition - Vector3.zero).magnitude <= distance)
+            shells[i].transform.Translate(Vector3.back * Time.deltaTime * 2f);
+            //shells[i].transform.localPosition = Vector3.MoveTowards(shells[i].transform.localPosition, -shells[i].transform.forward * distance, Time.deltaTime * 50);
+        }
+    }
+
+    public void CloseShells()
+    {
+        for (int i = 0; i < shells.Count; i++)
+        {
+            //shells[i].transform.localPosition = Vector3.zero;
+            shells[i].transform.localPosition = Vector3.MoveTowards(shells[i].transform.localPosition, Vector3.zero, Time.deltaTime * 20);
+
+        }
     }
 
     #endregion

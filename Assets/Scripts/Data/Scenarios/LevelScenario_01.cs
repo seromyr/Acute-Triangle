@@ -30,7 +30,7 @@ public class LevelScenario_01 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-1-boss-juliette]
     private void BuildScenario()
     {
         // Set player start position
@@ -44,7 +44,7 @@ public class LevelScenario_01 : MonoBehaviour
                 // Boss name
                 "Boss",
                 // Boss appearance
-                Enemy.Sphere_Large,
+                Enemy.Sphere_Large_Black,
                 // Boss placemenent
                 enemyContainer.transform,
                 // Boss material
@@ -63,15 +63,17 @@ public class LevelScenario_01 : MonoBehaviour
         _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
 
         // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        _enemyList[0].SetPosition(new Vector3(10, 0.5f, 10));
+
+        _enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
+        _enemyList[0].Mechanics.SetAgressiveDiameteMutiplierr(1f);
+        _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
+        _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
 
         // Set patrol parameter
         _enemyList[0].Mechanics.Add(Mechanic.Patrol);
         _enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
 
-        _enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += EnableAllShooters;
-        _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += EnableFistShooter;
 
         // Add cannons
         cannonCount = 6;
@@ -80,25 +82,27 @@ public class LevelScenario_01 : MonoBehaviour
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
 
         // Default boss cannon state
-        EnableFistShooter(null, null);
+        NonAggresiveState(null, null);
     }
 
-    private void EnableFistShooter(object sender, EventArgs e)
+    private void NonAggresiveState(object sender, EventArgs e)
     {
         for (int i = 1; i < cannonCount; i++)
         {
             _enemyList[0].Mechanics.Cannons[i].SetActive(false);
         }
         _enemyList[0].Mechanics.SetRotationParameters(100f);
+        _enemyList[0].Mechanics.SetPatrollingStatus(true);
     }
 
-    private void EnableAllShooters(object sender, EventArgs e)
+    private void AggressiveState(object sender, EventArgs e)
     {
         for (int i = 0; i < cannonCount; i++)
         {
             _enemyList[0].Mechanics.Cannons[i].SetActive(true);
         }
         _enemyList[0].Mechanics.SetRotationParameters(36f);
+        _enemyList[0].Mechanics.SetPatrollingStatus(false);
     }
 
     #region Scenario Stuff
@@ -112,8 +116,8 @@ public class LevelScenario_01 : MonoBehaviour
             GameManager.main.WinGame();
             Debug.Log("No boss left");
 
-            _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
-            _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
+            _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
+            _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
 
             _enemyList.Clear();
         }
