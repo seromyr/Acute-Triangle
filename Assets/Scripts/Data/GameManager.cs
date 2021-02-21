@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
         nextLevel++;
 
         //Cheat
-        if (nextLevel == 3)
+        if (nextLevel == 10)
         {
             desinationState = GameState.START;
             StartCoroutine(SwitchState(GameState.LOADING, 2.5f));

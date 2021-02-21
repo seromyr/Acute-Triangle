@@ -7,20 +7,34 @@ public class Shooter : MonoBehaviour
 {
     public BulletType bulletType;
     private GameObject bullet;
-    private float time;
-    private float speed;
-    private float size;
+    private float fireRate;
+    private float bulletSize;
     private float bulletSpeed;
+    private Timer timer;
 
-    public void SetShootingParameters(float _shootSpeed, float _size , float _bulletSpeed, BulletType _bulletType)
+    public void SetShootingParameters(float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
-        speed = _shootSpeed;
-        bulletType = _bulletType;
-        size = _size;
-        bulletSpeed = _bulletSpeed;
+        this.fireRate = fireRate;
+        this.bulletType = bulletType;
+        this.bulletSize = bulletSize;
+        this.bulletSpeed = bulletSpeed;
+
+        StartShooting();
     }
 
-    private void Start()
+    public void PauseShooting()
+    {
+        timer.PauseTimer();
+        //Debug.Log("Pause Shooting");
+    }
+
+    public void ResumeShooting()
+    {
+        timer.ResumeTimer();
+        //Debug.Log("Resume Shooting");
+    }
+
+    private void StartShooting()
     {
         // Decide which type of bullet this shooter will fire
         switch (bulletType)
@@ -33,17 +47,19 @@ public class Shooter : MonoBehaviour
                 break;
         }
 
-        time = Time.time;
+        timer.SetTimer(fireRate, 1, () => { InstantiatBullet(); });
+        timer.SetLoop(true);
     }
 
-    private void Update()
+    private void Awake()
     {
-        if (Time.time >= time + 1/speed)
-        {
-            var thisBullet = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
-            thisBullet.transform.localScale *= size;
-            thisBullet.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
-            time = Time.time;
-        }
+        timer = gameObject.AddComponent<Timer>();
+    }
+
+    private void InstantiatBullet()
+    {
+        var bulletInstance = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
+        bulletInstance.transform.localScale *= bulletSize;
+        bulletInstance.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
     }
 }

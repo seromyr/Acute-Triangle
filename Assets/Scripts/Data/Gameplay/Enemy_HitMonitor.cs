@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Mechanic : MonoBehaviour
+public class Enemy_HitMonitor : MonoBehaviour
 {
     private MeshRenderer mr;
     private SphereCollider sc;
@@ -12,6 +12,14 @@ public class Enemy_Mechanic : MonoBehaviour
     private ParticleSystem takeDamageFX, deathFX;
 
     public event EventHandler OnBulletHit;
+
+    private bool acceptDamage;
+
+    private void Awake()
+    {
+        // All enemies accept damage by default
+        SetDamageAcceptance(true);
+    }
 
     void Start()
     {
@@ -25,10 +33,13 @@ public class Enemy_Mechanic : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-        takeDamageFX.Play();
+        if (acceptDamage)
+        {
+            takeDamageFX.Play();
 
-        // Fire up the bullet hit event
-        OnBulletHit?.Invoke(this, EventArgs.Empty);
+            // Fire up the bullet hit event
+            OnBulletHit?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public void PlayExplosionFX()
@@ -65,5 +76,11 @@ public class Enemy_Mechanic : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
+    }
+
+    public void SetDamageAcceptance(bool acceptDamage)
+    {
+        this.acceptDamage = acceptDamage;
+        //Debug.LogWarning(transform.name + " damage acceptance: " + this.acceptDamage);
     }
 }

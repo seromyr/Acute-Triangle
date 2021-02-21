@@ -8,7 +8,7 @@ using Constants;
 // This template is used to create customized boss minion for each level in Level Scenario used in every level
 public class Enemy_Minion : Enemy_Boss_Default
 {
-    public Enemy_Minion(string name, string prefabName, Transform parent, float maxHealth, EventHandler OnDeadCallback) : base(name, prefabName, parent, maxHealth, OnDeadCallback)
+    public Enemy_Minion(string name, string prefabName, Transform parent, string material, float maxHealth, EventHandler OnDeadCallback) : base(name, prefabName, parent, material, maxHealth, OnDeadCallback)
     {
         _damage = 0.05f;
     }

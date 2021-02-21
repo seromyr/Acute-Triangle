@@ -15,10 +15,10 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
     // 
 
     // Constructor, declared in Level Scenario
-    public Enemy_SmallDestructableObstacle(string name, string prefabName, Transform parent, float maxHealth)
+    public Enemy_SmallDestructableObstacle(string name, string prefabName, Transform parent, string material, float maxHealth)
     {
         // Initialize obstacle game object
-        CreateBody(name, prefabName, parent);
+        CreateBody(name, prefabName, parent, material);
 
         // Set up gameplay parameters
         GameplaySetup(maxHealth);
@@ -66,8 +66,8 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         Mechanic.KillSelf(2);
     }
 
-    public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
-    {
-        // This enemy does not shoot.
-    }
+    //public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
+    //{
+    //    // This enemy does not shoot.
+    //}
 }

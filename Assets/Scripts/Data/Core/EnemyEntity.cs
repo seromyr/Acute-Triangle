@@ -4,31 +4,42 @@ using Constants;
 using UnityEngine;
 using Entities;
 
-public abstract class EnemyEntity : Entity, IDamageable, IShootable
+public abstract class EnemyEntity : Entity, IDamageable
 {
+    // Component to control material
+    private MeshRenderer meshRenderer;
+    public MeshRenderer MeshRenderer { get { return meshRenderer; } }
+
     // Mechanic component, used to define damage taking ability
-    private Enemy_Mechanic mechanic;
-    public Enemy_Mechanic Mechanic { get { return mechanic; } }
+    private Enemy_HitMonitor hitMonitor;
+    public Enemy_HitMonitor Mechanic { get { return hitMonitor; } }
 
     // Enemy feature (see Feature enum in Constants)
-    private Features features;
-    public Features Features { get { return features; } }
+    private Features mechanics;
+    public Features Mechanics { get { return mechanics; } }
 
-    protected void CreateBody(string name, string prefabName, Transform parent)
+    protected void CreateBody(string name, string prefabName, Transform parent, string material)
     {
         _name = name;
         _body = GetBodyPrefab(prefabName);
         _body = UnityEngine.Object.Instantiate(GetBodyPrefab(prefabName), parent);
         _body.name = _name;
+
+        meshRenderer = _body.GetComponent<MeshRenderer>();
+
+        if (material != "default")
+        {
+            SetMaterial(material);
+        }
     }
 
     protected void GameplaySetup(float maxHealth)
     {
         // Load up mechanics
-        mechanic = _body.AddComponent<Enemy_Mechanic>();
+        hitMonitor = _body.AddComponent<Enemy_HitMonitor>();
 
         // Instantiate features
-        features = new Features(_body);
+        mechanics = new Features(_body);
 
         // Initialize core parameters
         _maxHealth = maxHealth;
@@ -36,19 +47,11 @@ public abstract class EnemyEntity : Entity, IDamageable, IShootable
         _isAlive = true;
     }
 
+    protected void SetMaterial(string materialName)
+    {
+        meshRenderer.material = Resources.Load<Material>("Materials/" + materialName);
+    }
+
     public abstract void TakeDamage(object sender, EventArgs e);
     public abstract void DestroySelf(object sender, EventArgs e);
-    public abstract void Shoot(UnityEngine.GameObject cannon, UnityEngine.Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, Constants.BulletType bulletType);
-
-    //// Has minion
-    //public List<EnemyEntity> minionList;
-
-    //public void CreateMinions(string name, string prefabName, Transform parent)
-    //{
-    //    // Automatically create shield if a boss has minions
-    //    //CreateShield();
-
-    //    // Create minion list
-    //    minionList = new List<EnemyEntity>();
-    //}
 }

@@ -8,8 +8,12 @@ public class PlayerController : MonoBehaviour
 {
     private float rayCastMaxRange;
 
+    private Rigidbody rigidbody;
+
     private void Awake()
     {
+        transform.TryGetComponent(out rigidbody);
+
         // The maximum distance that the raycast will reach
         rayCastMaxRange = Mathf.Abs(Camera.main.transform.position.y * 1.5f);
 
@@ -26,8 +30,15 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         // Move player
-        transform.Translate(transform.InverseTransformDirection(Vector3.forward) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Vertical"));
-        transform.Translate(transform.InverseTransformDirection(Vector3.right) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Horizontal"));
+        //transform.Translate(transform.InverseTransformDirection(Vector3.forward) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Vertical"));
+        //transform.Translate(transform.InverseTransformDirection(Vector3.right) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Horizontal"));
+
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+
+        Vector3 tempVect = new Vector3(h, 0, v);
+        tempVect = tempVect.normalized * PlayerAttributes.PLAYER_MOVESPEED * Time.fixedDeltaTime;
+        rigidbody.MovePosition(rigidbody.position + tempVect);
     }
 
     private void Aim()
@@ -48,7 +59,8 @@ public class PlayerController : MonoBehaviour
             playerToMouse.y = 0f;
 
             // Create a rotation based on looking down the vector from the player to the mouse.
-            transform.rotation = Quaternion.LookRotation(playerToMouse);
+            //transform.rotation = Quaternion.LookRotation(playerToMouse);
+            rigidbody.MoveRotation(Quaternion.LookRotation(playerToMouse));
         }
     }
 
