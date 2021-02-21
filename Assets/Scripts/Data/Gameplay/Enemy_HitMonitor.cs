@@ -81,6 +81,6 @@ public class Enemy_HitMonitor : MonoBehaviour
     public void SetDamageAcceptance(bool acceptDamage)
     {
         this.acceptDamage = acceptDamage;
-        Debug.LogWarning(transform.name + " damage acceptance: " + this.acceptDamage);
+        //Debug.LogWarning(transform.name + " damage acceptance: " + this.acceptDamage);
     }
 }

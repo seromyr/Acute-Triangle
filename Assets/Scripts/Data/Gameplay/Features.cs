@@ -9,11 +9,17 @@ public class Features
 {
     public Action<Mechanic> Add;
     private GameObject body;
+    private Transform enemyContainer;
 
     public Features(GameObject gameObject)
     {
         Add = AddNewFeature;
         body = gameObject;
+    }
+
+    public void GetEnemyContainerReference(Transform enemyContainer)
+    {
+        this.enemyContainer = enemyContainer;
     }
 
     private void AddNewFeature(Mechanic feature)
@@ -75,6 +81,10 @@ public class Features
 
             case Mechanic.Shield:
                 CreateShield();
+                return;
+
+            case Mechanic.LookAtPlayer:
+                CreateLookAtPlayerMechanic();
                 return;
         }
     }
@@ -157,7 +167,7 @@ public class Features
         _shield.transform.parent = body.transform;
         _shield.transform.localPosition = Vector3.zero;
         _shield.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Shield");
-        _shield.transform.localScale = Vector3.one * 1.2f;
+        _shield.transform.localScale = Vector3.one * 2.2f;
         _shield.name = "Shield";
     }
     public void ActivateShield()
@@ -259,9 +269,24 @@ public class Features
         proximityMonitor.OnEnterProximity += StartAggressive;
         proximityMonitor.OnExitProximity += StopAggressive;
 
-        //Create Aggressive Proximity Indicator
-        aggressiveDisc = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Disc"), body.transform);
-        
+        body.TryGetComponent(out meshRenderer);
+
+        if (meshRenderer == null)
+        {
+            Debug.LogError("MeshRenderer component of " + body.name + " not found");
+        }
+    }
+
+    public void SetAuraProximityIndicator(int discType = 1)
+    {
+        UnityEngine.Object.Destroy(aggressiveDisc);
+
+        string disc = "Prefabs/Enemy/Disc_";
+        disc += discType;
+
+        //Create a new Aggressive Proximity Indicator
+        aggressiveDisc = UnityEngine.Object.Instantiate(Resources.Load<GameObject>(disc), body.transform);
+
         //Set aggressive proximity visual always at ground height
         Vector3 newPos = Vector3.zero;
         newPos.x = body.transform.position.x * body.transform.localScale.z + body.transform.position.x;
@@ -269,23 +294,6 @@ public class Features
         newPos.z = body.transform.position.z * body.transform.localScale.z + body.transform.position.z;
 
         aggressiveDisc.transform.position = aggressiveDisc.transform.InverseTransformPoint(newPos);
-
-
-
-        //shaderMaterial = aggroProxInd.GetComponent<MeshRenderer>().material;
-
-        ////color_1 = shaderMaterial.GetColorArray;
-        //MaterialPropertyBlock mbox = new MaterialPropertyBlock();
-        //mbox.SetColor("Color 1", Color.red);
-
-        //aggroProxInd.GetComponent<MeshRenderer>().SetPropertyBlock(mbox);
-
-        body.TryGetComponent(out meshRenderer);
-
-        if (meshRenderer == null)
-        {
-            Debug.LogError("MeshRenderer component of " + body.name + " not found");
-        }
     }
 
     private void StartAggressive(object sender, EventArgs e)
@@ -303,7 +311,7 @@ public class Features
     public void SetAgressiveDiameteMutiplierr(float diameter)
     {
         aggressiveDisc.transform.localScale *= diameter;
-        proximityMonitor.SetAggressiveDistance(diameter * 7f);
+        proximityMonitor.SetAggressiveDistance(diameter);
     }
 
     #endregion
@@ -344,6 +352,14 @@ public class Features
         }
     }
 
+    //public void StartShooting()
+    //{
+    //    for (int i = 0; i < cannons.Count; i++)
+    //    {
+    //        cannons[i].GetComponent<Shooter>().StartShooting();
+    //    }
+    //}
+
     public void SetShootingStatus(bool isShooting)
     {
         
@@ -378,6 +394,7 @@ public class Features
         meshRendererPointer = body.GetComponent<MeshRenderer>();
         colliderPointer = body.GetComponent<Collider>();
     }
+
     public void Phase(bool value)
     {
 
@@ -401,6 +418,21 @@ public class Features
     // Shell pieces
     private List<GameObject> shells;
 
+    // Power Pillars container
+    private List<EnemyEntity> pillars;
+    private int pillarCount;
+    private List<Vector3> pillarsPosition;
+
+    // Boss is weaken event
+    public event EventHandler OnAllPillarsDestroyed;
+
+    // Hardshell Timer
+    private Timer hardShellTimer;
+
+    // Callback action when it's time to regenerate pillars
+    public Action OnPillarsRegenerationCallback;
+
+
     private void CreateHardShellsMechanic()
     {
         GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shells"));
@@ -411,6 +443,11 @@ public class Features
         {
             this.shells.Add(child.gameObject);
         }
+
+        pillars = new List<EnemyEntity>();
+        pillarsPosition = new List<Vector3>();
+        hardShellTimer = body.AddComponent<Timer>();
+        OnPillarsRegenerationCallback += ReGeneratePillars;
     }
 
     public void SplitShells(float distance)
@@ -429,8 +466,84 @@ public class Features
         {
             //shells[i].transform.localPosition = Vector3.zero;
             shells[i].transform.localPosition = Vector3.MoveTowards(shells[i].transform.localPosition, Vector3.zero, Time.deltaTime * 20);
-
         }
+    }
+
+    //public void SetMaxPillars(int pillarCount)
+    //{
+    //    this.pillarCount = pillarCount;
+    //}
+
+    public void CreatePillar(Vector3 position, Transform enemyContainer)
+    {
+        int pillarID = pillars.Count;
+
+        pillars.Add
+            (
+                new Enemy_Minion
+                (
+                    "Power Pillar " + pillarID,
+                    Enemy.PowerPillar,
+                    enemyContainer,
+                    "default",
+                    15,
+                    // Register dead event action
+                    OnPillarDestroy
+                )
+            );
+
+        pillars[pillarID].SetPosition(position);
+
+        pillarCount++;
+
+        if (!pillarsPosition.Contains(position))
+        {
+            pillarsPosition.Add(position);
+        }
+     }
+
+    private void OnPillarDestroy(object sender, EventArgs e)
+    {
+        pillarCount--;
+
+        if (pillarCount == 0)
+        {
+            OnAllPillarsDestroyed?.Invoke(this, EventArgs.Empty);
+            pillars.Clear();
+            //Debug.LogError("All pillars destroyed");
+            hardShellTimer.SetTimer(5f, 1, OnPillarsRegenerationCallback);
+        }
+
+    }
+
+    private void ReGeneratePillars()
+    {
+        for (int i = 0; i < pillarsPosition.Count; i++)
+        {
+            CreatePillar(pillarsPosition[i], enemyContainer);
+        }
+    }
+
+    
+    #endregion
+
+    #region LookAt
+    // Look At mechanic
+    private LookAtPlayer lookAtPlayer; 
+
+    private void CreateLookAtPlayerMechanic()
+    {
+        lookAtPlayer = body.AddComponent<LookAtPlayer>();
+    }
+
+    public void SetLookingSpeed(float lookSpeed)
+    {
+        lookAtPlayer.SetLookSpeed(lookSpeed);
+    }
+
+    public void SetLookingStatus(bool isLooking)
+    {
+        lookAtPlayer.SetLookingStatus(isLooking);
     }
 
     #endregion
@@ -454,7 +567,6 @@ public class Timer : MonoBehaviour
     public void PauseTimer()
     {
         pauseCount = count;
-        Debug.LogError("pauseCount: " + pauseCount);
         count = 0;
     }
 
@@ -462,7 +574,6 @@ public class Timer : MonoBehaviour
     {
         count = pauseCount;
         pauseCount = count;
-        Debug.LogWarning("count: " + count);
     }
 
     public void SetTimer(float delay, int count, Action timerCallback)
@@ -518,7 +629,7 @@ public class ProximityMonitor : MonoBehaviour
 
     private void Start()
     {
-        SetAggressiveDistance();
+        //SetAggressiveDistance();
         SetAggressiveStatus(false);
     }
 
@@ -545,5 +656,55 @@ public class ProximityMonitor : MonoBehaviour
     public void SetAggressiveStatus(bool isAggressive)
     {
         this.isAggressive = isAggressive;
+    }
+}
+
+public class LookAtPlayer: MonoBehaviour
+{
+    private bool isLooking;
+
+    private Transform target;
+
+    private Vector3 lookDirection;
+
+    private Quaternion lookRotation;
+
+    private float rotationSpeed;
+
+    private void Start()
+    {
+        target = Player.main.Transform;
+    }
+
+    private void FixedUpdate()
+    {
+        Look();
+    }
+
+    private void Look()
+    {
+        if (isLooking )
+        {
+            lookDirection = target.position - transform.position;
+            lookDirection.y = 0;
+            lookRotation = Quaternion.LookRotation(lookDirection);
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, Time.fixedDeltaTime * rotationSpeed);
+        }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        this.target = target;
+    }
+
+    public void SetLookingStatus(bool isLooking)
+    {
+        this.isLooking = isLooking;
+    }
+    
+    public void SetLookSpeed(float rotationSpeed)
+    {
+        this.rotationSpeed = rotationSpeed;
     }
 }

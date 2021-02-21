@@ -11,28 +11,30 @@ public class Shooter : MonoBehaviour
     private float bulletSize;
     private float bulletSpeed;
     private Timer timer;
-    private bool isShooting;
 
-    public void SetShootingParameters(float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType, bool isShooting = true)
+    public void SetShootingParameters(float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         this.fireRate = fireRate;
         this.bulletType = bulletType;
         this.bulletSize = bulletSize;
         this.bulletSpeed = bulletSpeed;
-        this.isShooting = isShooting;
+
+        StartShooting();
     }
 
     public void PauseShooting()
     {
         timer.PauseTimer();
+        //Debug.Log("Pause Shooting");
     }
 
     public void ResumeShooting()
     {
         timer.ResumeTimer();
+        //Debug.Log("Resume Shooting");
     }
 
-    private void Start()
+    private void StartShooting()
     {
         // Decide which type of bullet this shooter will fire
         switch (bulletType)
@@ -45,9 +47,13 @@ public class Shooter : MonoBehaviour
                 break;
         }
 
-        timer = gameObject.AddComponent<Timer>();
         timer.SetTimer(fireRate, 1, () => { InstantiatBullet(); });
         timer.SetLoop(true);
+    }
+
+    private void Awake()
+    {
+        timer = gameObject.AddComponent<Timer>();
     }
 
     private void InstantiatBullet()

@@ -47,7 +47,8 @@
         Patrol,
         Chase,
         SelfPhase,
-        Shield
+        Shield,
+        LookAtPlayer
     }
 
     public static class SceneName
@@ -106,6 +107,7 @@
         public const string Sphere_Medium_Red = "Enemy/Sphere_M_Red";
         public const string Cube_Medium_Black = "Enemy/Cube_M_Black";
         public const string Triangle_Medium_Black = "Enemy/Triangle_Medium_Black";
+        public const string PowerPillar = "Enemy/PowerPillar";
     }
 
     public static class EnemyName
