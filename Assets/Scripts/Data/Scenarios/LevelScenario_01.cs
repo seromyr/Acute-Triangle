@@ -66,7 +66,7 @@ public class LevelScenario_01 : MonoBehaviour
         _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
 
         _enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        _enemyList[0].Mechanics.SetAuraProximityIndicator(2);
+        _enemyList[0].Mechanics.SetAuraProximityIndicator(1);
         _enemyList[0].Mechanics.SetAgressiveDiameteMutiplierr(7f);
         _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
         _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;

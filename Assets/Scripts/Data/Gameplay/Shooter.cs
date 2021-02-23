@@ -58,7 +58,7 @@ public class Shooter : MonoBehaviour
 
     private void InstantiatBullet()
     {
-        var bulletInstance = Instantiate(bullet, transform.position + transform.forward, transform.rotation);
+        var bulletInstance = Instantiate(bullet, transform.position + transform.forward * 1.5f, transform.rotation);
         bulletInstance.transform.localScale *= bulletSize;
         bulletInstance.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
     }

@@ -54,20 +54,36 @@ public class LevelScenario_03 : MonoBehaviour
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
         bossCount = 1;
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 7));
+
+        // *IMPORTANT* Get enemy container reference for features accessing
+        _enemyList[0].Mechanics.GetEnemyContainerReference(enemyContainer.transform);
+
+        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 20));
 
         // Boss takes no damage until the shield is down
         _enemyList[0].Mechanic.SetDamageAcceptance(false);
+
+        // Enable chase mode
+        _enemyList[0].Mechanics.Add(Mechanic.Chase);
+        _enemyList[0].Mechanics.SetChaseParams(true, 2);
 
         // Add Minion Summoning feature
         _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
 
         // Set maximum number of minions this boss has
-        _enemyList[0].Mechanics.SetMaximumMinion(10);
+        _enemyList[0].Mechanics.SetMaximumMinion(100);
 
         // Local count down tick for the timer to work
-        int tick = 10;
-        _enemyList[0].Mechanics.SummonTimer.SetTimer(1f, tick, () => { tick--; _enemyList[0].Mechanics.SpawnMinion(enemyContainer.transform); });
+        int tick = 100;
+        _enemyList[0].Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
+        {
+            tick--;
+
+            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
+            randomPositionAroundBoss.y = 0;
+
+            _enemyList[0].Mechanics.SpawnMinion(_enemyList[0].GetPosition + randomPositionAroundBoss, 4, 2, 10);
+        });
     }
 
     #region Scenario Stuff

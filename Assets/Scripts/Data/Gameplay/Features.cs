@@ -167,7 +167,7 @@ public class Features
         _shield.transform.parent = body.transform;
         _shield.transform.localPosition = Vector3.zero;
         _shield.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Shield");
-        _shield.transform.localScale = Vector3.one * 2.2f;
+        _shield.transform.localScale = Vector3.one * 2.5f;
         _shield.name = "Shield";
     }
     public void ActivateShield()
@@ -206,7 +206,7 @@ public class Features
         minionList = new List<EnemyEntity>();
     }
 
-    public void SpawnMinion(Transform enemyContainer)
+    public void SpawnMinion(Vector3 minionPosition, float minionSpeed = 1, float minionFireRate = 2, float bulletSpeed = 5)
     {
         int minionID = minionList.Count;
 
@@ -224,11 +224,11 @@ public class Features
                     )
                 );
 
-        minionList[minionID].SetPosition(new Vector3(-5 + minionID, 0.25f, 5));
+        minionList[minionID].SetPosition(minionPosition);
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
-        minionList[minionID].Mechanics.SetChaseParams(true, 1);
+        minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, 2, 0.5f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
     }
 
     private void OnMinionDeath(object sender, EventArgs e)
@@ -351,14 +351,6 @@ public class Features
             initialAngle += this.cannonAngle;
         }
     }
-
-    //public void StartShooting()
-    //{
-    //    for (int i = 0; i < cannons.Count; i++)
-    //    {
-    //        cannons[i].GetComponent<Shooter>().StartShooting();
-    //    }
-    //}
 
     public void SetShootingStatus(bool isShooting)
     {
@@ -511,7 +503,7 @@ public class Features
             OnAllPillarsDestroyed?.Invoke(this, EventArgs.Empty);
             pillars.Clear();
             //Debug.LogError("All pillars destroyed");
-            hardShellTimer.SetTimer(5f, 1, OnPillarsRegenerationCallback);
+            hardShellTimer.SetTimer(12f, 1, OnPillarsRegenerationCallback);
         }
 
     }
