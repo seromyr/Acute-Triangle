@@ -543,8 +543,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameState: 0
   desinationState: 0
-  overrideMode: 1
-  overrideLevel: 4
+  overrideMode: 0
+  overrideLevel: 6
 --- !u!4 &306092288
 Transform:
   m_ObjectHideFlags: 0

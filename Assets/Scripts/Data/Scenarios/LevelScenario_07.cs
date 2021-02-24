@@ -10,7 +10,9 @@ public class LevelScenario_07 : MonoBehaviour
 
     private GameObject enemyContainer;
 
-    private int bossCount, cannonCount;
+    private int bossCount, cannonCount, bossStates, currentBossState;
+
+    private Timer bossStateTimer;
 
     private void Awake()
     {
@@ -19,6 +21,9 @@ public class LevelScenario_07 : MonoBehaviour
 
         // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer");
+
+        // Create timer to change boss state
+        bossStateTimer = gameObject.AddComponent<Timer>();
     }
 
     private void Start()
@@ -30,11 +35,14 @@ public class LevelScenario_07 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 07 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-7]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
+
+        // Because this level only has 1 boss, so the boss id automatically known as 0
+        bossCount = 1;
 
         // Add enemy into the list
         _enemyList.Add
@@ -42,7 +50,7 @@ public class LevelScenario_07 : MonoBehaviour
             new Enemy_Boss_Default
             (
                 // Boss name
-                "Boss",
+                "Beholder",
                 // Boss appearance
                 Enemy.Sphere_Large_Black,
                 // Boss placemenent
@@ -56,8 +64,37 @@ public class LevelScenario_07 : MonoBehaviour
             )
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        _enemyList[0].Mechanics.GetEnemyContainerReference(enemyContainer.transform);
+
+        // This boss has 3 states
+        bossStates = 3;
+        currentBossState = bossStates--;
+
+        // Setup timer to change boss state
+        bossStateTimer.SetTimer(2, 1, () =>
+        {
+            currentBossState = (currentBossState + 1) % bossStates;
+            //Debug.LogError(currentBossState);
+
+            switch (currentBossState)
+            {
+                default:
+                case 0:
+                    ActivateStateOne();
+                    break;
+                case 1:
+                    ActivateStateTwo();
+                    break;
+                case 2:
+                    ActivateStateThree();
+                    break;
+            }
+        });
+
+
+        bossStateTimer.SetLoop(true);
+
 
         // Enable self rotation mode
         //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
@@ -83,6 +120,20 @@ public class LevelScenario_07 : MonoBehaviour
         //EnableFistShooter(null, null);
     }
 
+    private void ActivateStateOne()
+    {
+        Debug.LogError("1 State " + currentBossState);
+    }
+
+    private void ActivateStateTwo()
+    {
+        Debug.LogError("2 State " + currentBossState);
+    }
+
+    private void ActivateStateThree()
+    {
+        Debug.LogError("3 State " + currentBossState);
+    }
     //private void EnableFistShooter(object sender, EventArgs e)
     //{
     //    for (int i = 1; i < cannonCount; i++)

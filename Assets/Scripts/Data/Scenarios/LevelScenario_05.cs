@@ -83,24 +83,6 @@ public class LevelScenario_05 : MonoBehaviour
         //EnableFistShooter(null, null);
     }
 
-    //private void EnableFistShooter(object sender, EventArgs e)
-    //{
-    //    for (int i = 1; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
-    //}
-
-    //private void EnableAllShooters(object sender, EventArgs e)
-    //{
-    //    for (int i = 0; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
-    //}
-
     #region Scenario Stuff
     private void BossCountMonitor(object sender, EventArgs e)
     {

@@ -16,11 +16,7 @@ public class Player : Entity
     private AudioSource    _soundplayer;
     private Vector3        startPosition;
 
-    #region Accessors
-    public PlayerMechanic Mechanic { get { return _mechanic; } }
-
-
-    #endregion
+    private Rigidbody      _rigidbody;
 
     // Player constructor
     public Player()
@@ -73,6 +69,7 @@ public class Player : Entity
     {
         _mechanic = _body.AddComponent<PlayerMechanic>();
         _body.AddComponent<PlayerController>();
+        _rigidbody = _body.GetComponent<Rigidbody>();
     }
 
     // Set up gameplay parameters
@@ -119,5 +116,13 @@ public class Player : Entity
             Suicide();
             OnZeroHealth?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    // Push player away
+    public void PushPlayer(Vector3 pusherPosition, float pushPower)
+    {
+        Vector3 pushDirection = pusherPosition - GetPosition;
+
+        _rigidbody.AddForce(-pushDirection.normalized * pushPower);
     }
 }
