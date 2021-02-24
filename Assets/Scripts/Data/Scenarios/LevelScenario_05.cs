@@ -10,7 +10,7 @@ public class LevelScenario_05 : MonoBehaviour
 
     private GameObject enemyContainer;
 
-    private int bossCount;
+    private int bossCount, cannonCount;
 
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class LevelScenario_05 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 05 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-5]
+    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
     private void BuildScenario()
     {
         // Set player start position
@@ -66,8 +66,40 @@ public class LevelScenario_05 : MonoBehaviour
         //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
 
         // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        _enemyList[0].SetPosition(new Vector3(56.25f, 0.5f, 26.5f));
+
+
+        // Add cannons
+        cannonCount = 4;
+        float cannonAngle = 90;
+        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
+        //_enemyList[0].Mechanics.CreateCannon(Quaternion.identity, 1,1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+
+        cannonCount = 4;
+        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+
+        //// Default boss cannon state
+        //EnableFistShooter(null, null);
     }
+
+    //private void EnableFistShooter(object sender, EventArgs e)
+    //{
+    //    for (int i = 1; i < cannonCount; i++)
+    //    {
+    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
+    //    }
+    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
+    //}
+
+    //private void EnableAllShooters(object sender, EventArgs e)
+    //{
+    //    for (int i = 0; i < cannonCount; i++)
+    //    {
+    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
+    //    }
+    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
+    //}
 
     #region Scenario Stuff
     private void BossCountMonitor(object sender, EventArgs e)
@@ -79,6 +111,9 @@ public class LevelScenario_05 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss left");
+
+            //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
+            //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
 
             _enemyList.Clear();
         }
