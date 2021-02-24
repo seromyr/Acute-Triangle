@@ -79,7 +79,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         mainMenuTitle = mainMenuBkg.transform.Find("Title").GetComponent<Text>();
 
         // Main Menu BG is black
-        mainMenuBkg.color = Color.black;
+        //mainMenuBkg.color = Color.black;
 
         // Display title
         mainMenuTitle.text = Version.NAME + "\n" + Version.CURRENTVERSION;

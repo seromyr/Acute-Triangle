@@ -73,7 +73,7 @@ public class LevelScenario_06 : MonoBehaviour
 
         cannonCount = 180;
         cannonAngle = 2;
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
+        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
 
         // Enable hardshells mechanic
         _enemyList[0].Mechanics.Add(Mechanic.HardShells);
@@ -148,7 +148,7 @@ public class LevelScenario_06 : MonoBehaviour
 
         // Add cannons
         _enemyList[1].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[1].Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        //_enemyList[1].Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         #endregion
     }
