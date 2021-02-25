@@ -63,10 +63,6 @@ public class Features
                 CreateMinionSummoningMechanic();
                 return;
 
-            case Mechanic.SummonStationaryMinions:
-                CreateMinionSummoningMechanic();
-                return;
-
             case Mechanic.Switches:
                 return;
 
@@ -255,6 +251,7 @@ public class Features
 
         minionList[minionID].SetPosition(minionPosition);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
+        minionList[minionID].Mechanics.Add(Mechanic.LookAtPlayer);
         minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
     }
 

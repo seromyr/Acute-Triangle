@@ -12,8 +12,10 @@ public class LevelScenario_05 : MonoBehaviour
 
     private int bossCount, cannonCount;
 
+
     private void Awake()
     {
+
         // Create a list of enemy to use in any level
         _enemyList = new List<EnemyEntity>();
 
@@ -33,6 +35,9 @@ public class LevelScenario_05 : MonoBehaviour
     // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
     private void BuildScenario()
     {
+        //number of enemies
+        int enemyNum = 12;
+
         // Set player start position
         Player.main.SetPosition(new Vector3(0, 0, 0));
 
@@ -75,16 +80,39 @@ public class LevelScenario_05 : MonoBehaviour
         _enemyList[0].Mechanics.Add(Mechanic.Shoot);
         //_enemyList[0].Mechanics.CreateCannon(Quaternion.identity, 1,1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
-        _enemyList[0].Mechanics.Add(Mechanic.SummonStationaryMinions);
-
+        _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        _enemyList[0].Mechanics.SetRotationParameters(45f);
         cannonCount = 4;
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
+        
+        //enemy placement / summoning
+        _enemyList[0].Mechanics.SetMaximumMinion(enemyNum);
+
+        //Vector3[] spawnPoints = new Vector3[10];
+        GameObject[] spawnLocations = GameObject.FindGameObjectsWithTag("Enemy Spawn");
+
+        int index = UnityEngine.Random.Range(0, spawnLocations.Length);
+
+        List<int> selected = new List<int>();
+        for(int i = 0; i < enemyNum; i++)
+        {
+            index = DuplicateCatcher(UnityEngine.Random.Range(0, spawnLocations.Length), spawnLocations.Length, selected);
+            selected.Add(i);
+        }
+
+        for(int spot = 0; spot < enemyNum; spot++)
+        {
+            _enemyList[0].Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
+        }
+        
 
         //_enemyList[0].Mechanic
 
         //// Default boss cannon state
         //EnableFistShooter(null, null);
-
+        
+        //blockades
         for(int x = 0; x < 3; x++)
         {
             for(int y = 0; y < 7; y++)
@@ -146,9 +174,23 @@ public class LevelScenario_05 : MonoBehaviour
                         )
                 );
 
-                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(74.5f + x, 0, 25.5f + y));
             }
         }
+    }
+
+    private int DuplicateCatcher(int number, int maxNum, List<int> list)
+    {
+        if (list.Contains(number))
+        {
+            return DuplicateCatcher(UnityEngine.Random.Range(0, maxNum), maxNum, list);
+        }
+
+        else
+        {
+            return number;
+        }
+
     }
 
     //private void EnableFistShooter(object sender, EventArgs e)

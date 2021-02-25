@@ -43,7 +43,6 @@
         SelfRotation,
         SummonClones,
         SummonMinions,
-        SummonStationaryMinions,
         Switches,
         Patrol,
         Chase,
