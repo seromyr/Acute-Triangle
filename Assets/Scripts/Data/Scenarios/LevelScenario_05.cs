@@ -79,8 +79,75 @@ public class LevelScenario_05 : MonoBehaviour
         cannonCount = 4;
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
 
+        //_enemyList[0].Mechanic
+
         //// Default boss cannon state
         //EnableFistShooter(null, null);
+
+        for(int x = 0; x < 3; x++)
+        {
+            for(int y = 0; y < 7; y++)
+            {
+                _enemyList.Add
+                (
+                    new Enemy_SmallDestructableObstacle
+                        (
+                            EnemyName.Cube_Small + " " + (x + y),
+
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer.transform,
+                            "default",
+                            10
+                        )
+                );
+
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(-1f + x, 0, 18.5f + y));
+            }
+        }
+
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 7; y++)
+            {
+                _enemyList.Add
+                (
+                    new Enemy_SmallDestructableObstacle
+                        (
+                            // Name
+                            EnemyName.Cube_Small + " " + (x + y),
+
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer.transform,
+                            "default",
+                            10
+                        )
+                );
+
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
+            }
+        }
+
+        for (int x = 0; x < 7; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                _enemyList.Add
+                (
+                    new Enemy_SmallDestructableObstacle
+                        (
+                            // Name
+                            EnemyName.Cube_Small + " " + (x + y),
+
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer.transform,
+                            "default",
+                            10
+                        )
+                );
+
+                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
+            }
+        }
     }
 
     //private void EnableFistShooter(object sender, EventArgs e)
