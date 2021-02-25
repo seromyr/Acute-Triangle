@@ -63,7 +63,9 @@ public class Features
                 CreateMinionSummoningMechanic();
                 return;
 
-            case
+            case Mechanic.SummonStationaryMinions:
+                CreateMinionSummoningMechanic();
+                return;
 
             case Mechanic.Switches:
                 return;

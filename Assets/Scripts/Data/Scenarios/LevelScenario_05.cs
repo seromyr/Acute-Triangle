@@ -75,6 +75,7 @@ public class LevelScenario_05 : MonoBehaviour
         _enemyList[0].Mechanics.Add(Mechanic.Shoot);
         //_enemyList[0].Mechanics.CreateCannon(Quaternion.identity, 1,1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        _enemyList[0].Mechanics.Add(Mechanic.SummonStationaryMinions);
 
         cannonCount = 4;
         _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
