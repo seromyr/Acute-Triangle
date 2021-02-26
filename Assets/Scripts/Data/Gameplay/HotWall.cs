@@ -10,6 +10,8 @@ public class HotWall : MonoBehaviour
 
     private Material material;
 
+    private AudioSource audioSource;
+
     private void Awake()
     {
         damageTimer = gameObject.AddComponent<Timer>();
@@ -18,11 +20,13 @@ public class HotWall : MonoBehaviour
         damageTriggerBox.isTrigger = true;
         damageTriggerBox.size = Vector3.one * 1.25f;
 
-        damageTimer.SetTimer(0.5f, 1, () => { Player.main.TakeDamage(1); Debug.Log(Player.main.Health); });
+        damageTimer.SetTimer(0.5f, 1, () => { Player.main.TakeDamage(1); });
         damageTimer.SetLoop(true);
         damageTimer.PauseTimer();
 
         material = transform.GetComponent<MeshRenderer>().material;
+
+        audioSource = transform.GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -32,6 +36,7 @@ public class HotWall : MonoBehaviour
             damageTimer.ResumeTimer();
             material.SetFloat("Intensity_", 5);
             Player.main.PushPlayer(transform.position, 1500);
+            audioSource.Play();
         }
     }
 

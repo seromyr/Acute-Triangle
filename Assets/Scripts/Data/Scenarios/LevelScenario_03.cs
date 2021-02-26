@@ -61,7 +61,7 @@ public class LevelScenario_03 : MonoBehaviour
         _enemyList[0].SetPosition(new Vector3(0, 0.5f, 20));
 
         // Boss takes no damage until the shield is down
-        _enemyList[0].Mechanic.SetDamageAcceptance(false);
+        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
 
         // Enable chase mode
         _enemyList[0].Mechanics.Add(Mechanic.Chase);
@@ -71,10 +71,10 @@ public class LevelScenario_03 : MonoBehaviour
         _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
 
         // Set maximum number of minions this boss has
-        _enemyList[0].Mechanics.SetMaximumMinion(100);
+        _enemyList[0].Mechanics.SetMaximumMinion(50);
 
         // Local count down tick for the timer to work
-        int tick = 100;
+        int tick = 50;
         _enemyList[0].Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
         {
             tick--;

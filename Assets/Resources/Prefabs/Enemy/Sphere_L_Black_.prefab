@@ -19262,8 +19262,9 @@ GameObject:
   - component: {fileID: 2329721598907625604}
   - component: {fileID: 2329721598907625607}
   - component: {fileID: 2329721598907625606}
+  - component: {fileID: 2191982824076811372}
   m_Layer: 0
-  m_Name: Sphere_L_Black
+  m_Name: Sphere_L_Black_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19345,3 +19346,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2191982824076811372
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2329721598907625601}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 10
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 84
+  m_CollisionDetection: 0

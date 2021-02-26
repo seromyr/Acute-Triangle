@@ -21,7 +21,7 @@ public class Enemy_Boss_Default : EnemyEntity
         GameplaySetup(maxHealth);
 
         // Wire up the events
-        Mechanic.OnBulletHit += TakeDamage;
+        HitMonitor.OnBulletHit += TakeDamage;
         OnDestroy += DestroySelf;
         OnDestroy += OnDeadCallback;
     }
@@ -51,15 +51,15 @@ public class Enemy_Boss_Default : EnemyEntity
         Debug.Log(_name + " was killed");
 
         // Play dead effect
-        Mechanic.PlayExplosionFX();
+        HitMonitor.PlayExplosionFX();
 
         // Cannot take damage anymore
-        Mechanic.OnBulletHit -= TakeDamage;
+        HitMonitor.OnBulletHit -= TakeDamage;
 
         // Clear event subscriptions
         OnDestroy = delegate { };
 
         // Self-destruct after 2 seconds
-        Mechanic.KillSelf(2);
+        HitMonitor.KillSelf(2);
     }
 }

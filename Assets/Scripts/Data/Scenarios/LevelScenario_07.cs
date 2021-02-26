@@ -14,6 +14,10 @@ public class LevelScenario_07 : MonoBehaviour
 
     private Timer bossStateTimer;
 
+    private float cannonAngle;
+
+    private Vector3[] localWaypoints;
+
     private void Awake()
     {
         // Create a list of enemy to use in any level
@@ -24,6 +28,15 @@ public class LevelScenario_07 : MonoBehaviour
 
         // Create timer to change boss state
         bossStateTimer = gameObject.AddComponent<Timer>();
+
+        localWaypoints = new Vector3[]
+        {
+            new Vector3(0.23f, 0.5f, 0.15f),
+            new Vector3(21.98f, 0.5f, 21.9f),
+            new Vector3(21.98f, 0.5f, -21.9f),
+            new Vector3(-21.98f, 0.5f, 21.9f),
+            new Vector3(-21.98f, 0.5f, -21.9f),
+        };
     }
 
     private void Start()
@@ -39,7 +52,7 @@ public class LevelScenario_07 : MonoBehaviour
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, 0));
+        Player.main.SetPosition(new Vector3(0.23f, 0, -20));
 
         // Because this level only has 1 boss, so the boss id automatically known as 0
         bossCount = 1;
@@ -58,7 +71,7 @@ public class LevelScenario_07 : MonoBehaviour
                 // Boss material
                 "default",
                 // Boss health
-                30,
+                100,
                 // Register dead event action
                 BossCountMonitor
             )
@@ -69,14 +82,35 @@ public class LevelScenario_07 : MonoBehaviour
 
         // This boss has 3 states
         bossStates = 3;
-        currentBossState = bossStates--;
+        currentBossState = 0;
 
-        // Setup timer to change boss state
-        bossStateTimer.SetTimer(2, 1, () =>
+        // Set default position
+        _enemyList[0].SetPosition(new Vector3(0.23f, 0.5f, 0.15f));
+
+        // Add shield mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.Shield);
+        _enemyList[0].Mechanics.SwitchToVioletShield();
+
+        // Add look at player mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.LookAtPlayer);
+        _enemyList[0].Mechanics.SetLookingSpeed(360);
+
+        // Add shoot mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
+       
+        // Add complex movement mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.ComplexeMovement);
+
+        // Add self rotation mechanic
+        _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        _enemyList[0].Mechanics.SetRotationParameters(false);
+
+        // Setup timer to change boss state after 10 seconds
+        bossStateTimer.SetTimer(10, 1, () =>
         {
+            // Loop through boss state
             currentBossState = (currentBossState + 1) % bossStates;
-            //Debug.LogError(currentBossState);
-
+            _enemyList[0].Transform.rotation = Quaternion.identity;
             switch (currentBossState)
             {
                 default:
@@ -92,65 +126,83 @@ public class LevelScenario_07 : MonoBehaviour
             }
         });
 
-
+        // Keep boss state switching recurring
         bossStateTimer.SetLoop(true);
 
-
-        // Enable self rotation mode
-        //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
-
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
-
-        //// Set patrol parameter
-        //_enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        //_enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
-
-        //_enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += EnableAllShooters;
-        //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += EnableFistShooter;
-
-        //// Add cannons
-        //cannonCount = 6;
-        //float cannonAngle = 60;
-        //_enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
-
-        //// Default boss cannon state
-        //EnableFistShooter(null, null);
+        // Default state
+        ActivateStateOne();
     }
 
     private void ActivateStateOne()
     {
-        Debug.LogError("1 State " + currentBossState);
+        Debug.Log("I - State " + currentBossState);
+       
+        ActivateAttackPattern(1);
+
+        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
+        _enemyList[0].Mechanics.ActivateShield();
+        _enemyList[0].Mechanics.SetRotationStatus(false);
+        _enemyList[0].Mechanics.SetLookingStatus(true);
+        _enemyList[0].Mechanics.SetRunningAroundParams(true, 6);
+
     }
 
     private void ActivateStateTwo()
     {
-        Debug.LogError("2 State " + currentBossState);
+        Debug.Log("II - State " + currentBossState);
+        ActivateAttackPattern(2);
+
+        _enemyList[0].HitMonitor.SetDamageAcceptance(true);
+        _enemyList[0].Mechanics.DeactivateShield();
+        _enemyList[0].Mechanics.SetLookingStatus(false);
+        _enemyList[0].Mechanics.SetGoToWayPointParams(true, localWaypoints[UnityEngine.Random.Range(0,4)], 8);
     }
 
     private void ActivateStateThree()
     {
-        Debug.LogError("3 State " + currentBossState);
-    }
-    //private void EnableFistShooter(object sender, EventArgs e)
-    //{
-    //    for (int i = 1; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
-    //}
+        Debug.Log("III - State " + currentBossState);
+        ActivateAttackPattern(3);
 
-    //private void EnableAllShooters(object sender, EventArgs e)
-    //{
-    //    for (int i = 0; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
-    //}
+        _enemyList[0].Mechanics.SetRotationStatus(true);
+    }
+
+    private void ActivateAttackPattern(int id)
+    {
+        // Clear all cannon objects
+        _enemyList[0].Mechanics.DestroyAllCannons();
+
+        switch (id)
+        {
+            default:
+            case 1:
+                cannonCount = 1;
+                cannonAngle = 0;
+                _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.45f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1, BulletType.Destructible);
+                break;
+
+            case 2:
+                cannonCount = 8;
+                cannonAngle = 45;
+                _enemyList[0].Mechanics.Add(Mechanic.Shoot);
+                _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Destructible);
+
+                cannonCount = 180;
+                cannonAngle = 2;
+                _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+                break;
+
+            case 3:
+                cannonCount = 4;
+                cannonAngle = 90;
+                _enemyList[0].Mechanics.Add(Mechanic.Shoot);
+                _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 45, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE - 4, BulletType.Destructible);
+
+                cannonCount = 4;
+                _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, (2 / 3f), 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+
+                break;
+        }
+    }
 
     #region Scenario Stuff
     private void BossCountMonitor(object sender, EventArgs e)
@@ -162,9 +214,6 @@ public class LevelScenario_07 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss left");
-
-            //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
-            //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
 
             _enemyList.Clear();
         }

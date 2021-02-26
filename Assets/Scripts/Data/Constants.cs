@@ -3,7 +3,7 @@
     public static class Version
     {
         public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.2.0.7";
+        public const string CURRENTVERSION = "0.2.0.8";
     }
 
     public enum GameState
@@ -36,7 +36,7 @@
         Shoot,
         AggressiveRadius,
         Fear,
-        Retreat,
+        ComplexeMovement,
         HardShells,
         PowerChargers,
         MoveToWaypoints,
@@ -48,7 +48,7 @@
         Chase,
         SelfPhase,
         Shield,
-        LookAtPlayer
+        LookAtPlayer,
     }
 
     public static class SceneName

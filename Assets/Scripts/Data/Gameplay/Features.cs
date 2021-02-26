@@ -38,7 +38,8 @@ public class Features
             case Mechanic.Fear:
                 return;
 
-            case Mechanic.Retreat:
+            case Mechanic.ComplexeMovement:
+                CreateComplexMovementMechanic();
                 return;
 
             case Mechanic.HardShells:
@@ -80,12 +81,13 @@ public class Features
                 return;
 
             case Mechanic.Shield:
-                CreateShield();
+                CreateShieldMechanic();
                 return;
 
             case Mechanic.LookAtPlayer:
                 CreateLookAtPlayerMechanic();
                 return;
+
         }
     }
 
@@ -149,9 +151,14 @@ public class Features
         selfRotation = body.AddComponent<SelfRotation>();
     }
 
-    public void SetRotationParameters(float rotationSpeed = 500f, float accelerationSpeed = 500f)
+    public void SetRotationParameters(bool isRotating = true, float rotationSpeed = 500f, float accelerationSpeed = 500f)
     {
-        selfRotation.SetRotationParameters(rotationSpeed, accelerationSpeed);
+        selfRotation.SetRotationParameters(isRotating, rotationSpeed, accelerationSpeed);
+    }
+
+    public void SetRotationStatus(bool isRotating)
+    {
+        selfRotation.SetRotatingStatus(isRotating);
     }
 
     #endregion
@@ -161,23 +168,29 @@ public class Features
     private GameObject _shield;
 
     // Shield setup
-    private void CreateShield()
+    private void CreateShieldMechanic()
     {
         _shield = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         _shield.transform.parent = body.transform;
         _shield.transform.localPosition = Vector3.zero;
-        _shield.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Shield");
+        _shield.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Shield_Red");
         _shield.transform.localScale = Vector3.one * 2.5f;
         _shield.name = "Shield";
+        _shield.layer = 9;
     }
     public void ActivateShield()
     {
         _shield.SetActive(true);
     }
 
-    public void DestroyShield()
+    public void DeactivateShield()
     {
         _shield.SetActive(false);
+    }
+
+    public void SwitchToVioletShield()
+    {
+        _shield.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Shield_Violet");
     }
     #endregion
 
@@ -195,7 +208,7 @@ public class Features
         // Automatically create shield if a boss has minions
         if (_shield == null)
         {
-            CreateShield();
+            CreateShieldMechanic();
         }
         else
         {
@@ -240,7 +253,7 @@ public class Features
         {
             minionList.Clear();
             Debug.Log("All minions killed");
-            DestroyShield();
+            DeactivateShield();
             body.GetComponent<Enemy_HitMonitor>().SetDamageAcceptance(true);
         }
     }
@@ -367,6 +380,15 @@ public class Features
                     break;
             }
         }
+    }
+
+    public void DestroyAllCannons()
+    {
+        for (int i = 0; i < cannons.Count; i++)
+        {
+            GameObject.Destroy(cannons[i]);
+        }
+            cannons.Clear();
     }
 
     #endregion
@@ -516,11 +538,11 @@ public class Features
         }
     }
 
-    
+
     #endregion
 
     #region LookAt
-    // Look At mechanic
+    // Look At mechanic,  can be customized in Level Scenario if used
     private LookAtPlayer lookAtPlayer; 
 
     private void CreateLookAtPlayerMechanic()
@@ -536,6 +558,35 @@ public class Features
     public void SetLookingStatus(bool isLooking)
     {
         lookAtPlayer.SetLookingStatus(isLooking);
+    }
+
+    #endregion
+
+    #region Complex Movement: Run Around, Move To WayPoint
+    // Boss run away mechanic,  can be customized in Level Scenario if used
+    private ComplexMovement complexMovement;
+    private void CreateComplexMovementMechanic()
+    {
+        complexMovement = body.AddComponent<ComplexMovement>();
+    }
+
+    public void SetRunningAroundParams(bool isRunningAround, float speed)
+    {
+        if (isRunningAround)
+        {
+            complexMovement.StartRunningAround();
+            complexMovement.SetRunSpeed(speed);
+        }
+    }
+
+    public void SetGoToWayPointParams(bool isGoingToWayPoint, Vector3 destination, float speed)
+    {
+        if (isGoingToWayPoint)
+        {
+            complexMovement.StartGoingToWayPoint();
+            complexMovement.SetDestination(destination);
+            complexMovement.SetRunSpeed(speed);
+        }
     }
 
     #endregion
@@ -651,7 +702,7 @@ public class ProximityMonitor : MonoBehaviour
     }
 }
 
-public class LookAtPlayer: MonoBehaviour
+public class LookAtPlayer : MonoBehaviour
 {
     private bool isLooking;
 
@@ -693,10 +744,75 @@ public class LookAtPlayer: MonoBehaviour
     public void SetLookingStatus(bool isLooking)
     {
         this.isLooking = isLooking;
+        transform.rotation = isLooking ? transform.rotation : Quaternion.identity;
     }
     
     public void SetLookSpeed(float rotationSpeed)
     {
         this.rotationSpeed = rotationSpeed;
+    }
+}
+
+public class ComplexMovement : MonoBehaviour
+{
+    private float moveSpeed;
+    private bool isRunningAround, isGoingTodWayPoint;
+    private Vector3 wayPointDestination;
+
+    private void FixedUpdate()
+    {
+        RunAround(Player.main.Transform);
+        GoToWayPoint();
+    }
+
+    private void RunAround(Transform target)
+    {
+        if (isRunningAround)
+        {
+            Vector3 direction = (transform.position - target.position).normalized;
+            direction.y = 0;
+
+            transform.Translate(direction * Time.deltaTime * moveSpeed);
+        }
+    }
+
+    private void GoToWayPoint()
+    {
+        if (isGoingTodWayPoint)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, wayPointDestination, moveSpeed * Time.deltaTime);
+        }
+    }
+
+    public void SetRunSpeed(float runSpeed)
+    {
+        this.moveSpeed = runSpeed;
+    }
+
+    public void StartRunningAround()
+    {
+        isRunningAround = true;
+        isGoingTodWayPoint = false;
+    }
+
+    public void StartGoingToWayPoint()
+    {
+        isGoingTodWayPoint = true;
+        isRunningAround = false;
+    }
+
+    public void StopRunningAround()
+    {
+        isRunningAround = false;
+    }
+
+    public void StopGoingToWayPoint()
+    {
+        isGoingTodWayPoint = false;
+    }
+
+    public void SetDestination(Vector3 wayPointDestination)
+    {
+        this.wayPointDestination = wayPointDestination;
     }
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3798574741994473649}
   - component: {fileID: 3798574741994473650}
   - component: {fileID: 3798574741994473651}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Avatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -500,7 +500,7 @@ GameObject:
   - component: {fileID: 6829819084950803810}
   - component: {fileID: 6829819084950803808}
   - component: {fileID: 6829819084950803809}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DamageParticle
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -5314,8 +5314,8 @@ GameObject:
   - component: {fileID: 6829819085063848570}
   - component: {fileID: 6829819085063848571}
   - component: {fileID: 3516406075475339267}
-  m_Layer: 0
-  m_Name: Cone
+  m_Layer: 9
+  m_Name: Triangle_Medium_Black
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5425,7 +5425,7 @@ GameObject:
   - component: {fileID: 6829819085197916089}
   - component: {fileID: 6829819085197916087}
   - component: {fileID: 6829819085197916088}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10237,7 +10237,7 @@ GameObject:
   - component: {fileID: 6829819085734428601}
   - component: {fileID: 6829819085734428599}
   - component: {fileID: 6829819085734428600}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15049,7 +15049,7 @@ GameObject:
   - component: {fileID: 6829819086282751431}
   - component: {fileID: 6829819086282751429}
   - component: {fileID: 6829819086282751430}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ExplodeParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

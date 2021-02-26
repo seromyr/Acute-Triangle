@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1892919078828395109}
   - component: {fileID: 535163658774832336}
   - component: {fileID: 1694277783270976300}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shell_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6062061390747433664}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shells
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 2448118309912045739}
   - component: {fileID: 9118726516577895253}
   - component: {fileID: 1085465305921895801}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shell_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

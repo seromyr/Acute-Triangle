@@ -70,6 +70,7 @@ public class Player : Entity
         _mechanic = _body.AddComponent<PlayerMechanic>();
         _body.AddComponent<PlayerController>();
         _rigidbody = _body.GetComponent<Rigidbody>();
+        _soundplayer = _body.GetComponent<AudioSource>();
     }
 
     // Set up gameplay parameters
@@ -124,5 +125,11 @@ public class Player : Entity
         Vector3 pushDirection = pusherPosition - GetPosition;
 
         _rigidbody.AddForce(-pushDirection.normalized * pushPower);
+    }
+
+    public void PlayHitSound()
+    {
+        // Player take damage sound effect
+        _soundplayer.PlayOneShot(_soundplayer.clip);
     }
 }

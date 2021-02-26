@@ -11,6 +11,7 @@ public class PlayerMechanic : MonoBehaviour
         if (other.CompareTag(Constants.GeneralConst.BULLET))
         {
             Player.main.TakeDamage(1);
+            Player.main.PlayHitSound();
         }
     }
 }

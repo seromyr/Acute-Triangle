@@ -13,16 +13,29 @@ public class SelfRotation : MonoBehaviour
     [SerializeField, Header("Rotation Speed")]
     private float speed;
 
-    public void SetRotationParameters(float _maxSpeed = 500f, float _accelerationSpeed = 500f)
+    private bool isRotating;
+
+    public void SetRotationParameters(bool isRotating = true, float maxSpeed = 500f, float accelerationSpeed = 500f)
     {
-        maxSpeed = _maxSpeed;
-        accelerationSpeed = _accelerationSpeed;
+        this.isRotating = isRotating;
+        this.maxSpeed = maxSpeed;
+        this.accelerationSpeed = accelerationSpeed;
+
     }
+
+    public void SetRotatingStatus(bool isRotating)
+    {
+        this.isRotating = isRotating;
+    }
+
     private void FixedUpdate()
     {
-        speed += Time.deltaTime * accelerationSpeed;
-        if (speed >= maxSpeed) speed = maxSpeed;
+        if (isRotating)
+        {
+            speed += Time.deltaTime * accelerationSpeed;
+            if (speed >= maxSpeed) speed = maxSpeed;
 
-        transform.Rotate(Vector3.up * Time.deltaTime * speed);
+            transform.Rotate(Vector3.up * Time.deltaTime * speed);
+        }
     }
 }
