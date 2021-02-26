@@ -12,7 +12,7 @@ public abstract class EnemyEntity : Entity, IDamageable
 
     // Mechanic component, used to define damage taking ability
     private Enemy_HitMonitor hitMonitor;
-    public Enemy_HitMonitor Mechanic { get { return hitMonitor; } }
+    public Enemy_HitMonitor HitMonitor { get { return hitMonitor; } }
 
     // Enemy feature (see Feature enum in Constants)
     private Features mechanics;

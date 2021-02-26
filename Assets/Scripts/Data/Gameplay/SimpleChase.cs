@@ -27,9 +27,9 @@ public class SimpleChase : MonoBehaviour
         }
     }
 
-    public void SetChaseSpeed(float value)
+    public void SetChaseSpeed(float chaseSpeed)
     {
-        chaseSpeed = value;
+        this.chaseSpeed = chaseSpeed;
     }
 
     public void StarChase()

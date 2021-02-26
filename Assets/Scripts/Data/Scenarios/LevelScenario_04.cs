@@ -91,7 +91,7 @@ public class LevelScenario_04 : MonoBehaviour
 
         // Addition feature when boss is invincible
         _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
-        _enemyList[0].Mechanics.DestroyShield();
+        _enemyList[0].Mechanics.DeactivateShield();
 
         // Set boss default state
         ActivateInvincibleState(null, null);
@@ -102,7 +102,7 @@ public class LevelScenario_04 : MonoBehaviour
         isWeaken = true;
         _enemyList[0].Mechanics.SetShootingStatus(true);
         _enemyList[0].Mechanics.SetLookingStatus(true);
-        _enemyList[0].Mechanic.SetDamageAcceptance(true);
+        _enemyList[0].HitMonitor.SetDamageAcceptance(true);
 
     }
 
@@ -111,7 +111,7 @@ public class LevelScenario_04 : MonoBehaviour
         isWeaken = false;
         _enemyList[0].Mechanics.SetShootingStatus(false);
         _enemyList[0].Mechanics.SetLookingStatus(false);
-        _enemyList[0].Mechanic.SetDamageAcceptance(false);
+        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
 
         // Local count down tick for the timer to work
         _enemyList[0].Mechanics.SetMaximumMinion(10);

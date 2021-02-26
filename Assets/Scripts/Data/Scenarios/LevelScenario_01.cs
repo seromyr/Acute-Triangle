@@ -92,7 +92,7 @@ public class LevelScenario_01 : MonoBehaviour
         {
             _enemyList[0].Mechanics.Cannons[i].SetActive(false);
         }
-        _enemyList[0].Mechanics.SetRotationParameters(100f);
+        _enemyList[0].Mechanics.SetRotationParameters(true, 100f);
         _enemyList[0].Mechanics.SetPatrollingStatus(true);
     }
 
@@ -102,7 +102,7 @@ public class LevelScenario_01 : MonoBehaviour
         {
             _enemyList[0].Mechanics.Cannons[i].SetActive(true);
         }
-        _enemyList[0].Mechanics.SetRotationParameters(36f);
+        _enemyList[0].Mechanics.SetRotationParameters(true, 36f);
         _enemyList[0].Mechanics.SetPatrollingStatus(false);
     }
 

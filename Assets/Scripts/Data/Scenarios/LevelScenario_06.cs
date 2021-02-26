@@ -69,7 +69,7 @@ public class LevelScenario_06 : MonoBehaviour
         cannonCount = 8;
         float cannonAngle = 45;
         _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE -3, BulletType.Indestructible);
+        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Indestructible);
 
         cannonCount = 180;
         cannonAngle = 2;
@@ -87,7 +87,7 @@ public class LevelScenario_06 : MonoBehaviour
 
         // Enable self rotation mode
         _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
-        _enemyList[0].Mechanics.SetRotationParameters(10f);
+        _enemyList[0].Mechanics.SetRotationParameters(true, 10f);
 
         // Set boss default state
         ActivateInvincibleState(null, null);
@@ -126,16 +126,16 @@ public class LevelScenario_06 : MonoBehaviour
         _enemyList[1].SetPosition(new Vector3(30f, 0.5f, -30f));
 
         // Boss takes no damage until the shield is down
-        _enemyList[1].Mechanic.SetDamageAcceptance(false);
+        _enemyList[1].HitMonitor.SetDamageAcceptance(false);
 
         // Add summon minion
         _enemyList[1].Mechanics.Add(Mechanic.SummonMinions);
 
         // Set maximum number of minions this boss has
-        _enemyList[1].Mechanics.SetMaximumMinion(20);
+        _enemyList[1].Mechanics.SetMaximumMinion(30);
 
         // Local count down tick for the timer to work
-        int tick = 20;
+        int tick = 30;
         _enemyList[1].Mechanics.SummonTimer.SetTimer(0.75f, tick, () =>
         {
             tick--;
@@ -143,7 +143,7 @@ public class LevelScenario_06 : MonoBehaviour
             Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 10;
             randomPositionAroundBoss.y = 0;
 
-            _enemyList[1].Mechanics.SpawnMinion(_enemyList[1].GetPosition + randomPositionAroundBoss, 4, 2, 6);
+            _enemyList[1].Mechanics.SpawnMinion(_enemyList[1].GetPosition + randomPositionAroundBoss, 6, 2, 6);
         });
 
         // Add cannons
@@ -156,14 +156,14 @@ public class LevelScenario_06 : MonoBehaviour
     private void ActivateWeakenState(object sender, EventArgs e)
     {
         isWeaken = true;
-        _enemyList[0].Mechanic.SetDamageAcceptance(true);
+        _enemyList[0].HitMonitor.SetDamageAcceptance(true);
 
     }
 
     private void ActivateInvincibleState(object sender, EventArgs e)
     {
         isWeaken = false;
-        _enemyList[0].Mechanic.SetDamageAcceptance(false);
+        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
     }
 
     #region Scenario Stuff
@@ -172,14 +172,12 @@ public class LevelScenario_06 : MonoBehaviour
         pupuCount--;
         bossCount--;
 
-
         if (pupuCount == 0)
         {
             // Clean Pupu garbages
             _enemyList[0].Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
             _enemyList[0].Mechanics.OnPillarsRegenerationCallback = delegate { };
         }
-
 
         // Victory Condition
         if (bossCount == 0)
@@ -201,7 +199,6 @@ public class LevelScenario_06 : MonoBehaviour
             _enemyList[1].Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
             _enemyList[1].Mechanics.OnPillarsRegenerationCallback = delegate { };
         }
-
 
         // Victory Condition
         if (bossCount == 0)

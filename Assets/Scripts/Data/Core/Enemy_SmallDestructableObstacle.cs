@@ -12,8 +12,6 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
     // Event handler to handle death event
     public event EventHandler OnDestroy;
 
-    // 
-
     // Constructor, declared in Level Scenario
     public Enemy_SmallDestructableObstacle(string name, string prefabName, Transform parent, string material, float maxHealth)
     {
@@ -24,7 +22,7 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         GameplaySetup(maxHealth);
 
         // Wire up the events
-        Mechanic.OnBulletHit += TakeDamage;
+        HitMonitor.OnBulletHit += TakeDamage;
         OnDestroy += DestroySelf;
 
     }
@@ -54,16 +52,16 @@ public class Enemy_SmallDestructableObstacle : EnemyEntity
         Debug.Log(_name + " was killed");
 
         // Play dead effect
-        Mechanic.PlayExplosionFX();
+        HitMonitor.PlayExplosionFX();
 
         // Cannot take damage anymore
-        Mechanic.OnBulletHit -= TakeDamage;
+        HitMonitor.OnBulletHit -= TakeDamage;
 
         // Clear event subscriptions
         OnDestroy = delegate { };
 
         // Self-destruct after 2 seconds
-        Mechanic.KillSelf(2);
+        HitMonitor.KillSelf(2);
     }
 
     //public override void Shoot(GameObject cannon, Quaternion pointingAngle, float shootingSpeed, float bulletSize, float bulletSpeed, BulletType bulletType)
