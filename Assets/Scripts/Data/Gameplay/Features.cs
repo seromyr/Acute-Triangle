@@ -244,6 +244,30 @@ public class Features
         minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
     }
 
+    public void SpawnStationaryMinion(Vector3 minionPosition, float minionFireRate = 2, float bulletSpeed = 5)
+    {
+        int minionID = minionList.Count;
+
+        minionList.Add
+                (
+                    new Enemy_Minion
+                    (
+                        "Minion " + minionID,
+                        Enemy.Triangle_Medium_Black,
+                        enemyContainer,
+                        "default",
+                        5,
+                        // Register dead event action
+                        OnMinionDeath
+                    )
+                );
+
+        minionList[minionID].SetPosition(minionPosition);
+        minionList[minionID].Mechanics.Add(Mechanic.Shoot);
+        minionList[minionID].Mechanics.Add(Mechanic.LookAtPlayer);
+        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
+    }
+
     private void OnMinionDeath(object sender, EventArgs e)
     {
         minionCount--;
