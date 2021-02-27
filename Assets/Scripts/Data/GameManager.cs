@@ -9,7 +9,6 @@ using Cinemachine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager main;
-    public static PlayerEntity player;
 
     [SerializeField]
     private GameState gameState, desinationState;
@@ -18,12 +17,10 @@ public class GameManager : MonoBehaviour
 
     private int nextLevel;
 
-    [SerializeField]
-    private int playerHealth;
-
-    [SerializeField, Header("Money on game start")]
-    private int money;
-    public int CheckWallet { get { return money; } }
+    #region Test Mode
+    public bool overrideMode;
+    public int overrideLevel;
+    #endregion
 
     private void Awake()
     {
@@ -31,7 +28,7 @@ public class GameManager : MonoBehaviour
         SingletonizeGameManager();
 
         // Make player a Singleton
-        SingletonizePlayer();
+        CreatePlayer();
 
         // Setup before loading the Main Menu
         InitialGameSetup();
@@ -46,7 +43,18 @@ public class GameManager : MonoBehaviour
         
         UI_Control.main.gameObject.SetActive(false);
 
-        nextLevel = 0;
+        if (overrideMode)
+        {
+            nextLevel = overrideLevel;
+        }
+        else
+        {
+            nextLevel = 0;
+        }
+
+        // Subcribe to player died event
+        Player.main.OnZeroHealth += LoseGame;
+
     }
 
     private void SingletonizeGameManager()
@@ -63,49 +71,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SingletonizePlayer()
+    private void CreatePlayer()
     {
-        if (player == null)
-        {
-            // Construct player
-            player = new PlayerEntity();
-            player.Avatar.gameObject.SetActive(false);
-            player.Reset();
-            player.Avatar.transform.GetComponent<PlayerController>().LoadJoystick();
-
-            DontDestroyOnLoad(player.Avatar);
-            Debug.Log("Player was created");
-        }
-        else if (player != new PlayerEntity())
-        {
-            Destroy(player.Avatar);
-        }
+        // Construct player
+        new Player();
+        Player.main.Reset();
+        Player.main.Body.SetActive(false);
     }
 
     private void InitialGameSetup()
     {
-        // Construct player
-        //new PlayerEntity();
-        //PlayerMonitor.main.gameObject.SetActive(false);
-        //PlayerMonitor.main.Reset();
-        //PlayerMonitor.main.transform.GetComponent<PlayerController>().LoadJoystick();
-
         // Load camera in scene
         //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (PlayerMonitor.main.transform);
         //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (PlayerMonitor.main.transform);
 
-        GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (player.Avatar.transform);
-        GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (player.Avatar.transform);
+        GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (Player.main.Body.transform);
+        GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (Player.main.Body.transform);
 
-        // Set initial game state
-        gameState = GameState.LOADING;
-        desinationState = GameState.START;
+        if (overrideMode)
+        {
+            gameState = GameState.LOADING;
+            desinationState = GameState.NEW;
+        }
+        else
+        {
+            // Set initial game state
+            gameState = GameState.LOADING;
+            desinationState = GameState.START;
+        }
     }
 
-    private void OnLevelWasLoaded()
-    {
-        UI_InGameMenu_Mechanic.main.SendInstruction(SceneManager.GetActiveScene().name);
-    }
+    //private void OnLevelWasLoaded()
+    //{
+    //    UI_InGameMenu_Mechanic.main.SendInstruction(SceneManager.GetActiveScene().name);
+    //}
 
     private void Update()
     {
@@ -137,7 +136,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
 
         // Disable player
-        player.Avatar.SetActive(false);
+        Player.main.Body.SetActive(false);
 
         // Disable control panel
         UI_Control.main.gameObject.SetActive(false);
@@ -145,8 +144,9 @@ public class GameManager : MonoBehaviour
         // Disable In Game Menu
         UI_InGameMenu_Mechanic.main.SetActiveCanvas(false);
 
-        // Disable Win Panel
+        // Disable Win & Lose Panel
         UI_WinPanel.main.gameObject.SetActive(false);
+        UI_LosePanel.main.gameObject.SetActive(false);
 
         // Next step, switch to destination state, on default is START
         StartCoroutine(SwitchState(desinationState, 1));
@@ -163,8 +163,18 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____NEW_____Routines()
     {
-        // Next level reset
-        nextLevel = 0;
+        //// Next level reset
+        //nextLevel = 0;
+
+        if (overrideMode)
+        {
+            nextLevel = overrideLevel;
+        }
+        else
+        {
+            // Next level reset
+            nextLevel = 0;
+        }
 
         Perform_____NEXT____Routines();
     }
@@ -179,8 +189,11 @@ public class GameManager : MonoBehaviour
         //PlayerMonitor.main.gameObject.SetActive(true);
         //PlayerMonitor.main.Reset();
 
-        player.Avatar.SetActive(true);
-        player.Reset();
+        //player.Avatar.SetActive(true);
+        //player.Reset();
+
+        Player.main.Body.SetActive(true);
+        Player.main.Reset();
 
         // Deactivate Main Menu
         UI_MainMenu_Mechanic.main.SetActiveCanvas(false);
@@ -214,7 +227,7 @@ public class GameManager : MonoBehaviour
         nextLevel++;
 
         //Cheat
-        if (nextLevel == 3)
+        if (nextLevel == 10)
         {
             desinationState = GameState.START;
             StartCoroutine(SwitchState(GameState.LOADING, 2.5f));
@@ -233,6 +246,13 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____LOSE____Routines()
     {
+        // Show lose panel
+        UI_LosePanel.main.gameObject.SetActive(true);
+
+        //desinationState = GameState.START;
+        //StartCoroutine(SwitchState(GameState.LOADING, 2.5f));
+        //UI_InGameMenu_Mechanic.main.SendInstruction("GAME OVER");
+        //StartCoroutine(UI_LoadingScreen_Mechanic.main.RequestFadeOut(5, 4.5f));
     }
 
     private IEnumerator SwitchState(GameState state, float delay)
@@ -290,8 +310,28 @@ public class GameManager : MonoBehaviour
         StartCoroutine(UI_LoadingScreen_Mechanic.main.RequestFadeIn(2, 2));
     }
 
-    public void LoseGame()
+    public void LoseGame(object sender, EventArgs e)
     {
-        
+        stateUpdating = true;
+
+        // Disable In Game Menu
+        UI_InGameMenu_Mechanic.main.SetActiveCanvas(false);
+
+        gameState = GameState.LOSE;
+        UI_InGameMenu_Mechanic.main.SendInstruction("You died");
+    }
+
+    public void RetryLevel()
+    {
+        desinationState = GameState.NEXT;
+        StartCoroutine(SwitchState(GameState.LOADING, 0.5f));
+    }
+
+    public void QuitGame()
+    {
+        #if UNITY_STANDALONE_WIN
+        // Only works if the running platform is Windows
+        Application.Quit();
+        #endif
     }
 }

@@ -2,51 +2,82 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Constants;
 
 public class PlayerController : MonoBehaviour
 {
-    private Joystick joystick;
+    private float rayCastMaxRange;
 
-    [SerializeField]
-    private Transform playerPointer;
+    private Rigidbody rigidbody;
 
-    [SerializeField]
-    private float speed;
-
-    [SerializeField]
-    private float speedMultiplier;
-
-    void Start()
+    private void Awake()
     {
+        transform.TryGetComponent(out rigidbody);
 
-    }
+        // The maximum distance that the raycast will reach
+        rayCastMaxRange = Mathf.Abs(Camera.main.transform.position.y * 1.5f);
 
-    public void LoadJoystick()
-    {
-        joystick = GameObject.Find("Fixed Joystick").GetComponent<Joystick>();
+        // Create a floor layer in front of the camera to get the mouse position reflection
+        CreateFloor();
     }
 
     private void FixedUpdate()
     {
-        if (joystick != null) ControllerEngage();
+        Aim();
+        Move();
     }
 
-    private void ControllerEngage()
+    private void Move()
     {
-        speed = new Vector2(joystick.Horizontal, joystick.Vertical).magnitude * speedMultiplier;
+        // Move player
+        //transform.Translate(transform.InverseTransformDirection(Vector3.forward) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Vertical"));
+        //transform.Translate(transform.InverseTransformDirection(Vector3.right) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Horizontal"));
 
-        if (joystick.Horizontal > 0 || joystick.Horizontal < 0 || joystick.Vertical > 0 || joystick.Vertical < 0)
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+
+        Vector3 tempVect = new Vector3(h, 0, v);
+        tempVect = tempVect.normalized * PlayerAttributes.PLAYER_MOVESPEED * Time.fixedDeltaTime;
+        rigidbody.MovePosition(rigidbody.position + tempVect);
+    }
+
+    private void Aim()
+    {
+        // Create a ray from the mouse cursor on the screen in the direction of the camera
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Create a ray cast hit to store info about what was hit by the ray
+        RaycastHit hit;
+
+        // Perform the raycast and see if it hits something on the floorlayer
+        if (Physics.Raycast(ray, out hit, rayCastMaxRange, LayerMask.GetMask("Floor")))
         {
-            playerPointer.position = new Vector3(joystick.Horizontal + transform.position.x, playerPointer.position.y, joystick.Vertical + transform.position.z);
+            // Create a vector from the player to the point on the floor the raycast from the mouse hit.
+            Vector3 playerToMouse = hit.point - transform.position;
 
-            transform.LookAt(new Vector3(playerPointer.position.x, 0, playerPointer.position.z));
+            // Ensure the vector is entirely along the floor plane.
+            playerToMouse.y = 0f;
 
-            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-
-            //transform.Translate(Vector3.forward * Time.deltaTime * speed);
+            // Create a rotation based on looking down the vector from the player to the mouse.
+            //transform.rotation = Quaternion.LookRotation(playerToMouse);
+            rigidbody.MoveRotation(Quaternion.LookRotation(playerToMouse));
         }
+    }
 
-        transform.Translate(transform.InverseTransformDirection(Vector3.forward) * Time.deltaTime * speedMultiplier * Input.GetAxis("Vertical"));
-        transform.Translate(transform.InverseTransformDirection(Vector3.right) * Time.deltaTime * speedMultiplier * Input.GetAxis("Horizontal"));
+    private void CreateFloor()
+    {
+        GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        floor.name = "Floor";
+        floor.transform.localScale = new Vector3(5, 1, 3);
+        floor.transform.position = new Vector3(0, -1, 0);
+
+        // Make the floor always follow the main camera
+        floor.transform.SetParent(Camera.main.transform);
+
+        // Set this object layer to Floor because the ray cast will only hit the floor and ignore other layers
+        floor.gameObject.layer = GeneralConst.FLOOR_LAYER;
+
+        // Remove the Mesh Renderer because we only need the Mesh Collider for the ray cast to work
+        Destroy(floor.GetComponent<MeshRenderer>());
     }
 }

@@ -13,25 +13,29 @@ public class SelfRotation : MonoBehaviour
     [SerializeField, Header("Rotation Speed")]
     private float speed;
 
-    [SerializeField, Header("Duration")]
-    private float duration;
+    private bool isRotating;
 
-    public float FeedCoffee { set { duration += value;  } }
-
-    // Start is called before the first frame update
-    void Start()
+    public void SetRotationParameters(bool isRotating = true, float maxSpeed = 500f, float accelerationSpeed = 500f)
     {
-        maxSpeed = 50;
-        speed = 0;
+        this.isRotating = isRotating;
+        this.maxSpeed = maxSpeed;
+        this.accelerationSpeed = accelerationSpeed;
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetRotatingStatus(bool isRotating)
     {
+        this.isRotating = isRotating;
+    }
 
-        speed += Time.deltaTime * accelerationSpeed;
-        if (speed >= maxSpeed) speed = maxSpeed;
+    private void FixedUpdate()
+    {
+        if (isRotating)
+        {
+            speed += Time.deltaTime * accelerationSpeed;
+            if (speed >= maxSpeed) speed = maxSpeed;
 
-        transform.Rotate(Vector3.up * Time.deltaTime * speed);
+            transform.Rotate(Vector3.up * Time.deltaTime * speed);
+        }
     }
 }

@@ -19,13 +19,13 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     // Main Menu group
     private Image mainMenuBkg;
     private Text mainMenuTitle;
-    private Button newGame;
+    private Button newGame, quitGame;
     // -------------------
 
     private void Awake()
     {
         // Make the Main Menu a Singleton
-        SingletonMaker();
+        Singletonize();
 
         // Canvas
         canvas = GetComponent<Canvas>();
@@ -37,10 +37,11 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
 
     private void Start()
     {
+        // Disable Main Menu Background
         mainMenuBkg.gameObject.SetActive(false);
     }
 
-    private void SingletonMaker()
+    private void Singletonize()
     {
         if (main == null)
         {
@@ -68,6 +69,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
 
     private void SplashTextPulsing()
     {
+        // Text Pulsing effect
         splashText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time, 1));
     }
 
@@ -77,19 +79,33 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         mainMenuTitle = mainMenuBkg.transform.Find("Title").GetComponent<Text>();
 
         // Main Menu BG is black
-        mainMenuBkg.color = Color.black;
+        //mainMenuBkg.color = Color.black;
 
         // Display title
-        mainMenuTitle.text = "Bullet Hell Prototype v0.1b";
+        mainMenuTitle.text = Version.NAME + "\n" + Version.CURRENTVERSION;
         mainMenuTitle.color = Color.white;
 
+        // Add function to New Game Button
         newGame = mainMenuBkg.transform.Find("NewGame").GetComponent<Button>();
         newGame.onClick.AddListener(StartNewGame);
+
+        // Add function to Quit Game Button
+        quitGame = mainMenuBkg.transform.Find("Quit").GetComponent<Button>();
+        quitGame.onClick.AddListener(QuitGame);
+        // Disable if webGL
+        #if UNITY_WEBGL
+        quitGame.gameObject.SetActive(false);
+        #endif
     }
 
     private void StartNewGame()
     {
         GameManager.main.StartNewGame();
+    }
+
+    private void QuitGame()
+    {
+        GameManager.main.QuitGame();
     }
 
     private void SplashScreenInputReading(KeyCode key)

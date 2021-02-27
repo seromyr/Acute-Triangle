@@ -1,5 +1,4 @@
-﻿using Constants;
-interface IMoveable
+﻿interface IMoveable
 {
-    void Patrol(Direction direction, float distance, float speed);
+    void Patrol(bool isPatrolling, Constants.Direction direction, float distance, float speed);
 }

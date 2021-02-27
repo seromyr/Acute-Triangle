@@ -12,17 +12,22 @@ public class SimplePatrol : MonoBehaviour
     private float amplitude;
 
     [SerializeField]
-    private float distanceModifier;
+    private float patrolDistance;
 
     [SerializeField]
-    private float frequency;
+    private float patrolSpeed;
 
     [SerializeField]
     private float offset;
 
     private float orginalPosition;
 
-    void Start()
+    private bool isPatrolling;
+
+    // Local time
+    private float localTime;
+
+    private void Start()
     {
         //frequency = 0.5f;
         //distanceModifier = 2f;
@@ -41,33 +46,48 @@ public class SimplePatrol : MonoBehaviour
 
     private void Update()
     {
-        amplitude = Mathf.Sin(Time.time / frequency + offset) * distanceModifier;
-        switch (direction)
+        // Delta time updates per frame so it should be calculated in Update
+        if (isPatrolling) localTime += Time.deltaTime;
+    }
+
+    private void FixedUpdate()
+    {
+        if (isPatrolling)
         {
-            case Direction.Right:
-                sineWave = new Vector3(amplitude + orginalPosition, transform.position.y, transform.position.z);
-                break;
-            case Direction.Forward:
-                sineWave = new Vector3(transform.position.x, transform.position.y, amplitude + orginalPosition);
-                break;
+            amplitude = Mathf.Sin(localTime / patrolSpeed + offset) * patrolDistance;
+
+            switch (direction)
+            {
+                case Direction.Right:
+                    sineWave = new Vector3(amplitude + orginalPosition, transform.position.y, transform.position.z);
+                    break;
+                case Direction.Forward:
+                    sineWave = new Vector3(transform.position.x, transform.position.y, amplitude + orginalPosition);
+                    break;
+            }
+
+            // use localPosition because this is a child object
+            transform.localPosition = sineWave;
         }
-
-        // use localPosition because this is a child object
-        transform.localPosition = sineWave;
     }
 
-    public void SetPatrolDistance(float value)
+    public void SetPatrollingStatus(bool isPatrolling)
     {
-        distanceModifier = value;
+        this.isPatrolling = isPatrolling;
     }
 
-    public void SetPatrolSpeed(float value)
+    public void SetPatrolDistance(float patrolDistance)
     {
-        frequency = value;
+        this.patrolDistance = patrolDistance;
     }
 
-    public void SetPatrolDirection(Direction _direction)
+    public void SetPatrolSpeed(float patrolSpeed)
     {
-        direction = _direction;
+        this.patrolSpeed = patrolSpeed;
+    }
+
+    public void SetPatrolDirection(Direction direction)
+    {
+        this.direction = direction;
     }
 }
