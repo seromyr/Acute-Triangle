@@ -5,11 +5,7 @@ using UnityEngine;
 
 public class Enemy_HitMonitor : MonoBehaviour
 {
-    private MeshRenderer mr;
-    private SphereCollider sc;
-    private BoxCollider bc;
-
-    private ParticleSystem takeDamageFX, deathFX;
+    private ParticleSystem takeDamageFX;
 
     public event EventHandler OnBulletHit;
 
@@ -24,11 +20,6 @@ public class Enemy_HitMonitor : MonoBehaviour
     void Start()
     {
         transform.Find("DamageParticle").TryGetComponent(out takeDamageFX);
-        transform.Find("ExplodeParticle").TryGetComponent(out deathFX);
-
-        TryGetComponent(out mr);
-        TryGetComponent(out sc);
-        TryGetComponent(out bc);
     }
 
     private void OnParticleCollision(GameObject other)
@@ -42,45 +33,13 @@ public class Enemy_HitMonitor : MonoBehaviour
         }
     }
 
-    public void PlayExplosionFX()
+    public void SelfDestruct()
     {
-        takeDamageFX.gameObject.SetActive(false);
-        deathFX.Play(true);
-        mr.enabled = false;
-
-        if (sc != null)
-        {
-            sc.enabled = false;
-        }
-
-        if (bc != null)
-        {
-            bc.enabled = false;
-        }
-
-        if (transform.childCount > 2)
-        {
-            for (int i = 2; i < transform.childCount; i++)
-            {
-                transform.GetChild(i).gameObject.SetActive(false);
-            }
-        }
-    }
-
-    public void KillSelf(float delay)
-    {
-        StartCoroutine(DestroySelfWithDelay(delay));
-    }
-
-    IEnumerator DestroySelfWithDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
 
     public void SetDamageAcceptance(bool acceptDamage)
     {
         this.acceptDamage = acceptDamage;
-        //Debug.LogWarning(transform.name + " damage acceptance: " + this.acceptDamage);
     }
 }

@@ -6,26 +6,26 @@ using Constants;
 
 public class LevelScenario_04 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
-
-    private GameObject enemyContainer;
-
-    private int bossCount, cannonCount;
+    private EnemyEntity boss;
+    private Transform enemyContainer;
+    private int bossBlasterCount;
+    private Vector3[] pillarPosition;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
         // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        enemyContainer = new GameObject("EnemyContainer").transform;
+        pillarPosition = new Vector3[]
+        {
+            new Vector3( 10 , -0.5f ,  10 ),
+            new Vector3(-10 , -0.5f ,  10 ),
+            new Vector3( 10 , -0.5f , -10 ),
+            new Vector3(-10 , -0.5f , -10 )
+        };
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
     }
@@ -37,61 +37,56 @@ public class LevelScenario_04 : MonoBehaviour
         Player.main.SetPosition(new Vector3(0, 0, -10));
 
         // Add enemy into the list
-        _enemyList.Add
+        boss = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Medium_Red,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                100,
-                // Register dead event action
-                BossCountMonitor
-            )
+            // Boss name
+            "Navel",
+            // Boss appearance
+            Enemy.Sphere_Medium_Red,
+            // Boss placemenent
+            enemyContainer,
+            // Boss material
+            "default",
+            // Boss health
+            100,
+            // Register dead event action
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
-
         // *IMPORTANT* Get enemy container reference for features accessing
-        _enemyList[0].Mechanics.GetEnemyContainerReference(enemyContainer.transform);
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        //Enable shooting mechanic by adding some cannons
-        cannonCount = 9;
+        // Add blasters to boss
+        bossBlasterCount = 9;
         float cannonAngle = 12;
-        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
-        cannonCount = 2;
+        bossBlasterCount = 2;
         cannonAngle = 120;
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
 
 
-        // Enable hardshells mechanic
-        _enemyList[0].Mechanics.Add(Mechanic.HardShells);
-        _enemyList[0].Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(10, -0.5f, 10), enemyContainer.transform);
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(-10, -0.5f, 10), enemyContainer.transform);
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(10, -0.5f, -10), enemyContainer.transform);
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(-10, -0.5f, -10), enemyContainer.transform);
-        _enemyList[0].Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
+        // Activate Hard Shells mechanic
+        boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+        for (int i = 0; i < pillarPosition.Length; i++)
+        {
+            boss.Mechanics.CreatePillar(pillarPosition[i], enemyContainer);
+        }
+
+        boss.Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
 
        // Set boss default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 0));
+        boss.SetPosition(new Vector3(0, 0.5f, 0));
 
-        // Enable look at player mechanic
-        _enemyList[0].Mechanics.Add(Mechanic.LookAtPlayer);
-        _enemyList[0].Mechanics.SetLookingSpeed(50);
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(50);
 
-        // Addition feature when boss is invincible
-        _enemyList[0].Mechanics.Add(Mechanic.SummonMinions);
-        _enemyList[0].Mechanics.DeactivateShield();
+        // Activate Minion Summoning mechanic
+        boss.Mechanics.Add(Mechanic.SummonMinions);
+        boss.Mechanics.DeactivateShield();
 
         // Set boss default state
         ActivateInvincibleState(null, null);
@@ -100,48 +95,44 @@ public class LevelScenario_04 : MonoBehaviour
     private void ActivateWeakenState(object sender, EventArgs e)
     {
         isWeaken = true;
-        _enemyList[0].Mechanics.SetShootingStatus(true);
-        _enemyList[0].Mechanics.SetLookingStatus(true);
-        _enemyList[0].HitMonitor.SetDamageAcceptance(true);
-
+        boss.Mechanics.SetShootingStatus(true);
+        boss.Mechanics.SetLookingStatus(true);
+        boss.HitMonitor.SetDamageAcceptance(true);
     }
 
     private void ActivateInvincibleState(object sender, EventArgs e)
     {
         isWeaken = false;
-        _enemyList[0].Mechanics.SetShootingStatus(false);
-        _enemyList[0].Mechanics.SetLookingStatus(false);
-        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
+        boss.Mechanics.SetShootingStatus(false);
+        boss.Mechanics.SetLookingStatus(false);
+        boss.HitMonitor.SetDamageAcceptance(false);
 
-        // Local count down tick for the timer to work
-        _enemyList[0].Mechanics.SetMaximumMinion(10);
+        // Local countdown tick for the timer to work
+        boss.Mechanics.SetMaximumMinion(10);
         int tick = 10;
-        _enemyList[0].Mechanics.SummonTimer.SetTimer(1f, tick, () =>
+        boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
         {
             tick--;
 
             Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
             randomPositionAroundBoss.y = 0;
 
-            _enemyList[0].Mechanics.SpawnMinion(_enemyList[0].GetPosition + randomPositionAroundBoss, 4, 2, 10);
+            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
         });
 
     }
 
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
+            Debug.Log("No boss remaining");
 
-            _enemyList[0].Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
-            _enemyList[0].Mechanics.OnPillarsRegenerationCallback = delegate { };
-            _enemyList.Clear();
+            boss.Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
+            boss.Mechanics.OnPillarsRegenerationCallback = delegate { };
         }
     }
 
@@ -149,13 +140,13 @@ public class LevelScenario_04 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isWeaken && bossCount > 0)
+        if (isWeaken && boss.IsAlive)
         {
-            _enemyList[0].Mechanics.SplitShells(3f);
+            boss.Mechanics.SplitShells(3f);
         }
-        else if (!isWeaken && bossCount > 0)
+        else if (!isWeaken && boss.IsAlive)
         {
-            _enemyList[0].Mechanics.CloseShells();
+            boss.Mechanics.CloseShells();
         }
     }
     #endregion

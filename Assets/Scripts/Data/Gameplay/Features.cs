@@ -289,8 +289,6 @@ public class Features
     #endregion
 
     #region Agressive Proximity
-    // Mesh Renderer preference to control material
-    private MeshRenderer meshRenderer;
     private ProximityMonitor proximityMonitor;
     public ProximityMonitor ProximityMonitor { get { return proximityMonitor; } }
 
@@ -305,13 +303,6 @@ public class Features
         proximityMonitor = body.AddComponent<ProximityMonitor>();
         proximityMonitor.OnEnterProximity += StartAggressive;
         proximityMonitor.OnExitProximity += StopAggressive;
-
-        body.TryGetComponent(out meshRenderer);
-
-        if (meshRenderer == null)
-        {
-            Debug.LogError("MeshRenderer component of " + body.name + " not found");
-        }
     }
 
     public void SetAuraProximityIndicator(int discType = 1)
@@ -370,11 +361,11 @@ public class Features
     }
 
     // Shooting parameter setting used in level scenario
-    // This method create boss shooters
+    // This method create enemy blasters
     public void CreateCannon(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         cannons.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), body.transform.position, pointingAngle, body.transform));
-        cannons[cannons.Count - 1].GetComponent<Shooter>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
+        cannons[cannons.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
     }
 
     public void CreateMultipleCannons(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
@@ -397,10 +388,10 @@ public class Features
             switch (isShooting)
             {
                 case true:
-                    cannons[i].GetComponent<Shooter>().ResumeShooting();
+                    cannons[i].GetComponent<Blaster>().ResumeShooting();
                     break;
                 case false:
-                    cannons[i].GetComponent<Shooter>().PauseShooting();
+                    cannons[i].GetComponent<Blaster>().PauseShooting();
                     break;
             }
         }
@@ -507,14 +498,15 @@ public class Features
         }
     }
 
-    //public void SetMaxPillars(int pillarCount)
-    //{
-    //    this.pillarCount = pillarCount;
-    //}
-
+    private Transform pillarContainer;
     public void CreatePillar(Vector3 position, Transform enemyContainer)
     {
         int pillarID = pillars.Count;
+
+        if (enemyContainer == this.enemyContainer)
+        {
+            pillarContainer = enemyContainer;
+        }
 
         pillars.Add
             (
@@ -558,6 +550,11 @@ public class Features
     {
         for (int i = 0; i < pillarsPosition.Count; i++)
         {
+            if (pillarContainer != enemyContainer)
+            {
+                CreatePillar(pillarsPosition[i], pillarContainer);
+            }
+            else
             CreatePillar(pillarsPosition[i], enemyContainer);
         }
     }

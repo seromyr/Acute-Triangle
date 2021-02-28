@@ -6,95 +6,87 @@ using Constants;
 
 public class LevelScenario_02 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
-
-    private GameObject enemyContainer;
-
-    private int bossCount, cannonCount;
+    private EnemyEntity boss;
+    private Transform enemyContainer;
+    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
-        // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        // Create enemy container for organized objects managing
+        enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
     }
 
-
     // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
     private void BuildScenario()
     {
-        _enemyList.Add
+        // Set player start position
+        Player.main.SetPosition(Vector3.zero);
+
+        boss = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss container
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                30,
-                // Boss dead event handler
-                BossCountMonitor
-            )
+            // Boss name
+            "Ragazzino",
+            // Boss appearance
+            Enemy.Boss_02,
+            // Boss container
+            enemyContainer,
+            // Boss material
+            "default",
+            // Boss health
+            30,
+            // Boss dead event handler
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Add cannons
-        cannonCount = 6;
+        // Set boss default position
+        boss.SetPosition(new Vector3(24, 0.5f, 21.25f));
+
+        // Add blasters to boss
+        bossBlasterCount = 6;
         float cannonAngle = 30;
-        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 195, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 195, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
 
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(24, 0.5f, 21.25f));
+        // Activate Patrol mechanic
+        boss.Mechanics.Add(Mechanic.Patrol);
+        boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
 
-        // Set patrol parameter
-        _enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        _enemyList[0].Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
-
-        // Add destroyable cubes
+        #region Create Destructible Obstacles
+        List<EnemyEntity> obstacles = new List<EnemyEntity>();
         // Cluster 01 - 2 rows 4 collumns
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 2; j++)
             {
-                _enemyList.Add
+                obstacles.Add
                 (
-                    new Enemy_SmallDestructableObstacle
+                    new Enemy_Default
                     (
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
                         Enemy.Cube_Medium_Black,
                         // Container
-                        enemyContainer.transform,
+                        enemyContainer,
                         // Material
                         "default",
                         // Health
-                        10
+                        5,
+                        null
                     )
                 );
 
                 // Set default position
-                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
-
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
             }
         }
 
@@ -103,25 +95,26 @@ public class LevelScenario_02 : MonoBehaviour
         {
             for (int j = 0; j < 6; j++)
             {
-                _enemyList.Add
+                obstacles.Add
                 (
-                    new Enemy_SmallDestructableObstacle
+                    new Enemy_Default
                     (
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
                         Enemy.Cube_Medium_Black,
                         // Container
-                        enemyContainer.transform,
+                        enemyContainer,
                         // Material
                         "default",
                         // Health
-                        10
+                        5,
+                        null
                     )
                 );
 
                 // Set default position
-                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
 
             }
         }
@@ -131,41 +124,40 @@ public class LevelScenario_02 : MonoBehaviour
         {
             for (int j = 0; j < 5; j++)
             {
-                _enemyList.Add
+                obstacles.Add
                 (
-                    new Enemy_SmallDestructableObstacle
+                    new Enemy_Default
                     (
                         // Name
                         EnemyName.Cube_Small + " " + (i + j),
                         // Appearance
                         Enemy.Cube_Medium_Black,
                         // Container
-                        enemyContainer.transform,
+                        enemyContainer,
                         // Material
                         "default",
                         // Health
-                        10
+                        5,
+                        null
                     )
                 );
 
                 // Set default position
-                _enemyList[_enemyList.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
 
             }
         }
+        #endregion
     }
 
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
-            _enemyList.Clear();
+            Debug.Log("No boss remaining");
         }
     }
     #endregion

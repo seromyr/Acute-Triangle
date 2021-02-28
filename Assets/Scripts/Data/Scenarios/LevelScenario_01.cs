@@ -6,26 +6,18 @@ using Constants;
 
 public class LevelScenario_01 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
-
-    private GameObject enemyContainer;
-
-    private int bossCount, cannonCount;
+    private EnemyEntity boss;
+    private Transform enemyContainer;
+    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
-        // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        // Create enemy container for organized objects managing
+        enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
     }
@@ -37,90 +29,84 @@ public class LevelScenario_01 : MonoBehaviour
         Player.main.SetPosition(new Vector3(0, 0, -20));
 
         // Add enemy into the list
-        _enemyList.Add
+        boss = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "Shader Graphs_Boss_01_Shader",
-                // Boss health
-                30,
-                // Register dead event action
-                BossCountMonitor
-            )
+            // Boss name
+            "Julliette",
+            // Boss appearance
+            Enemy.Boss_01,
+            // Boss placemenent
+            enemyContainer,
+            // Boss material
+            "default",
+            // Boss health
+            30,
+            // Register dead event action
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Enable self rotation mode
-        _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        // Activate Self Rotation mechanic
+        boss.Mechanics.Add(Mechanic.SelfRotation);
 
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 10));
 
-        _enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        _enemyList[0].Mechanics.SetAuraProximityIndicator(1);
-        _enemyList[0].Mechanics.SetAgressiveDiameteMutiplierr(7f);
-        _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
-        _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
+        // Activate Aggressive Proximity mechanic
+        boss.Mechanics.Add(Mechanic.AggressiveRadius);
+        boss.Mechanics.SetAuraProximityIndicator(1);
+        boss.Mechanics.SetAgressiveDiameteMutiplierr(7f);
+        boss.Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
+        boss.Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
 
-        // Set patrol parameter
-        _enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        _enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.8f);
+        // Activate Patrol mechanic
+        boss.Mechanics.Add(Mechanic.Patrol);
+        boss.Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.8f);
 
-
-        // Add cannons
-        cannonCount = 6;
+        // Add blasters to boss
+        bossBlasterCount = 6;
         float cannonAngle = 60;
-        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
 
-        // Default boss cannon state
+        // Set boss default state
         NonAggresiveState(null, null);
     }
 
     private void NonAggresiveState(object sender, EventArgs e)
     {
-        for (int i = 1; i < cannonCount; i++)
+        for (int i = 1; i < bossBlasterCount; i++)
         {
-            _enemyList[0].Mechanics.Cannons[i].SetActive(false);
+            boss.Mechanics.Cannons[i].SetActive(false);
         }
-        _enemyList[0].Mechanics.SetRotationParameters(true, 100f);
-        _enemyList[0].Mechanics.SetPatrollingStatus(true);
+
+        boss.Mechanics.SetRotationParameters(true, 100f);
+        boss.Mechanics.SetPatrollingStatus(true);
     }
 
     private void AggressiveState(object sender, EventArgs e)
     {
-        for (int i = 0; i < cannonCount; i++)
+        for (int i = 0; i < bossBlasterCount; i++)
         {
-            _enemyList[0].Mechanics.Cannons[i].SetActive(true);
+            boss.Mechanics.Cannons[i].SetActive(true);
         }
-        _enemyList[0].Mechanics.SetRotationParameters(true, 36f);
-        _enemyList[0].Mechanics.SetPatrollingStatus(false);
+        boss.Mechanics.SetRotationParameters(true, 36f);
+        boss.Mechanics.SetPatrollingStatus(false);
     }
 
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
+            Debug.Log("No boss remaining");
 
-            _enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
-            _enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
-
-            _enemyList.Clear();
+            boss.Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
+            boss.Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
         }
     }
     #endregion

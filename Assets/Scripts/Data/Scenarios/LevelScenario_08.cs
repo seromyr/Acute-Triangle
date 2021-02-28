@@ -6,116 +6,148 @@ using Constants;
 
 public class LevelScenario_08 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
+    private EnemyEntity boss;
 
-    private GameObject enemyContainer;
+    private Transform enemyContainer;
 
-    private int bossCount, cannonCount;
+    private Vector3[] minionSpawnSpots, pillarSpawnSpots;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
         // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        enemyContainer = new GameObject("EnemyContainer").transform;
+
+        // Create a collection of spawning spots for minions
+        minionSpawnSpots = new Vector3[]
+        {
+            new Vector3(13.25f      ,   0    ,   0           ),
+            new Vector3(9.369165f   ,   0    ,   -9.369164f  ),
+            new Vector3(0           ,   0    ,   -13.25f     ),
+            new Vector3(-9.369167f  ,   0    ,   -9.369164f  ),
+            new Vector3(-13.25f     ,   0    ,   0           ),
+            new Vector3(-9.369169f  ,   0    ,   9.369162f   ),
+            new Vector3(0           ,   0    ,   13.25f      ),
+            new Vector3(9.369162f   ,   0    ,   9.369168f   )
+        };
+
+        // Create a collection of spawning spots for pillars
+        pillarSpawnSpots = new Vector3[]
+        {
+            new Vector3(17.41573f   + 0.25f   , -0.5f   ,   0   ),
+            new Vector3(0           + 0.25f   , -0.5f   ,   0   ),
+            new Vector3(-17.41573f  + 0.25f   , -0.5f   ,   0   ),
+        };
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 08 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-8]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, -6));
 
         // Add enemy into the list
-        _enemyList.Add
+        boss = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                30,
-                // Register dead event action
-                BossCountMonitor
-            )
+            // Boss name
+            "Gearbox",
+            // Boss appearance
+            Enemy.Sphere_Medium_Red,
+            // Boss placemenent, needs to be placed at root for now
+            null,
+            // Boss material
+            "default",
+            // Boss health
+            50,
+            // Register dead event action
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Enable self rotation mode
-        //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        // Activate Hard Shells mechanic
+        boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+
+        for (int i = 0; i < pillarSpawnSpots.Length; i++)
+        {
+            boss.Mechanics.CreatePillar(pillarSpawnSpots[i], GameObject.Find("PillarContainer").transform);
+        }
+
+        boss.Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
 
         // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        boss.SetPosition(new Vector3(0, 0.5f, 21));
 
-        //// Set patrol parameter
-        //_enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        //_enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
+        boss.Transform.parent = GameObject.Find("RotaryRing").transform;
 
-        //_enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += EnableAllShooters;
-        //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += EnableFistShooter;
+        // Add blasters to boss
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, 4, BulletType.Destructible);
 
-        //// Add cannons
-        //cannonCount = 6;
-        //float cannonAngle = 60;
-        //_enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(35f);
+        boss.Mechanics.SetLookingStatus(true);
 
-        //// Default boss cannon state
-        //EnableFistShooter(null, null);
+        // Activate Summon Minion mechanic
+        boss.Mechanics.Add(Mechanic.SummonMinions);
+        boss.Mechanics.DeactivateShield();
     }
 
-    //private void EnableFistShooter(object sender, EventArgs e)
-    //{
-    //    for (int i = 1; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
-    //}
 
-    //private void EnableAllShooters(object sender, EventArgs e)
-    //{
-    //    for (int i = 0; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
-    //}
+    private void ActivateWeakenState(object sender, EventArgs e)
+    {
+        isWeaken = true;
+        boss.HitMonitor.SetDamageAcceptance(true);
+        boss.Mechanics.SetShootingStatus(false);
+
+        // Local countdown tick for the timer to work
+        int tick = 8;
+        boss.Mechanics.SetMaximumMinion(tick);
+
+        boss.Mechanics.SummonTimer.SetTimer(0.1f, tick, () =>
+        {
+            tick--;
+            boss.Mechanics.SpawnMinion(minionSpawnSpots[minionSpawnSpots.Length - tick], 1, 3, 6);
+        });
+    }
+
+    private void ActivateInvincibleState(object sender, EventArgs e)
+    {
+        isWeaken = false;
+        boss.HitMonitor.SetDamageAcceptance(false);
+        boss.Mechanics.SetShootingStatus(true);
+    }
 
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
+            Debug.Log("No boss remaining");
+        }
+    }
 
-            //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
-            //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
+    private bool isWeaken = false;
 
-            _enemyList.Clear();
+    private void FixedUpdate()
+    {
+        if (isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.SplitShells(3f);
+        }
+        else if (!isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.CloseShells();
         }
     }
     #endregion

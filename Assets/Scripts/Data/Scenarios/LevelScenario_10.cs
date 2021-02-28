@@ -39,7 +39,7 @@ public class LevelScenario_10 : MonoBehaviour
         // Add enemy into the list
         _enemyList.Add
         (
-            new Enemy_Boss_Default
+            new Enemy_Default
             (
                 // Boss name
                 "Boss",

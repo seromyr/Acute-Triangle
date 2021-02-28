@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Sphere_L_StrongShooter : Enemy_Boss_Default
+public class Enemy_Sphere_L_StrongShooter : Enemy_Default
 {
     public Enemy_Sphere_L_StrongShooter(string prefabName, string name, Transform parent, string material, float health, float maxHealth, EventHandler OnDeadCallback) : base ( name, prefabName,  parent, material, maxHealth, OnDeadCallback)
     {

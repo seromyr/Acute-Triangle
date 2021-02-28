@@ -117,14 +117,15 @@ public class GameManager : MonoBehaviour
         {
             switch (gameState)
             {
-                case GameState.LOADING: Perform___LOADING___Routines(); break;
-                case GameState.START:   Perform____START____Routines(); break;
-                case GameState.NEW:     Perform_____NEW_____Routines(); break;
-                case GameState.NEXT:    Perform_____NEXT____Routines(); break;
-                case GameState.RUNNING: Perform___RUNNING___Routines(); break;
-                case GameState.PAUSE:   Perform____PAUSE____Routines(); break;
-                case GameState.WIN:     Perform_____WIN_____Routines(); break;
-                case GameState.LOSE:    Perform_____LOSE____Routines(); break;
+                case GameState.LOADING:   Perform___LOADING___Routines(); break;
+                case GameState.START:     Perform____START____Routines(); break;
+                case GameState.NEW:       Perform_____NEW_____Routines(); break;
+                case GameState.NEXT:      Perform_____NEXT____Routines(); break;
+                case GameState.RUNNING:   Perform___RUNNING___Routines(); break;
+                case GameState.PAUSE:     Perform____PAUSE____Routines(); break;
+                case GameState.WIN:       Perform_____WIN_____Routines(); break;
+                case GameState.LOSE:      Perform_____LOSE____Routines(); break;
+                case GameState.LOADLEVEL: Perform__LOADLEVEL__Routines(); break;
             }
         }
         //--------------------
@@ -255,6 +256,13 @@ public class GameManager : MonoBehaviour
         //StartCoroutine(UI_LoadingScreen_Mechanic.main.RequestFadeOut(5, 4.5f));
     }
 
+    private void Perform__LOADLEVEL__Routines()
+    {
+        //nextLevel = 0;
+
+        Perform_____NEXT____Routines();
+    }
+
     private IEnumerator SwitchState(GameState state, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -333,5 +341,20 @@ public class GameManager : MonoBehaviour
         // Only works if the running platform is Windows
         Application.Quit();
         #endif
+    }
+
+    public void SetNextLevel(int levelNumber)
+    {
+        stateUpdating = true;
+
+        // Show loading screen
+        UI_LoadingScreen_Mechanic.main.RequestFadeIn(2);
+
+        nextLevel = levelNumber;
+
+        desinationState = GameState.NEXT;
+        StartCoroutine(SwitchState(GameState.LOADING, 1));
+
+        Debug.LogWarning(levelNumber);
     }
 }

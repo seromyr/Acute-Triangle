@@ -116,6 +116,7 @@ public class Player : Entity
             SetBodyActive(false);
             Suicide();
             OnZeroHealth?.Invoke(this, EventArgs.Empty);
+            UnityEngine.GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/VFX/PlayerDieVFX"), GetPosition, Quaternion.identity);
         }
     }
 

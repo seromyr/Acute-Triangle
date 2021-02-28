@@ -19,7 +19,18 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     // Main Menu group
     private Image mainMenuBkg;
     private Text mainMenuTitle;
-    private Button newGame, quitGame;
+    private Button newGame, selectLevel, credits, quitGame;
+    // -------------------
+
+    // Level Selection group
+    private Image levelSelectBkg;
+    private Button level_1, level_2, level_3, level_4, level_5, level_6, level_7, level_8, level_9, level_10, levelBackToMain
+        ;
+    // -------------------
+
+    // Credits Screen group
+    private Image creditsBkg;
+    private Button creditsBackToMain;
     // -------------------
 
     private void Awake()
@@ -30,15 +41,23 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         // Canvas
         canvas = GetComponent<Canvas>();
 
-        // Set up screen
+        // Set up screens
         SplashScreenSetup();
         MainMenuSetup();
+        LevelSelectScreenSetup();
+        CreditsScreenSetup();
     }
 
     private void Start()
     {
         // Disable Main Menu Background
         mainMenuBkg.gameObject.SetActive(false);
+
+        // Disable Level Select Background
+        levelSelectBkg.gameObject.SetActive(false);
+
+        // Disable Credits Screen Background
+        creditsBkg.gameObject.SetActive(false);
     }
 
     private void Singletonize()
@@ -55,6 +74,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         }
     }
 
+    #region Splash Screen
     private void SplashScreenSetup()
     {
         splashBkg = transform.Find("SplashScreen").GetComponent<Image>();
@@ -73,6 +93,23 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         splashText.color = Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time, 1));
     }
 
+    private void SplashScreenInputReading(KeyCode key)
+    {
+        if (Input.GetKey(key) || Input.GetMouseButton(0))
+        {
+            splashBkg.gameObject.SetActive(false);
+            mainMenuBkg.gameObject.SetActive(true);
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            splashBkg.gameObject.SetActive(true);
+            mainMenuBkg.gameObject.SetActive(false);
+        }
+    }
+    #endregion
+
+    #region Main Menu
     private void MainMenuSetup()
     {
         mainMenuBkg = transform.Find("MainMenuScreen").GetComponent<Image>();
@@ -82,12 +119,20 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         //mainMenuBkg.color = Color.black;
 
         // Display title
-        mainMenuTitle.text = Version.NAME + "\n" + Version.CURRENTVERSION;
-        mainMenuTitle.color = Color.white;
+        mainMenuTitle.text = "v" + Version.CURRENTVERSION + "b" + Version.BUILD + "." + Version.DATE;
+        mainMenuTitle.color = Color.gray;
 
         // Add function to New Game Button
         newGame = mainMenuBkg.transform.Find("NewGame").GetComponent<Button>();
         newGame.onClick.AddListener(StartNewGame);
+
+        // Add function to Credits Button
+        selectLevel = mainMenuBkg.transform.Find("SelectLevel").GetComponent<Button>();
+        selectLevel.onClick.AddListener(SelectLevel);
+        
+        // Add function to Credits Button
+        credits = mainMenuBkg.transform.Find("Credits").GetComponent<Button>();
+        credits.onClick.AddListener(ViewCredits);
 
         // Add function to Quit Game Button
         quitGame = mainMenuBkg.transform.Find("Quit").GetComponent<Button>();
@@ -103,25 +148,83 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         GameManager.main.StartNewGame();
     }
 
+    private void SelectLevel()
+    {
+        levelSelectBkg.gameObject.SetActive(true);
+    }
+
+    private void ViewCredits()
+    {
+        creditsBkg.gameObject.SetActive(true);
+    }
+
     private void QuitGame()
     {
         GameManager.main.QuitGame();
     }
 
-    private void SplashScreenInputReading(KeyCode key)
-    {
-        if (Input.GetKey(key) || Input.GetMouseButton(0))
-        {
-            splashBkg.gameObject.SetActive(false);
-            mainMenuBkg.gameObject.SetActive(true);
-        }
+    #endregion
 
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            splashBkg.gameObject.SetActive(true);
-            mainMenuBkg.gameObject.SetActive(false);
-        }
+    #region Level Select Screen
+    private void LevelSelectScreenSetup()
+    {
+        levelSelectBkg = transform.Find("LevelSelectionScreen").GetComponent<Image>();
+
+        // Add function to Level Select Buttons
+        level_1 = levelSelectBkg.transform.Find("Level 1").GetComponent<Button>();
+        level_2 = levelSelectBkg.transform.Find("Level 2").GetComponent<Button>();
+        level_3 = levelSelectBkg.transform.Find("Level 3").GetComponent<Button>();
+        level_4 = levelSelectBkg.transform.Find("Level 4").GetComponent<Button>();
+        level_5 = levelSelectBkg.transform.Find("Level 5").GetComponent<Button>();
+        level_6 = levelSelectBkg.transform.Find("Level 6").GetComponent<Button>();
+        level_7 = levelSelectBkg.transform.Find("Level 7").GetComponent<Button>();
+        level_8 = levelSelectBkg.transform.Find("Level 8").GetComponent<Button>();
+        //level_9 = levelSelectBkg.transform.Find("Level 9").GetComponent<Button>();
+        //level_10 = levelSelectBkg.transform.Find("Level 10").GetComponent<Button>();
+
+        level_1.onClick.AddListener(() => GoToLevel(1));
+        level_2.onClick.AddListener(() => GoToLevel(2));
+        level_3.onClick.AddListener(() => GoToLevel(3));
+        level_4.onClick.AddListener(() => GoToLevel(4));
+        level_5.onClick.AddListener(() => GoToLevel(5));
+        level_6.onClick.AddListener(() => GoToLevel(6));
+        level_7.onClick.AddListener(() => GoToLevel(7));
+        level_8.onClick.AddListener(() => GoToLevel(8));
+
+        // Add function to Back To Main Menu Button
+        levelBackToMain = levelSelectBkg.transform.Find("BackToMainMenu").GetComponent<Button>();
+        levelBackToMain.onClick.AddListener(LevelSelectBackToMainMenu);
     }
+
+    private void GoToLevel(int levelNumber)
+    {
+        //Debug.LogError(levelNumber);
+        GameManager.main.SetNextLevel(levelNumber - 1);
+    }
+
+
+    private void LevelSelectBackToMainMenu()
+    {
+        levelSelectBkg.gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Credits Screen
+    private void CreditsScreenSetup()
+    {
+        creditsBkg = transform.Find("CreditsScreen").GetComponent<Image>();
+
+        // Add function to Back To Main Menu Button
+        creditsBackToMain = creditsBkg.transform.Find("BackToMainMenu").GetComponent<Button>();
+        creditsBackToMain.onClick.AddListener(CreditsBackToMainMenu);
+    }
+
+    private void CreditsBackToMainMenu()
+    {
+        creditsBkg.gameObject.SetActive(false);
+    }
+    #endregion
+
     private void Update()
     {
         SplashTextPulsing();

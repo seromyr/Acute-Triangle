@@ -13,7 +13,7 @@ public class SelfRotation : MonoBehaviour
     [SerializeField, Header("Rotation Speed")]
     private float speed;
 
-    private bool isRotating;
+    private bool isRotating = true;
 
     public void SetRotationParameters(bool isRotating = true, float maxSpeed = 500f, float accelerationSpeed = 500f)
     {

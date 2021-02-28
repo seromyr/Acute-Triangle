@@ -6,26 +6,20 @@ using Constants;
 
 public class LevelScenario_06 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
+    private EnemyEntity pupu, moxie;
 
-    private GameObject enemyContainer;
+    private Transform enemyContainer;
 
-    private int bossCount, pupuCount, moxieCount, cannonCount;
+    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
         // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
     }
@@ -34,192 +28,155 @@ public class LevelScenario_06 : MonoBehaviour
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, 0));
-
-        // According to level design, this level has 2 bosses
-        pupuCount = 1;
-        moxieCount = 1;
-        bossCount = pupuCount + moxieCount;
+        Player.main.SetPosition(Vector3.zero);
 
         #region Pupu Scenario
         // Add 1st boss into the list
-        _enemyList.Add
+        pupu = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Pupu",
-                // Boss appearance
-                Enemy.Sphere_Medium_Red,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                40,
-                // Register dead event action
-                PupuMonitor
-            )
+            // Boss name
+            "Pupu",
+            // Boss appearance
+            Enemy.Sphere_Medium_Red,
+            // Boss placemenent
+            enemyContainer,
+            // Boss material
+            "default",
+            // Boss health
+            1,
+            // Register dead event action
+            BossMonitor
         );
 
-         // *IMPORTANT* Get enemy container reference for features accessing
-        _enemyList[0].Mechanics.GetEnemyContainerReference(enemyContainer.transform);
+        // *IMPORTANT* Get enemy container reference for features accessing
+        pupu.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Add cannons
-        cannonCount = 8;
-        float cannonAngle = 45;
-        _enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Indestructible);
+        // Add blasters to boss
+        bossBlasterCount = 8;
+        float shootingAngle = 45;
+        pupu.Mechanics.Add(Mechanic.Shoot);
+        pupu.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Indestructible);
 
-        cannonCount = 180;
-        cannonAngle = 2;
-        _enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
+        bossBlasterCount = 180;
+        shootingAngle = 2;
+        pupu.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
 
-        // Enable hardshells mechanic
-        _enemyList[0].Mechanics.Add(Mechanic.HardShells);
-        _enemyList[0].Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(12, -0.5f, 15.5f), enemyContainer.transform);
-        _enemyList[0].Mechanics.CreatePillar(new Vector3(-12, -0.5f, 6.5f), enemyContainer.transform);
-        _enemyList[0].Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
+        // Activate Hard Shells mechanic
+        pupu.Mechanics.Add(Mechanic.HardShells);
+        pupu.Mechanics.OnAllPillarsDestroyed += ActivatePupuWeakenState;
+        pupu.Mechanics.CreatePillar(new Vector3(12, -0.5f, 15.5f), enemyContainer.transform);
+        pupu.Mechanics.CreatePillar(new Vector3(-12, -0.5f, 6.5f), enemyContainer.transform);
+        pupu.Mechanics.OnPillarsRegenerationCallback += () => ActivatePupuInvincibleState(null, null);
 
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(-20f, 0.5f, 20f));
+        // Set Pupu default position
+        pupu.SetPosition(new Vector3(-20f, 0.5f, 20f));
 
         // Enable self rotation mode
-        _enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
-        _enemyList[0].Mechanics.SetRotationParameters(true, 10f);
+        pupu.Mechanics.Add(Mechanic.SelfRotation);
+        pupu.Mechanics.SetRotationParameters(true, 10f);
 
         // Set boss default state
-        ActivateInvincibleState(null, null);
+        ActivatePupuInvincibleState(null, null);
 
         #endregion
 
         #region Moxie Scenario
         // Add 2nd boss into the list
-        _enemyList.Add
+        moxie = new Enemy_Default
         (
-            new Enemy_Boss_Default
-            (
-                // Boss name
-                "Moxie",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                40,
-                // Register dead event action
-                MoxieMonitor
-            )
+            // Boss name
+            "Moxie",
+            // Boss appearance
+            Enemy.Sphere_Large_Black,
+            // Boss placemenent
+            enemyContainer.transform,
+            // Boss material
+            "default",
+            // Boss health
+            1,
+            // Register dead event action
+            BossMonitor
         );
 
         // *IMPORTANT* Get enemy container reference for features accessing
-        _enemyList[1].Mechanics.GetEnemyContainerReference(enemyContainer.transform);
+        moxie.Mechanics.GetEnemyContainerReference(enemyContainer.transform);
 
-        // Enable chase mode
-        _enemyList[1].Mechanics.Add(Mechanic.Chase);
-        _enemyList[1].Mechanics.SetChaseParams(true, 2);
+        // Activate Chase mechanic
+        moxie.Mechanics.Add(Mechanic.Chase);
+        moxie.Mechanics.SetChaseParams(true, 2);
 
-        // Set default position
-        _enemyList[1].SetPosition(new Vector3(30f, 0.5f, -30f));
+        // Set Moxie default position
+        moxie.SetPosition(new Vector3(30f, 0.5f, -30f));
 
         // Boss takes no damage until the shield is down
-        _enemyList[1].HitMonitor.SetDamageAcceptance(false);
+        moxie.HitMonitor.SetDamageAcceptance(false);
 
-        // Add summon minion
-        _enemyList[1].Mechanics.Add(Mechanic.SummonMinions);
+        // Activate Summon Minion mechanic
+        moxie.Mechanics.Add(Mechanic.SummonMinions);
+        moxie.Mechanics.SetMaximumMinion(30);
 
-        // Set maximum number of minions this boss has
-        _enemyList[1].Mechanics.SetMaximumMinion(30);
-
-        // Local count down tick for the timer to work
+        // Local countdown tick for the timer to work
         int tick = 30;
-        _enemyList[1].Mechanics.SummonTimer.SetTimer(0.75f, tick, () =>
+        moxie.Mechanics.SummonTimer.SetTimer(0.75f, tick, () =>
         {
             tick--;
 
             Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 10;
             randomPositionAroundBoss.y = 0;
 
-            _enemyList[1].Mechanics.SpawnMinion(_enemyList[1].GetPosition + randomPositionAroundBoss, 6, 2, 6);
+            moxie.Mechanics.SpawnMinion(moxie.GetPosition + randomPositionAroundBoss, 6, 2, 6);
         });
 
-        // Add cannons
-        _enemyList[1].Mechanics.Add(Mechanic.Shoot);
-        _enemyList[1].Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        // Add blasters to boss
+        moxie.Mechanics.Add(Mechanic.Shoot);
+        moxie.Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         #endregion
     }
 
-    private void ActivateWeakenState(object sender, EventArgs e)
+    private void ActivatePupuWeakenState(object sender, EventArgs e)
     {
         isWeaken = true;
-        _enemyList[0].HitMonitor.SetDamageAcceptance(true);
+        pupu.HitMonitor.SetDamageAcceptance(true);
 
     }
 
-    private void ActivateInvincibleState(object sender, EventArgs e)
+    private void ActivatePupuInvincibleState(object sender, EventArgs e)
     {
         isWeaken = false;
-        _enemyList[0].HitMonitor.SetDamageAcceptance(false);
+        pupu.HitMonitor.SetDamageAcceptance(false);
     }
 
     #region Scenario Stuff
-    private void PupuMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        pupuCount--;
-        bossCount--;
-
-        if (pupuCount == 0)
+        if (!pupu.IsAlive)
         {
             // Clean Pupu garbages
-            _enemyList[0].Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
-            _enemyList[0].Mechanics.OnPillarsRegenerationCallback = delegate { };
+            pupu.Mechanics.OnAllPillarsDestroyed -= ActivatePupuWeakenState;
+            pupu.Mechanics.OnPillarsRegenerationCallback = delegate { };
         }
 
         // Victory Condition
-        if (bossCount == 0)
+        if (!pupu.IsAlive && !moxie.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
-            _enemyList.Clear();
-        }
-    }
-
-    private void MoxieMonitor(object sender, EventArgs e)
-    {
-        moxieCount--;
-        bossCount--;
-
-        if (moxieCount == 0)
-        {
-            // Clean Moxie garbages
-            _enemyList[1].Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
-            _enemyList[1].Mechanics.OnPillarsRegenerationCallback = delegate { };
+            Debug.Log("No boss remaining");
         }
 
-        // Victory Condition
-        if (bossCount == 0)
-        {
-            GameManager.main.WinGame();
-            Debug.Log("No boss left");
-            _enemyList.Clear();
-        }
     }
 
     private bool isWeaken = false;
 
     private void FixedUpdate()
     {
-        if (isWeaken && pupuCount > 0)
+        if (isWeaken && pupu.IsAlive)
         {
-            _enemyList[0].Mechanics.SplitShells(3f);
+            pupu.Mechanics.SplitShells(3f);
         }
-        else if (!isWeaken && pupuCount > 0)
+        else if (!isWeaken && pupu.IsAlive)
         {
-            _enemyList[0].Mechanics.CloseShells();
+            pupu.Mechanics.CloseShells();
         }
     }
     #endregion

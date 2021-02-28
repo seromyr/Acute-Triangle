@@ -2,8 +2,9 @@
 {
     public static class Version
     {
-        public const string NAME = "The Trials of Acute Triangle";
-        public const string CURRENTVERSION = "0.2.0.8";
+        public const string CURRENTVERSION = "0.2.0.9";
+        public const string BUILD = "1";
+        public const string DATE = "02282021";
     }
 
     public enum GameState
@@ -16,7 +17,8 @@
         PAUSE,      // Gameplay is paused
         WIN,        // A level is victorious, debrief is shown before proceed to the next level
         LOSE,       // A level is lost but can retry
-        GAMEOVER    // A level is lost but cannot retry, return to Main Menu/Title Screen
+        GAMEOVER,   // A level is lost but cannot retry, return to Main Menu/Title Screen
+        LOADLEVEL   // Go to a level specified in Main Menu
     }
 
     public enum Direction
@@ -103,6 +105,9 @@
 
     public static class Enemy
     {
+        public const string Boss_01 = "Enemy/Boss_01";
+        public const string Boss_02 = "Enemy/Boss_02";
+
         public const string Sphere_Large_Black = "Enemy/Sphere_L_Black";
         public const string Sphere_Medium_Red = "Enemy/Sphere_M_Red";
         public const string Cube_Medium_Black = "Enemy/Cube_M_Black";
