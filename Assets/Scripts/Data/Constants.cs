@@ -2,8 +2,8 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.2.0.9";
-        public const string BUILD = "1";
+        public const string CURRENTVERSION = "0.2.1.0";
+        public const string BUILD = "2";
         public const string DATE = "02282021";
     }
 
@@ -91,7 +91,7 @@
 
     public static class PlayerAttributes
     {
-        public const float PLAYER_MAXHEALTH = 12f;
+        public const float PLAYER_MAXHEALTH = 15f;
         public const float PLAYER_DAMAGE = 1f;
         public const float PLAYER_MOVESPEED = 10f;
     }

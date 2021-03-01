@@ -22,6 +22,7 @@ namespace Entities
         public Transform    Transform { get { return _body.transform; } }
         public GameObject   Avatar    { get { return _avatar;         } }
         public float        Health    { get { return _health;         } }
+        public float        MaxHealth { get { return _maxHealth;      } }
         public float        Damage    { get { return _damage;         } }
         public bool         IsAlive   { get { return _isAlive;        } }
 

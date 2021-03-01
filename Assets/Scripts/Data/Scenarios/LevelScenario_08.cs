@@ -99,8 +99,8 @@ public class LevelScenario_08 : MonoBehaviour
         // Activate Summon Minion mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
         boss.Mechanics.DeactivateShield();
-    }
 
+    }
 
     private void ActivateWeakenState(object sender, EventArgs e)
     {
@@ -109,13 +109,14 @@ public class LevelScenario_08 : MonoBehaviour
         boss.Mechanics.SetShootingStatus(false);
 
         // Local countdown tick for the timer to work
+
         int tick = 8;
         boss.Mechanics.SetMaximumMinion(tick);
 
         boss.Mechanics.SummonTimer.SetTimer(0.1f, tick, () =>
         {
-            tick--;
             boss.Mechanics.SpawnMinion(minionSpawnSpots[minionSpawnSpots.Length - tick], 1, 3, 6);
+            tick--;
         });
     }
 

@@ -461,7 +461,6 @@ public class Features
     // Callback action when it's time to regenerate pillars
     public Action OnPillarsRegenerationCallback;
 
-
     private void CreateHardShellsMechanic()
     {
         GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shells"));
@@ -503,10 +502,7 @@ public class Features
     {
         int pillarID = pillars.Count;
 
-        if (enemyContainer == this.enemyContainer)
-        {
-            pillarContainer = enemyContainer;
-        }
+        pillarContainer = enemyContainer;
 
         pillars.Add
             (
@@ -543,23 +539,15 @@ public class Features
             //Debug.LogError("All pillars destroyed");
             hardShellTimer.SetTimer(12f, 1, OnPillarsRegenerationCallback);
         }
-
     }
 
     private void ReGeneratePillars()
     {
         for (int i = 0; i < pillarsPosition.Count; i++)
         {
-            if (pillarContainer != enemyContainer)
-            {
-                CreatePillar(pillarsPosition[i], pillarContainer);
-            }
-            else
-            CreatePillar(pillarsPosition[i], enemyContainer);
+            CreatePillar(pillarsPosition[i], pillarContainer);
         }
     }
-
-
     #endregion
 
     #region LookAt

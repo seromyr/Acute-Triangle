@@ -53,8 +53,14 @@ public class Enemy_Default : EnemyEntity
     {
         Debug.Log(_name + " was killed");
 
+        string deathVFX = "BossDieVFX";
+        if (_name.Contains("Minion"))
+        {
+            deathVFX = "MinionDieVFX";
+        }
+
         // Play dead effect
-        UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/VFX/BossDieVFX"), GetPosition, Quaternion.identity);
+        UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/VFX/" + deathVFX), GetPosition, Quaternion.identity);
 
         // Clear event subscriptions
         HitMonitor.OnBulletHit -= TakeDamage;

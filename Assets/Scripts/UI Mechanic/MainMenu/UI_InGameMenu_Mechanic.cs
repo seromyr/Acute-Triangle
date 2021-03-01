@@ -15,6 +15,8 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
 
     private Text instructionMessage;
 
+    private Image playerHealth;
+
     private void Awake()
     {
         // Make the In Game Menu a Singleton
@@ -59,6 +61,14 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         returnToMainMenu.onClick.AddListener(GoToMainMenu);
 
         instructionMessage = transform.Find("Instruction").GetComponentInChildren<Text>();
+
+        playerHealth = transform.Find("PlayerHP").GetComponentInChildren<Image>();
+    }
+
+    private void Update()
+    {
+        playerHealth.fillAmount = Player.main.Health / Player.main.MaxHealth;
+
     }
 
     private void PauseGame()
