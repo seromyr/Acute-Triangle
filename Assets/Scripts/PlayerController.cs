@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Constants;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,6 +26,26 @@ public class PlayerController : MonoBehaviour
     {
         Aim();
         Move();
+        Pause();
+    }
+
+    private void Pause()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if(GameManager.main.GetState() == GameState.RUNNING)
+            {
+                //UI_InGameMenu_Mechanic.main.UsePause();
+                GameManager.main.PauseGame();
+                GameObject.Find("IngameMenuScreen").GetComponent<Image>().enabled = true;
+            }
+
+            if (GameManager.main.GetState() == GameState.PAUSE)
+            {
+                GameManager.main.ResumeGame();
+                GameObject.Find("IngameMenuScreen").SetActive(false);
+            }
+        }
     }
 
     private void Move()

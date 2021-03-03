@@ -131,6 +131,7 @@ public class GameManager : MonoBehaviour
         stateUpdating = false;
     }
 
+
     private void Perform___LOADING___Routines()
     {
         Time.timeScale = 1;
@@ -326,6 +327,8 @@ public class GameManager : MonoBehaviour
         desinationState = GameState.NEXT;
         StartCoroutine(SwitchState(GameState.LOADING, 0.5f));
     }
+
+    public GameState GetState() => gameState;
 
     public void QuitGame()
     {

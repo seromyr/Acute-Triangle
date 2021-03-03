@@ -87,4 +87,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     {
         instructionMessage.text = text;
     }
+
+    public void UsePause() => PauseGame();
+    public void UseResume() => ResumeGame();
 }
