@@ -71,6 +71,8 @@ public class LevelScenario_05 : MonoBehaviour
         // Minion placements / summoning
         boss.Mechanics.SetMaximumMinion(enemyNum);
 
+        boss.HitMonitor.SetDamageAcceptance(false);
+
         GameObject[] spawnLocations = GameObject.FindGameObjectsWithTag("Enemy Spawn");
 
         int index = UnityEngine.Random.Range(0, spawnLocations.Length);
@@ -86,6 +88,8 @@ public class LevelScenario_05 : MonoBehaviour
         {
             boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
         }
+
+        
 
         #region Create Destructible Obstacles / Blockades
         List<EnemyEntity> obstacles = new List<EnemyEntity>();

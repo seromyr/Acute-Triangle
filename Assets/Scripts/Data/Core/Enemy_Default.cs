@@ -45,6 +45,9 @@ public class Enemy_Default : EnemyEntity
 
             // Set dead state
             Suicide();
+
+            //play dead SFX
+
         }
     }
 
