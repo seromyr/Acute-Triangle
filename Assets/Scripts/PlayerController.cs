@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Constants;
 
 public class PlayerController : MonoBehaviour
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour
     {
         Aim();
         Move();
+        Pause();
     }
 
     private void Move()
@@ -79,5 +81,13 @@ public class PlayerController : MonoBehaviour
 
         // Remove the Mesh Renderer because we only need the Mesh Collider for the ray cast to work
         Destroy(floor.GetComponent<MeshRenderer>());
+    }
+
+    private void Pause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UI_InGameMenu_Mechanic.main.UsePause();
+        }
     }
 }
