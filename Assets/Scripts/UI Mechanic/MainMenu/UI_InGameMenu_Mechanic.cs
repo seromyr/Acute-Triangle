@@ -65,12 +65,14 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     {
         GameManager.main.PauseGame();
         inGameMenuScreen.SetActive(true);
+        //inGameMenuScreen.GetComponent<Image>().enabled = true;
     }
 
     private void ResumeGame()
     {
         GameManager.main.ResumeGame();
         inGameMenuScreen.SetActive(false);
+        //inGameMenuScreen.GetComponent<Image>().enabled = false;
     }
 
     private void GoToMainMenu()

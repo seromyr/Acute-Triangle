@@ -26,25 +26,20 @@ public class PlayerController : MonoBehaviour
     {
         Aim();
         Move();
-        Pause();
+        PauseKey();
     }
 
-    private void Pause()
+    private void PauseKey()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
             if(GameManager.main.GetState() == GameState.RUNNING)
             {
-                //UI_InGameMenu_Mechanic.main.UsePause();
+                UI_InGameMenu_Mechanic.main.UsePause();
                 GameManager.main.PauseGame();
-                GameObject.Find("IngameMenuScreen").GetComponent<Image>().enabled = true;
+                //GameObject.Find("IngameMenuScreen").GetComponent<Image>().enabled = true;
             }
 
-            if (GameManager.main.GetState() == GameState.PAUSE)
-            {
-                GameManager.main.ResumeGame();
-                GameObject.Find("IngameMenuScreen").SetActive(false);
-            }
         }
     }
 
