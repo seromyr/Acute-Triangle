@@ -450,6 +450,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 1614460128}
   - {fileID: 989386183}
   - {fileID: 1812326616}
   - {fileID: 402964286}
@@ -1099,7 +1100,7 @@ MonoBehaviour:
   gameState: 0
   desinationState: 0
   overrideMode: 0
-  overrideLevel: 0
+  overrideLevel: 4
 --- !u!4 &306092288
 Transform:
   m_ObjectHideFlags: 0
@@ -1484,7 +1485,7 @@ RectTransform:
   m_Children:
   - {fileID: 1145859505}
   m_Father: {fileID: 32714749}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -2891,7 +2892,7 @@ RectTransform:
   m_Children:
   - {fileID: 762124133}
   m_Father: {fileID: 32714749}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -4694,13 +4695,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1922576174}
-  m_RootOrder: 1
+  m_Father: {fileID: 32714749}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -31.99997, y: 448.25}
-  m_SizeDelta: {x: 1472, y: 1024.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1614460129
 MonoBehaviour:
@@ -5451,7 +5452,7 @@ RectTransform:
   - {fileID: 1994018538}
   - {fileID: 710734689}
   m_Father: {fileID: 32714749}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -5603,9 +5604,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1636722626}
-  - {fileID: 1614460128}
   m_Father: {fileID: 32714749}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}

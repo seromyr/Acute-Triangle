@@ -89,7 +89,7 @@ public class LevelScenario_08 : MonoBehaviour
 
         // Add blasters to boss
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, 4, BulletType.Destructible);
+        boss.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, 1, 4, BulletType.Destructible);
 
         // Activate Look At Player mechanic
         boss.Mechanics.Add(Mechanic.LookAtPlayer);

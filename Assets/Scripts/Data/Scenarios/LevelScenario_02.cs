@@ -52,9 +52,9 @@ public class LevelScenario_02 : MonoBehaviour
 
         // Add blasters to boss
         bossBlasterCount = 6;
-        float cannonAngle = 30;
+        float blasterAngle = 30;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 195, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 195, blasterAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
 
         // Activate Patrol mechanic
         boss.Mechanics.Add(Mechanic.Patrol);
@@ -80,7 +80,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        5,
+                        2,
                         null
                     )
                 );
@@ -108,7 +108,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        5,
+                        2,
                         null
                     )
                 );
@@ -137,7 +137,7 @@ public class LevelScenario_02 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        5,
+                        2,
                         null
                     )
                 );

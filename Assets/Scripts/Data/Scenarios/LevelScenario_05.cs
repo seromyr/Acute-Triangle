@@ -59,10 +59,10 @@ public class LevelScenario_05 : MonoBehaviour
         bossBlasterCount = 4;
         float cannonAngle = 90;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
         
         bossBlasterCount = 4;
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
         boss.Mechanics.Add(Mechanic.SummonMinions);
         
         boss.Mechanics.Add(Mechanic.SelfRotation);

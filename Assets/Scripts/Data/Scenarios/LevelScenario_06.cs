@@ -55,11 +55,11 @@ public class LevelScenario_06 : MonoBehaviour
         bossBlasterCount = 8;
         float shootingAngle = 45;
         pupu.Mechanics.Add(Mechanic.Shoot);
-        pupu.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Indestructible);
+        pupu.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Indestructible);
 
         bossBlasterCount = 180;
         shootingAngle = 2;
-        pupu.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
+        pupu.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
 
         // Activate Hard Shells mechanic
         pupu.Mechanics.Add(Mechanic.HardShells);
@@ -129,7 +129,7 @@ public class LevelScenario_06 : MonoBehaviour
 
         // Add blasters to boss
         moxie.Mechanics.Add(Mechanic.Shoot);
-        moxie.Mechanics.CreateCannon(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        moxie.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         #endregion
     }

@@ -41,7 +41,7 @@ public class Blaster : MonoBehaviour
         switch (bulletType)
         {
             case BulletType.Destructible:
-                bullet = Resources.Load<GameObject>(Bullet._01);
+                bullet = Resources.Load<GameObject>(Bullet._03);
                 bullet.name = "Destructible";
                 break;
             case BulletType.Indestructible:
