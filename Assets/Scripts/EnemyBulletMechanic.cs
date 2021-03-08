@@ -35,6 +35,26 @@ public class EnemyBulletMechanic : MonoBehaviour
         Destroy(gameObject);
     }
 
+    // Spawn an explosion effect upon destroy
+    private void OnDestroy()
+    {
+        //Vector3 dir = transform.position - Player.main.GetPosition;
+        //Quaternion lookDir = Quaternion.LookRotation(dir);
+
+        Quaternion lookDir = transform.rotation;
+        if (transform.name.Contains("Destructible"))
+        {
+            GameObject spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/DestructibleBulletExplosionVFX");
+            GameObject.Instantiate(spawnVFX, transform.position, lookDir);
+        }
+        else if (transform.name.Contains("Indestructible"))
+        {
+            GameObject spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/IndestructibleBulletExplosionVFX");
+            GameObject.Instantiate(spawnVFX, transform.position, lookDir);
+        }
+            
+    }
+
     public void SetMovingSpeed(float speed)
     {
         bulletSpeed = speed;

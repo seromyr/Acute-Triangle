@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.2.1.0";
-        public const string BUILD = "2";
-        public const string DATE = "02282021";
+        public const string CURRENTVERSION = "0.3.0.1";
+        public const string BUILD = "1";
+        public const string DATE = "03082021";
     }
 
     public enum GameState
@@ -78,7 +78,7 @@
     public static class GeneralConst
     {
         //public const string GAMEMANAGER = "GameManager";
-        public const string PLAYER = "Player";
+        public const string PLAYER = "Player/Player";
         public const int FLOOR_LAYER = 8;
         public const string BULLET = "Bullet";
         public const float ENEMY_BULLET_SPEED_FAST = 20f;
@@ -119,5 +119,14 @@
     {
         public const string Sphere_Large = "LargeSphere";
         public const string Cube_Small = "SmallCube";
+    }
+
+    public static class Bullet
+    {
+        public const string _01 = "Prefabs/Bullets/Bullet_01";
+        public const string _02 = "Prefabs/Bullets/Bullet_02";
+        public const string _03 = "Prefabs/Bullets/Bullet_03";
+        public const string _04 = "Prefabs/Bullets/Bullet_04";
+        public const string _05 = "Prefabs/Bullets/Bullet_05";
     }
 }

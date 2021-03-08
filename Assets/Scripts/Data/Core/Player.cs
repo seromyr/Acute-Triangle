@@ -9,7 +9,7 @@ public class Player : Entity
     public static Player main;
 
     // Create player event
-    public event EventHandler OnZeroHealth;
+    public event EventHandler OnDamage,OnZeroHealth;
 
     private PlayerMechanic _mechanic;
     private bool           _allowPlayerControl;
@@ -61,7 +61,7 @@ public class Player : Entity
     {
         // Using default skin
         _avatar = UnityEngine.Object.Instantiate(GetSkinPrefab(PlayerSkin._01), _body.transform);
-        _avatar.name = PlayerSkin.DEFAULT;
+        _avatar.name = PlayerSkin._01;
     }
 
     // Load player mechanics
@@ -103,12 +103,20 @@ public class Player : Entity
 
         SetHealth(_maxHealth);
         Revive();
+
+        // Reset UI
+        UI_InGameMenu_Mechanic.main.ResetPlayerHUD();
     }
 
     // Damage taking method
     public void TakeDamage(int damageTaken)
     {
+
+        OnDamage?.Invoke(this, EventArgs.Empty);
+
         ModifyHealth(-damageTaken);
+
+        _mechanic.PlayHitFX();
 
         //Dispatch the event that player has died
         if (_health <= 0)
