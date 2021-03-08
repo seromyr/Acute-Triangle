@@ -1,4 +1,5 @@
 ﻿using Constants;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +16,10 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
 
     private Text instructionMessage;
 
-    private Image playerHealth;
+    // Player ingame HUD
+    private Image playerHealth, hpFrameOverlay;
+    private Color hpOverlayColor, highlightColor;
+    private float colorPulsingTimer;
 
     private void Awake()
     {
@@ -31,6 +35,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
 
     private void Start()
     {
+        Player.main.OnDamage += UpdateGameplayUI;
         inGameMenuScreen.SetActive(false);
     }
     private void SingletonMaker()
@@ -63,12 +68,35 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         instructionMessage = transform.Find("Instruction").GetComponentInChildren<Text>();
 
         playerHealth = transform.Find("PlayerHP").GetComponentInChildren<Image>();
+        hpFrameOverlay = transform.Find("HpOverlay").GetComponentInChildren<Image>();
+        hpOverlayColor = hpFrameOverlay.color;
+        hpOverlayColor.a = 0;
+        hpFrameOverlay.color = hpOverlayColor;
+        highlightColor = new Color(0.8f, 0, 0, 0);
+        colorPulsingTimer = 0;
     }
 
     private void Update()
     {
-        playerHealth.fillAmount = Player.main.Health / Player.main.MaxHealth;
+        if (colorPulsingTimer > 0)
+        {
+            colorPulsingTimer -= Time.deltaTime;
+            highlightColor.a = hpOverlayColor.a;
+            hpFrameOverlay.color = Color.Lerp(hpFrameOverlay.color, highlightColor, Time.deltaTime * 5);
 
+            if (colorPulsingTimer <= 0)
+            {
+                hpFrameOverlay.color = hpOverlayColor;
+            }
+        }
+    }
+
+    private void UpdateGameplayUI(object sender, EventArgs e)
+    {
+        playerHealth.fillAmount = Player.main.Health / Player.main.MaxHealth;
+        hpOverlayColor.a = 1 - playerHealth.fillAmount;
+        //Activate Hp Overlay Pulsing
+        colorPulsingTimer = 0.2f;
     }
 
     private void PauseGame()
@@ -99,4 +127,12 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     }
 
     public void UsePause() => PauseGame();
+
+    public void ResetPlayerHUD()
+    {
+        playerHealth.fillAmount = Player.main.Health / Player.main.MaxHealth; ;
+        hpOverlayColor.a = 1 - playerHealth.fillAmount;
+        hpFrameOverlay.color = hpOverlayColor;
+        colorPulsingTimer = 0;
+    }
 }

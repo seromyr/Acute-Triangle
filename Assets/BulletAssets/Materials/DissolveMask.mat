@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DissolveMask
+  m_Shader: {fileID: -6465566751694194690, guid: 02f54e8d084292c4a8b94d0ab5114a05,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Floats:
+    - Vector1_147B2D97: 0.01
+    - Vector1_6CD27C8E: 0.1
+    - Vector1_CA4EE3A3: 30
+    m_Colors:
+    - Color_3BE256BD: {r: 2, g: 0.32941177, b: 0, a: 0}
+    - Color_C32976E6: {r: 10.68063, g: 3.39267, b: 0, a: 0}

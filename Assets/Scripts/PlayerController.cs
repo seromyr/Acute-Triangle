@@ -9,11 +9,11 @@ public class PlayerController : MonoBehaviour
 {
     private float rayCastMaxRange;
 
-    private Rigidbody rigidbody;
+    private Rigidbody rigidBody;
 
     private void Awake()
     {
-        transform.TryGetComponent(out rigidbody);
+        transform.TryGetComponent(out rigidBody);
 
         // The maximum distance that the raycast will reach
         rayCastMaxRange = Mathf.Abs(Camera.main.transform.position.y * 1.5f);
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 tempVect = new Vector3(h, 0, v);
         tempVect = tempVect.normalized * PlayerAttributes.PLAYER_MOVESPEED * Time.fixedDeltaTime;
-        rigidbody.MovePosition(rigidbody.position + tempVect);
+        rigidBody.MovePosition(rigidBody.position + tempVect);
     }
 
     private void Aim()
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
 
             // Create a rotation based on looking down the vector from the player to the mouse.
             //transform.rotation = Quaternion.LookRotation(playerToMouse);
-            rigidbody.MoveRotation(Quaternion.LookRotation(playerToMouse));
+            rigidBody.MoveRotation(Quaternion.LookRotation(playerToMouse));
         }
     }
 
