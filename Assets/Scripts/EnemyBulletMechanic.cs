@@ -7,11 +7,16 @@ public class EnemyBulletMechanic : MonoBehaviour
 {
     public BulletType bulletType;
     private float bulletSpeed;
+    private Transform bulletContainer;
+
+    private void Start()
+    {
+        bulletContainer = GameObject.Find("BulletContainer").transform;
+    }
 
     private void FixedUpdate()
     {
         // Automatically moving forward after firing
-        //transform.Translate(Vector3.forward * Time.deltaTime * GeneralConst.ENEMY_BULLET_SPEED);
         MoveForward(bulletSpeed);
     }
 
@@ -38,21 +43,18 @@ public class EnemyBulletMechanic : MonoBehaviour
     // Spawn an explosion effect upon destroy
     private void OnDestroy()
     {
-        //Vector3 dir = transform.position - Player.main.GetPosition;
-        //Quaternion lookDir = Quaternion.LookRotation(dir);
-
         Quaternion lookDir = transform.rotation;
-        if (transform.name.Contains("Destructible"))
+        GameObject spawnVFX = null;
+        if (bulletType == BulletType.Destructible)
         {
-            GameObject spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/DestructibleBulletExplosionVFX");
-            GameObject.Instantiate(spawnVFX, transform.position, lookDir);
+            spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/DestructibleBulletExplosionVFX");
         }
-        else if (transform.name.Contains("Indestructible"))
+        else if (bulletType == BulletType.Indestructible)
         {
-            GameObject spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/IndestructibleBulletExplosionVFX");
-            GameObject.Instantiate(spawnVFX, transform.position, lookDir);
+            spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/IndestructibleBulletExplosionVFX");
         }
             
+            GameObject.Instantiate(spawnVFX, transform.position, lookDir, bulletContainer);
     }
 
     public void SetMovingSpeed(float speed)

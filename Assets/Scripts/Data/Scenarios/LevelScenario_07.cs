@@ -165,28 +165,28 @@ public class LevelScenario_07 : MonoBehaviour
             case 1:
                 bossBlasterCount = 1;
                 shootingAngle = 0;
-                boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 0.45f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1, BulletType.Destructible);
+                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 0.45f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1, BulletType.Destructible);
                 break;
 
             case 2:
                 bossBlasterCount = 8;
                 shootingAngle = 45;
                 boss.Mechanics.Add(Mechanic.Shoot);
-                boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Destructible);
+                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Destructible);
 
                 bossBlasterCount = 180;
                 shootingAngle = 2;
-                boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
                 break;
 
             case 3:
                 bossBlasterCount = 4;
                 shootingAngle = 90;
                 boss.Mechanics.Add(Mechanic.Shoot);
-                boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 45, shootingAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE - 4, BulletType.Destructible);
+                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 45, shootingAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE - 4, BulletType.Destructible);
 
                 bossBlasterCount = 4;
-                boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, shootingAngle, (2 / 3f), 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, (2 / 3f), 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
 
                 break;
         }

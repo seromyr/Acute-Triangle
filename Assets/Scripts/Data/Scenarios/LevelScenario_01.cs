@@ -69,7 +69,7 @@ public class LevelScenario_01 : MonoBehaviour
         bossBlasterCount = 6;
         float cannonAngle = 60;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
 
         // Set boss default state
         NonAggresiveState(null, null);
@@ -79,7 +79,7 @@ public class LevelScenario_01 : MonoBehaviour
     {
         for (int i = 1; i < bossBlasterCount; i++)
         {
-            boss.Mechanics.Cannons[i].SetActive(false);
+            boss.Mechanics.Blasters[i].SetActive(false);
         }
 
         boss.Mechanics.SetRotationParameters(true, 100f);
@@ -90,7 +90,7 @@ public class LevelScenario_01 : MonoBehaviour
     {
         for (int i = 0; i < bossBlasterCount; i++)
         {
-            boss.Mechanics.Cannons[i].SetActive(true);
+            boss.Mechanics.Blasters[i].SetActive(true);
         }
         boss.Mechanics.SetRotationParameters(true, 36f);
         boss.Mechanics.SetPatrollingStatus(false);

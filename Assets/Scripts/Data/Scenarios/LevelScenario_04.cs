@@ -60,11 +60,11 @@ public class LevelScenario_04 : MonoBehaviour
         bossBlasterCount = 9;
         float cannonAngle = 12;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         bossBlasterCount = 2;
         cannonAngle = 120;
-        boss.Mechanics.CreateMultipleCannons(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
 
 
         // Activate Hard Shells mechanic

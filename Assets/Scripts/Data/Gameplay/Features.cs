@@ -241,7 +241,7 @@ public class Features
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
         minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 1, bulletSpeed, BulletType.Destructible);
     }
 
     public void SpawnStationaryMinion(Vector3 minionPosition, float minionFireRate = 2, float bulletSpeed = 5)
@@ -265,7 +265,7 @@ public class Features
         minionList[minionID].SetPosition(minionPosition);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
         minionList[minionID].Mechanics.Add(Mechanic.LookAtPlayer);
-        minionList[minionID].Mechanics.CreateCannon(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
     }
 
     private void OnMinionDeath(object sender, EventArgs e)
@@ -346,52 +346,52 @@ public class Features
 
     #region Shoot
     // Shooter manager
-    private List<GameObject> cannons;
-    private int cannonCount;
-    private float cannonAngle;
+    private List<GameObject> blasters;
+    private int blasterCount;
+    private float blasterAngle;
 
-    public List<GameObject> Cannons { get { return cannons; } }
+    public List<GameObject> Blasters { get { return blasters; } }
 
     private void CreateShootingMechanic()
     {
-        if (cannons == null)
+        if (blasters == null)
         {
-            cannons = new List<GameObject>();
+            blasters = new List<GameObject>();
         }
     }
 
     // Shooting parameter setting used in level scenario
     // This method create enemy blasters
-    public void CreateCannon(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateBlaster(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
-        cannons.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Cannon"), body.transform.position, pointingAngle, body.transform));
-        cannons[cannons.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
+        blasters.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Blaster"), body.transform.position, pointingAngle, body.transform));
+        blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
     }
 
-    public void CreateMultipleCannons(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateMultipleBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
-        this.cannonCount = cannonCount;
-        this.cannonAngle = cannonAngle;
+        this.blasterCount = cannonCount;
+        this.blasterAngle = cannonAngle;
         float initialAngle = _initialAngle;
-        for (int i = 0; i < this.cannonCount; i++)
+        for (int i = 0; i < this.blasterCount; i++)
         {
-            CreateCannon(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSize, bulletSpeed, bulletType);
-            initialAngle += this.cannonAngle;
+            CreateBlaster(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSize, bulletSpeed, bulletType);
+            initialAngle += this.blasterAngle;
         }
     }
 
     public void SetShootingStatus(bool isShooting)
     {
         
-        for (int i = 0; i < cannons.Count; i++)
+        for (int i = 0; i < blasters.Count; i++)
         {
             switch (isShooting)
             {
                 case true:
-                    cannons[i].GetComponent<Blaster>().ResumeShooting();
+                    blasters[i].GetComponent<Blaster>().ResumeShooting();
                     break;
                 case false:
-                    cannons[i].GetComponent<Blaster>().PauseShooting();
+                    blasters[i].GetComponent<Blaster>().PauseShooting();
                     break;
             }
         }
@@ -399,11 +399,11 @@ public class Features
 
     public void DestroyAllCannons()
     {
-        for (int i = 0; i < cannons.Count; i++)
+        for (int i = 0; i < blasters.Count; i++)
         {
-            GameObject.Destroy(cannons[i]);
+            GameObject.Destroy(blasters[i]);
         }
-            cannons.Clear();
+            blasters.Clear();
     }
 
     #endregion

@@ -51,13 +51,13 @@ public class LevelScenario_03 : MonoBehaviour
 
         // Activate Minion Summoning mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.SetMaximumMinion(30);
+        boss.Mechanics.SetMaximumMinion(10);
 
         // Boss takes no damage until the shield is down
         boss.HitMonitor.SetDamageAcceptance(false);
 
         // Set local countdown tick for the timer to work
-        int tick = 30;
+        int tick = 10;
         boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
         {
             tick--;
