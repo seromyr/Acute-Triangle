@@ -8,11 +8,10 @@ public class LevelScenario_02 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
-    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create enemy container for organized objects managing
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
@@ -20,27 +19,31 @@ public class LevelScenario_02 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
+    // Tutorial Level 2
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(Vector3.zero);
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
+        // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Ragazzino",
+            "Boss",
             // Boss appearance
-            Enemy.Boss_02,
-            // Boss container
+            Enemy.Sphere_Large_Black,
+            // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            30,
-            // Boss dead event handler
+            10,
+            // Register dead event action
             BossMonitor
         );
 
@@ -48,24 +51,16 @@ public class LevelScenario_02 : MonoBehaviour
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
         // Set boss default position
-        boss.SetPosition(new Vector3(24, 0.5f, 21.25f));
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
 
-        // Add blasters to boss
-        bossBlasterCount = 6;
-        float blasterAngle = 30;
-        boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 195, blasterAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
-
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
-
-        #region Create Destructible Obstacles
+        #region Create Obstacles
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
-        // Cluster 01 - 2 rows 4 collumns
-        for (int i = 0; i < 4; i++)
+        int row = 10;
+        int collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
@@ -85,69 +80,12 @@ public class LevelScenario_02 : MonoBehaviour
                     )
                 );
 
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
-            }
-        }
-
-        // Cluster 02 - 6 rows 7 collumns
-        for (int i = 0; i < 7; i++)
-        {
-            for (int j = 0; j < 6; j++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                    (
-                        // Name
-                        EnemyName.Cube_Small + " " + (i + j),
-                        // Appearance
-                        Enemy.Cube_Medium_Black,
-                        // Container
-                        enemyContainer,
-                        // Material
-                        "default",
-                        // Health
-                        2,
-                        null
-                    )
-                );
-
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
-
-            }
-        }
-
-        // Cluster 03 - 5 rows 3 collumns
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 5; j++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                    (
-                        // Name
-                        EnemyName.Cube_Small + " " + (i + j),
-                        // Appearance
-                        Enemy.Cube_Medium_Black,
-                        // Container
-                        enemyContainer,
-                        // Material
-                        "default",
-                        // Health
-                        2,
-                        null
-                    )
-                );
-
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
-
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 5 + j));
             }
         }
         #endregion
+
     }
 
     #region Scenario Stuff
@@ -157,7 +95,6 @@ public class LevelScenario_02 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
     #endregion

@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            nextLevel = 0;
+            nextLevel = 1;
         }
 
         // Subcribe to player died event
@@ -164,9 +164,6 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____NEW_____Routines()
     {
-        //// Next level reset
-        //nextLevel = 0;
-
         if (overrideMode)
         {
             nextLevel = overrideLevel;
@@ -174,7 +171,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // Next level reset
-            nextLevel = 0;
+            nextLevel = 1;
         }
 
         Perform_____NEXT____Routines();
@@ -258,8 +255,6 @@ public class GameManager : MonoBehaviour
 
     private void Perform__LOADLEVEL__Routines()
     {
-        //nextLevel = 0;
-
         Perform_____NEXT____Routines();
     }
 

@@ -368,7 +368,7 @@ public class Features
         blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
     }
 
-    public void CreateMultipleBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         this.blasterCount = cannonCount;
         this.blasterAngle = cannonAngle;

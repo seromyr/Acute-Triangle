@@ -63,7 +63,6 @@
     {
         public const string NAME = "Level 0";
 
-        public const string LV000 = "Level 00";
         public const string LV001 = "Level 01";
         public const string LV002 = "Level 02";
         public const string LV003 = "Level 03";
@@ -73,6 +72,17 @@
         public const string LV007 = "Level 07";
         public const string LV008 = "Level 08";
         public const string LV009 = "Level 09";
+        public const string LV010 = "Level 10";
+        public const string LV011 = "Level 11";
+        public const string LV012 = "Level 12";
+        public const string LV013 = "Level 13";
+        public const string LV014 = "Level 14";
+        public const string LV015 = "Level 15";
+        public const string LV016 = "Level 16";
+        public const string LV017 = "Level 17";
+        public const string LV018 = "Level 18";
+        public const string LV019 = "Level 19";
+        public const string LV020 = "Level 20";
     }
 
     public static class GeneralConst
