@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     private int nextLevel;
 
-    #region Test Mode
+    #region Level Override Mode
     public bool overrideMode;
     public int overrideLevel;
     #endregion

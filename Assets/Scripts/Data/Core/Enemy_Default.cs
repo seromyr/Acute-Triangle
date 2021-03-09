@@ -42,12 +42,6 @@ public class Enemy_Default : EnemyEntity
 
             // Fire up dead event
             OnDestroy?.Invoke(this, EventArgs.Empty);
-
-            // Set dead state
-            Suicide();
-
-            //play dead SFX
-
         }
     }
 
@@ -56,11 +50,7 @@ public class Enemy_Default : EnemyEntity
     {
         Debug.Log(_name + " was killed");
 
-        string deathVFX = "BossDieVFX";
-        if (_name.Contains("Minion"))
-        {
-            deathVFX = "MinionDieVFX";
-        }
+        string deathVFX = _name.Contains("Minion")? "MinionDieVFX" : "BossDieVFX";
 
         // Play dead effect
         UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/VFX/" + deathVFX), GetPosition, Quaternion.identity);
@@ -70,7 +60,7 @@ public class Enemy_Default : EnemyEntity
         OnDestroy = delegate { };
 
         // Self-destruct and set dead state
-        HitMonitor.SelfDestruct();
         Suicide();
+        HitMonitor.SelfDestruct();
     }
 }

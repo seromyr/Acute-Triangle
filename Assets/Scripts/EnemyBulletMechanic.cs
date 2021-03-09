@@ -37,14 +37,16 @@ public class EnemyBulletMechanic : MonoBehaviour
     // This object will self-destruct if collide with any game object
     private void OnTriggerEnter(Collider other)
     {
+        CreateDeadVFX();
         Destroy(gameObject);
     }
 
     // Spawn an explosion effect upon destroy
-    private void OnDestroy()
+    private void CreateDeadVFX()
     {
         Quaternion lookDir = transform.rotation;
         GameObject spawnVFX = null;
+
         if (bulletType == BulletType.Destructible)
         {
             spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/DestructibleBulletExplosionVFX");
@@ -53,8 +55,8 @@ public class EnemyBulletMechanic : MonoBehaviour
         {
             spawnVFX = Resources.Load<GameObject>("Prefabs/VFX/IndestructibleBulletExplosionVFX");
         }
-            
-            GameObject.Instantiate(spawnVFX, transform.position, lookDir, bulletContainer);
+
+        GameObject.Instantiate(spawnVFX, transform.position, lookDir, bulletContainer);
     }
 
     public void SetMovingSpeed(float speed)

@@ -53,7 +53,7 @@ public class Player : Entity
     {
         _name = GeneralConst.PLAYER;
         _body = UnityEngine.Object.Instantiate(GetBodyPrefab(_name));
-        _body.name = _name;
+        _body.name = "Player";
     }
 
     // Load player visual
