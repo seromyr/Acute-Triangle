@@ -17,6 +17,7 @@ namespace Entities
         protected bool          _isAlive;
         protected bool          _isSingleton;
 
+
         public string       Name      { get { return _name;           } }
         public GameObject   Body      { get { return _body;           } }
         public Transform    Transform { get { return _body.transform; } }

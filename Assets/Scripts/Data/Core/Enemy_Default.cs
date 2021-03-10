@@ -11,6 +11,10 @@ public class Enemy_Default : EnemyEntity
     // Event handler to handle on destroy event
     public event EventHandler OnDestroy;
 
+    //Audio source
+    private AudioSource _soundplayer;
+    private List<AudioClip> clips;
+
     // Constructor, declared in Level Scenario
     public Enemy_Default(string name, string prefabName, Transform parent, string material, float maxHealth, EventHandler OnDeadCallback)
     {
@@ -24,6 +28,15 @@ public class Enemy_Default : EnemyEntity
         HitMonitor.OnBulletHit += TakeDamage;
         OnDestroy += DestroySelf;
         OnDestroy += OnDeadCallback;
+
+        //adding Audiosource and applying clip
+        _soundplayer = _body.AddComponent<AudioSource>();
+        _soundplayer.clip = Resources.Load<AudioClip>("SFX/taking_damage");
+        
+        //list created
+        clips = new List<AudioClip>();
+        clips.Add(Resources.Load<AudioClip>("SFX/taking_damage"));
+
     }
 
     public override void TakeDamage(object sender, EventArgs e)
@@ -34,6 +47,8 @@ public class Enemy_Default : EnemyEntity
             ModifyHealth(-Player.main.GetDamage);
 
             //Debug.Log("hit");
+            _soundplayer.PlayOneShot(_soundplayer.clip);
+            
         }
         else
         {
@@ -45,6 +60,9 @@ public class Enemy_Default : EnemyEntity
 
             // Set dead state
             Suicide();
+
+            //play death sound
+            _soundplayer.PlayOneShot(Resources.Load<AudioClip>("Resources/SFX/taking_damage"));
         }
     }
 
