@@ -8,7 +8,6 @@ public class LevelScenario_09 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
-    private int bossBlasterCount;
 
     private void Awake()
     {
@@ -20,13 +19,16 @@ public class LevelScenario_09 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Tutorial Level 1
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
@@ -40,7 +42,7 @@ public class LevelScenario_09 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            5,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -48,6 +50,8 @@ public class LevelScenario_09 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
     }
 
     #region Scenario Stuff
@@ -57,8 +61,7 @@ public class LevelScenario_09 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
-}
     #endregion
+}

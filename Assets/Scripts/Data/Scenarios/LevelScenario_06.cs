@@ -8,7 +8,6 @@ public class LevelScenario_06 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
-    private int bossBlasterCount;
 
     private void Awake()
     {
@@ -20,13 +19,16 @@ public class LevelScenario_06 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Tutorial Level 6
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
@@ -34,13 +36,13 @@ public class LevelScenario_06 : MonoBehaviour
             // Boss name
             "Boss",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Sphere_Medium_Red_HalfShell,
             // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            5,
+            30,
             // Register dead event action
             BossMonitor
         );
@@ -48,6 +50,13 @@ public class LevelScenario_06 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 15));
+
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(18);
+        boss.Mechanics.SetLookingStatus(true);
     }
 
     #region Scenario Stuff
@@ -57,8 +66,7 @@ public class LevelScenario_06 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
 }
-    #endregion
+#endregion

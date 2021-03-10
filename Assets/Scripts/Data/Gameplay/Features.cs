@@ -241,7 +241,7 @@ public class Features
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
         minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 1, bulletSpeed, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, bulletSpeed, BulletType.Destructible);
     }
 
     public void SpawnStationaryMinion(Vector3 minionPosition, float minionFireRate = 2, float bulletSpeed = 5)
@@ -265,7 +265,7 @@ public class Features
         minionList[minionID].SetPosition(minionPosition);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
         minionList[minionID].Mechanics.Add(Mechanic.LookAtPlayer);
-        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, bulletSpeed, BulletType.Destructible);
     }
 
     private void OnMinionDeath(object sender, EventArgs e)
@@ -362,10 +362,10 @@ public class Features
 
     // Shooting parameter setting used in level scenario
     // This method create enemy blasters
-    public void CreateBlaster(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateBlaster(Quaternion pointingAngle, float fireRate, float bulletSpeed, BulletType bulletType)
     {
         blasters.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Blaster"), body.transform.position, pointingAngle, body.transform));
-        blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
+        blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSpeed, bulletType);
     }
 
     public void CreateBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
@@ -375,7 +375,7 @@ public class Features
         float initialAngle = _initialAngle;
         for (int i = 0; i < this.blasterCount; i++)
         {
-            CreateBlaster(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSize, bulletSpeed, bulletType);
+            CreateBlaster(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSpeed, bulletType);
             initialAngle += this.blasterAngle;
         }
     }

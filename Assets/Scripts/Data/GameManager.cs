@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
     {
         // Load next level
         SceneManager.LoadScene(Map.NAME + nextLevel);
-        Debug.Log("Next level: Level_0" + nextLevel);
+        Debug.Log("Next level: Level_" + nextLevel);
 
         // Activate player
         //PlayerMonitor.main.gameObject.SetActive(true);
@@ -225,7 +225,7 @@ public class GameManager : MonoBehaviour
         nextLevel++;
 
         //Cheat
-        if (nextLevel == 8)
+        if (nextLevel == 20)
         {
             desinationState = GameState.START;
             StartCoroutine(SwitchState(GameState.LOADING, 2.5f));

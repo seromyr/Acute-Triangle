@@ -129,7 +129,7 @@ public class LevelScenario_16 : MonoBehaviour
 
         // Add blasters to boss
         moxie.Mechanics.Add(Mechanic.Shoot);
-        moxie.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        moxie.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         #endregion
     }

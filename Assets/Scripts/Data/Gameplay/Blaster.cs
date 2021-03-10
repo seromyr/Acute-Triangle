@@ -8,16 +8,14 @@ public class Blaster : MonoBehaviour
     public BulletType bulletType;
     private GameObject bullet;
     private float fireRate;
-    private float bulletSize;
     private float bulletSpeed;
     private Timer timer;
     private Transform bulletContainer;
 
-    public void SetShootingParameters(float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void SetShootingParameters(float fireRate, float bulletSpeed, BulletType bulletType)
     {
         this.fireRate = fireRate;
         this.bulletType = bulletType;
-        this.bulletSize = bulletSize;
         this.bulletSpeed = bulletSpeed;
 
         StartShooting();
@@ -41,17 +39,33 @@ public class Blaster : MonoBehaviour
         switch (bulletType)
         {
             case BulletType.Destructible:
-                bullet = Resources.Load<GameObject>(Bullet._03);
-                bullet.name = "Destructible";
+                LoadBullet(Bullet._03, "Destructible");
                 break;
             case BulletType.Indestructible:
-                bullet = Resources.Load<GameObject>(Bullet._04);
-                bullet.name = "Indestructible";
+                LoadBullet(Bullet._04, "Indestructible");
+                break;
+            case BulletType.Mixed:
+                if (Random.value == 0.5f) LoadBullet(Bullet._03, "Destructible");
+                else                      LoadBullet(Bullet._04, "Indestructible");
                 break;
         }
 
-        timer.SetTimer(fireRate, 1, () => { InstantiatBullet(); });
+        timer.SetTimer(fireRate, 1, () =>
+        {
+            if (bulletType == BulletType.Mixed)
+            {
+                if (bullet.name == "Destructible") LoadBullet(Bullet._04, "Indestructible");
+                else LoadBullet(Bullet._03, "Destructible");
+            }
+            InstantiatBullet();
+        });
         timer.SetLoop(true);
+    }
+
+    private void LoadBullet(string bullet, string name)
+    {
+        this.bullet = Resources.Load<GameObject>(bullet);
+        this.bullet.name = name;
     }
 
     private void Awake()
@@ -72,7 +86,6 @@ public class Blaster : MonoBehaviour
     private void InstantiatBullet()
     {
         var bulletInstance = Instantiate(bullet, transform.position + transform.forward * 1.5f, transform.rotation, bulletContainer);
-        bulletInstance.transform.localScale *= bulletSize;
         bulletInstance.GetComponent<EnemyBulletMechanic>().SetMovingSpeed(bulletSpeed);
     }
 }
