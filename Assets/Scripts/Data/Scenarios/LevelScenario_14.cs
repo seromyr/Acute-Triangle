@@ -7,20 +7,32 @@ using Constants;
 public class LevelScenario_14 : MonoBehaviour
 {
     private EnemyEntity boss;
+
     private Transform enemyContainer;
-    private int bossBlasterCount;
-    private Vector3[] pillarPosition;
+
+    private int bossBlasterCount, bossStates, currentBossState;
+
+    private Timer bossStateTimer;
+
+    private float shootingAngle;
+
+    private Vector3[] localWaypoints;
 
     private void Awake()
     {
         // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
-        pillarPosition = new Vector3[]
+
+        // Create timer to change boss state
+        bossStateTimer = gameObject.AddComponent<Timer>();
+
+        localWaypoints = new Vector3[]
         {
-            new Vector3( 10 , -0.5f ,  10 ),
-            new Vector3(-10 , -0.5f ,  10 ),
-            new Vector3( 10 , -0.5f , -10 ),
-            new Vector3(-10 , -0.5f , -10 )
+            new Vector3(0.23f, 0.5f, 0.15f),
+            new Vector3(21.98f, 0.5f, 21.9f),
+            new Vector3(21.98f, 0.5f, -21.9f),
+            new Vector3(-21.98f, 0.5f, 21.9f),
+            new Vector3(-21.98f, 0.5f, -21.9f),
         };
     }
 
@@ -30,19 +42,19 @@ public class LevelScenario_14 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 04 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-4]
+    // Scenario 07 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-7]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -10));
+        Player.main.SetPosition(new Vector3(0.23f, 0, -20));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Navel",
+            "Beholder",
             // Boss appearance
-            Enemy.Sphere_Medium_Red,
+            Enemy.Sphere_Large_Black,
             // Boss placemenent
             enemyContainer,
             // Boss material
@@ -56,70 +68,128 @@ public class LevelScenario_14 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Add blasters to boss
-        bossBlasterCount = 9;
-        float cannonAngle = 12;
-        boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+        // This boss has 3 states
+        bossStates = 3;
+        currentBossState = 0;
 
-        bossBlasterCount = 2;
-        cannonAngle = 120;
-        boss.Mechanics.CreateBlasters(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        // Set default position
+        boss.SetPosition(new Vector3(0.23f, 0.5f, 0.15f));
 
-
-        // Activate Hard Shells mechanic
-        boss.Mechanics.Add(Mechanic.HardShells);
-        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
-        for (int i = 0; i < pillarPosition.Length; i++)
-        {
-            boss.Mechanics.CreatePillar(pillarPosition[i], enemyContainer);
-        }
-
-        boss.Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
-
-       // Set boss default position
-        boss.SetPosition(new Vector3(0, 0.5f, 0));
+        // Activate Shield mechanic
+        boss.Mechanics.Add(Mechanic.Shield);
+        boss.Mechanics.SwitchToVioletShield();
 
         // Activate Look At Player mechanic
         boss.Mechanics.Add(Mechanic.LookAtPlayer);
-        boss.Mechanics.SetLookingSpeed(50);
+        boss.Mechanics.SetLookingSpeed(360);
 
-        // Activate Minion Summoning mechanic
-        boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.DeactivateShield();
+        // Add blasters to boss
+        boss.Mechanics.Add(Mechanic.Shoot);
 
-        // Set boss default state
-        ActivateInvincibleState(null, null);
-    }
+        // Activate Complex Movement mechanic
+        boss.Mechanics.Add(Mechanic.ComplexeMovement);
 
-    private void ActivateWeakenState(object sender, EventArgs e)
-    {
-        isWeaken = true;
-        boss.Mechanics.SetShootingStatus(true);
-        boss.Mechanics.SetLookingStatus(true);
-        boss.HitMonitor.SetDamageAcceptance(true);
-    }
+        // Activate Self Rotation mechanic
+        boss.Mechanics.Add(Mechanic.SelfRotation);
+        boss.Mechanics.SetRotationParameters(false);
 
-    private void ActivateInvincibleState(object sender, EventArgs e)
-    {
-        isWeaken = false;
-        boss.Mechanics.SetShootingStatus(false);
-        boss.Mechanics.SetLookingStatus(false);
-        boss.HitMonitor.SetDamageAcceptance(false);
-
-        // Local countdown tick for the timer to work
-        boss.Mechanics.SetMaximumMinion(10);
-        int tick = 10;
-        boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
+        // Setup timer to change boss state after 10 seconds
+        bossStateTimer.SetTimer(10, 1, () =>
         {
-            tick--;
-
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
-            randomPositionAroundBoss.y = 0;
-
-            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
+            // Loop through boss state
+            currentBossState = (currentBossState + 1) % bossStates;
+            boss.Transform.rotation = Quaternion.identity;
+            switch (currentBossState)
+            {
+                default:
+                case 0:
+                    ActivateStateOne();
+                    break;
+                case 1:
+                    ActivateStateTwo();
+                    break;
+                case 2:
+                    ActivateStateThree();
+                    break;
+            }
         });
 
+        // Keep boss state switching recurring
+        bossStateTimer.SetLoop(true);
+
+        // Default state
+        ActivateStateOne();
+    }
+
+    private void ActivateStateOne()
+    {
+        Debug.Log("I - State " + currentBossState);
+
+        ActivateAttackPattern(1);
+
+        boss.HitMonitor.SetDamageAcceptance(false);
+        boss.Mechanics.ActivateShield();
+        boss.Mechanics.SetRotationStatus(false);
+        boss.Mechanics.SetLookingStatus(true);
+        boss.Mechanics.SetRunningAroundParams(true, 6);
+
+    }
+
+    private void ActivateStateTwo()
+    {
+        Debug.Log("II - State " + currentBossState);
+        ActivateAttackPattern(2);
+
+        boss.HitMonitor.SetDamageAcceptance(true);
+        boss.Mechanics.DeactivateShield();
+        boss.Mechanics.SetLookingStatus(false);
+        boss.Mechanics.SetGoToWayPointParams(true, localWaypoints[UnityEngine.Random.Range(0, 4)], 8);
+    }
+
+    private void ActivateStateThree()
+    {
+        Debug.Log("III - State " + currentBossState);
+        ActivateAttackPattern(3);
+
+        boss.Mechanics.SetRotationStatus(true);
+    }
+
+    private void ActivateAttackPattern(int id)
+    {
+        // Clear all cannon objects
+        boss.Mechanics.DestroyAllCannons();
+
+        switch (id)
+        {
+            default:
+            case 1:
+                bossBlasterCount = 1;
+                shootingAngle = 0;
+                boss.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, 0.45f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1, BulletType.Destructible);
+                break;
+
+            case 2:
+                bossBlasterCount = 8;
+                shootingAngle = 45;
+                boss.Mechanics.Add(Mechanic.Shoot);
+                boss.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Destructible);
+
+                bossBlasterCount = 180;
+                shootingAngle = 2;
+                boss.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+                break;
+
+            case 3:
+                bossBlasterCount = 4;
+                shootingAngle = 90;
+                boss.Mechanics.Add(Mechanic.Shoot);
+                boss.Mechanics.CreateBlasters(bossBlasterCount, 45, shootingAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE - 4, BulletType.Destructible);
+
+                bossBlasterCount = 4;
+                boss.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, (2 / 3f), 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
+
+                break;
+        }
     }
 
     #region Scenario Stuff
@@ -130,23 +200,6 @@ public class LevelScenario_14 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
-
-            boss.Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
-            boss.Mechanics.OnPillarsRegenerationCallback = delegate { };
-        }
-    }
-
-    private bool isWeaken = false;
-
-    private void FixedUpdate()
-    {
-        if (isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.SplitShells(3f);
-        }
-        else if (!isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.CloseShells();
         }
     }
     #endregion

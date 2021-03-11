@@ -9,11 +9,19 @@ public class LevelScenario_11 : MonoBehaviour
     private EnemyEntity boss;
     private Transform enemyContainer;
     private int bossBlasterCount;
+    private Vector3[] reactorPositions;
 
     private void Awake()
     {
-        // Create enemy container for organized objects managing
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
+        reactorPositions = new Vector3[]
+        {
+            new Vector3( 10 , -0.5f ,  10 ),
+            new Vector3(-10 , -0.5f ,  10 ),
+            new Vector3( 10 , -0.5f , -10 ),
+            new Vector3(-10 , -0.5f , -10 )
+        };
     }
 
     private void Start()
@@ -22,25 +30,25 @@ public class LevelScenario_11 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-1-boss-juliette]
+    // Scenario 04 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-4]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, -10));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Julliette",
+            "Navel",
             // Boss appearance
-            Enemy.Boss_01,
+            Enemy.Sphere_Medium_Red,
             // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            30,
+            100,
             // Register dead event action
             BossMonitor
         );
@@ -48,52 +56,70 @@ public class LevelScenario_11 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Activate Self Rotation mechanic
-        boss.Mechanics.Add(Mechanic.SelfRotation);
+        // Add blasters to boss
+        bossBlasterCount = 9;
+        float cannonAngle = 12;
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
+
+        bossBlasterCount = 2;
+        cannonAngle = 120;
+        boss.Mechanics.CreateBlasters(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+
+
+        // Activate Hard Shells mechanic
+        boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+        for (int i = 0; i < reactorPositions.Length; i++)
+        {
+            boss.Mechanics.CreatePillar(reactorPositions[i], enemyContainer);
+        }
+
+        boss.Mechanics.OnReactorsRegenerationCallback += () => ActivateInvincibleState(null, null);
 
         // Set boss default position
-        boss.SetPosition(new Vector3(0, 0.5f, 10));
+        boss.SetPosition(new Vector3(0, 0.5f, 0));
 
-        // Activate Aggressive Proximity mechanic
-        boss.Mechanics.Add(Mechanic.AggressiveRadius);
-        boss.Mechanics.SetAuraProximityIndicator(1);
-        boss.Mechanics.SetAgressiveDiameteMutiplierr(7f);
-        boss.Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
-        boss.Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(50);
 
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.8f);
-
-        // Add blasters to boss
-        bossBlasterCount = 6;
-        float cannonAngle = 60;
-        boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        // Activate Minion Summoning mechanic
+        boss.Mechanics.Add(Mechanic.SummonMinions);
+        boss.Mechanics.DeactivateShield();
 
         // Set boss default state
-        NonAggresiveState(null, null);
+        ActivateInvincibleState(null, null);
     }
 
-    private void NonAggresiveState(object sender, EventArgs e)
+    private void ActivateWeakenState(object sender, EventArgs e)
     {
-        for (int i = 1; i < bossBlasterCount; i++)
-        {
-            boss.Mechanics.Blasters[i].SetActive(false);
-        }
-
-        boss.Mechanics.SetRotationParameters(true, 100f);
-        boss.Mechanics.SetPatrollingStatus(true);
+        isWeaken = true;
+        boss.Mechanics.SetShootingStatus(true);
+        boss.Mechanics.SetLookingStatus(true);
+        boss.HitMonitor.SetDamageAcceptance(true);
     }
 
-    private void AggressiveState(object sender, EventArgs e)
+    private void ActivateInvincibleState(object sender, EventArgs e)
     {
-        for (int i = 0; i < bossBlasterCount; i++)
+        isWeaken = false;
+        boss.Mechanics.SetShootingStatus(false);
+        boss.Mechanics.SetLookingStatus(false);
+        boss.HitMonitor.SetDamageAcceptance(false);
+
+        // Local countdown tick for the timer to work
+        boss.Mechanics.SetMaximumMinion(10);
+        int tick = 10;
+        boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
         {
-            boss.Mechanics.Blasters[i].SetActive(true);
-        }
-        boss.Mechanics.SetRotationParameters(true, 36f);
-        boss.Mechanics.SetPatrollingStatus(false);
+            tick--;
+
+            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
+            randomPositionAroundBoss.y = 0;
+
+            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
+        });
+
     }
 
     #region Scenario Stuff
@@ -105,8 +131,22 @@ public class LevelScenario_11 : MonoBehaviour
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
 
-            boss.Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
-            boss.Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
+            boss.Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
+            boss.Mechanics.OnReactorsRegenerationCallback = delegate { };
+        }
+    }
+
+    private bool isWeaken = false;
+
+    private void FixedUpdate()
+    {
+        if (isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.SplitShells(3f);
+        }
+        else if (!isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.CloseShells();
         }
     }
     #endregion

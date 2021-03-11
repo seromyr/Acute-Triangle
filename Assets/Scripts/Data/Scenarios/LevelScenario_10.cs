@@ -11,7 +11,7 @@ public class LevelScenario_10 : MonoBehaviour
 
     private void Awake()
     {
-        // Create enemy container for organized object managing
+        // Create enemy container for organized objects managing
         enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
@@ -19,39 +19,54 @@ public class LevelScenario_10 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
-
-        // Send mission instruction
-        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Tutorial Level 1
+    // Scenario 03 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
     private void BuildScenario()
     {
-        // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, 0));
-
-        // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Boss",
+            "Warwick",
             // Boss appearance
             Enemy.Sphere_Large_Black,
-            // Boss placemenent
-            enemyContainer,
+            // Boss container
+            enemyContainer.transform,
             // Boss material
             "default",
             // Boss health
-            10,
-            // Register dead event action
+            30,
+            // Boss dead event handler
             BossMonitor
         );
 
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Set boss default position
         boss.SetPosition(new Vector3(0, 0.5f, 20));
+
+        // Activate Chase mechanic
+        boss.Mechanics.Add(Mechanic.Chase);
+        boss.Mechanics.SetChaseParams(true, 2);
+
+        // Activate Minion Summoning mechanic
+        boss.Mechanics.Add(Mechanic.SummonMinions);
+        boss.Mechanics.SetMaximumMinion(10);
+
+        // Boss takes no damage until the shield is down
+        boss.HitMonitor.SetDamageAcceptance(false);
+
+        // Set local countdown tick for the timer to work
+        int tick = 10;
+        boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
+        {
+            tick--;
+
+            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
+            randomPositionAroundBoss.y = 0;
+
+            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
+        });
     }
 
     #region Scenario Stuff
@@ -61,6 +76,7 @@ public class LevelScenario_10 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
+            Debug.Log("No boss remaining");
         }
     }
     #endregion

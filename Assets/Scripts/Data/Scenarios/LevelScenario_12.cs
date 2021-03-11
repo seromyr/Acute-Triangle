@@ -10,9 +10,10 @@ public class LevelScenario_12 : MonoBehaviour
     private Transform enemyContainer;
     private int bossBlasterCount;
 
+
     private void Awake()
     {
-        // Create enemy container for organized objects managing
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
@@ -22,132 +23,152 @@ public class LevelScenario_12 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
+    // Scenario 05 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-5]
     private void BuildScenario()
     {
+        //number of enemies
+        int enemyNum = 12;
+
         // Set player start position
         Player.main.SetPosition(Vector3.zero);
 
+        // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Ragazzino",
+            "Minotaur",
             // Boss appearance
-            Enemy.Boss_02,
-            // Boss container
+            Enemy.Sphere_Large_Black,
+            // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
             30,
-            // Boss dead event handler
+            // Register dead event action
             BossMonitor
         );
 
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Set boss default position
-        boss.SetPosition(new Vector3(24, 0.5f, 21.25f));
+        // Set default position
+        boss.SetPosition(new Vector3(56.25f, 0.5f, 26.5f));
 
         // Add blasters to boss
-        bossBlasterCount = 6;
-        float blasterAngle = 30;
+        bossBlasterCount = 4;
+        float cannonAngle = 90;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(bossBlasterCount, 195, blasterAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
+        bossBlasterCount = 4;
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.Add(Mechanic.SummonMinions);
 
-        #region Create Destructible Obstacles
+        boss.Mechanics.Add(Mechanic.SelfRotation);
+        boss.Mechanics.SetRotationParameters(true, 45f);
+
+        // Minion placements / summoning
+        boss.Mechanics.SetMaximumMinion(enemyNum);
+
+        boss.HitMonitor.SetDamageAcceptance(false);
+
+        GameObject[] spawnLocations = GameObject.FindGameObjectsWithTag("Enemy Spawn");
+
+        int index = UnityEngine.Random.Range(0, spawnLocations.Length);
+
+        List<int> selected = new List<int>();
+        for (int i = 0; i < enemyNum; i++)
+        {
+            index = DuplicateCatcher(UnityEngine.Random.Range(0, spawnLocations.Length), spawnLocations.Length, selected);
+            selected.Add(i);
+        }
+
+        for (int spot = 0; spot < enemyNum; spot++)
+        {
+            boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
+        }
+
+        #region Create Destructible Obstacles / Blockades
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
-        // Cluster 01 - 2 rows 4 collumns
-        for (int i = 0; i < 4; i++)
+
+        for (int x = 0; x < 3; x++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int y = 0; y < 7; y++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                    (
-                        // Name
-                        EnemyName.Cube_Small + " " + (i + j),
-                        // Appearance
-                        Enemy.Cube_Medium_Black,
-                        // Container
-                        enemyContainer,
-                        // Material
-                        "default",
-                        // Health
-                        2,
-                        null
-                    )
+                        (
+                            EnemyName.Cube_Small + " " + (x + y),
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer,
+                            "default",
+                            10,
+                            null
+                        )
                 );
 
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-1f + x, 0, 18.5f + y));
             }
         }
 
-        // Cluster 02 - 6 rows 7 collumns
-        for (int i = 0; i < 7; i++)
+        for (int x = 0; x < 3; x++)
         {
-            for (int j = 0; j < 6; j++)
+            for (int y = 0; y < 7; y++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                    (
-                        // Name
-                        EnemyName.Cube_Small + " " + (i + j),
-                        // Appearance
-                        Enemy.Cube_Medium_Black,
-                        // Container
-                        enemyContainer,
-                        // Material
-                        "default",
-                        // Health
-                        2,
-                        null
-                    )
+                        (
+                            EnemyName.Cube_Small + " " + (x + y),
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer,
+                            "default",
+                            10,
+                            null
+                        )
                 );
 
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
-
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
             }
         }
 
-        // Cluster 03 - 5 rows 3 collumns
-        for (int i = 0; i < 3; i++)
+        for (int x = 0; x < 7; x++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int y = 0; y < 3; y++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                    (
-                        // Name
-                        EnemyName.Cube_Small + " " + (i + j),
-                        // Appearance
-                        Enemy.Cube_Medium_Black,
-                        // Container
-                        enemyContainer,
-                        // Material
-                        "default",
-                        // Health
-                        2,
-                        null
-                    )
+                        (
+                            EnemyName.Cube_Small + " " + (x + y),
+                            Enemy.Cube_Medium_Black,
+                            enemyContainer,
+                            "default",
+                            10,
+                            null
+                        )
                 );
 
-                // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
-
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(74.5f + x, 0, 25.5f + y));
             }
         }
         #endregion
+    }
+
+    private int DuplicateCatcher(int number, int maxNum, List<int> list)
+    {
+        if (list.Contains(number))
+        {
+            return DuplicateCatcher(UnityEngine.Random.Range(0, maxNum), maxNum, list);
+        }
+
+        else
+        {
+            return number;
+        }
+
     }
 
     #region Scenario Stuff

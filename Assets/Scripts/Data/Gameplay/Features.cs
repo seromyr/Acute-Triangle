@@ -459,7 +459,7 @@ public class Features
     private Timer hardShellTimer;
 
     // Callback action when it's time to regenerate pillars
-    public Action OnPillarsRegenerationCallback;
+    public Action OnReactorsRegenerationCallback;
 
     private void CreateHardShellsMechanic()
     {
@@ -475,7 +475,7 @@ public class Features
         pillars = new List<EnemyEntity>();
         pillarsPosition = new List<Vector3>();
         hardShellTimer = body.AddComponent<Timer>();
-        OnPillarsRegenerationCallback += ReGeneratePillars;
+        OnReactorsRegenerationCallback += ReGeneratePillars;
     }
 
     public void SplitShells(float distance)
@@ -509,7 +509,7 @@ public class Features
                 new Enemy_Minion
                 (
                     "Power Pillar " + pillarID,
-                    Enemy.PowerPillar,
+                    Enemy.PowerReactor,
                     enemyContainer,
                     "default",
                     15,
@@ -537,7 +537,7 @@ public class Features
             OnAllPillarsDestroyed?.Invoke(this, EventArgs.Empty);
             pillars.Clear();
             //Debug.LogError("All pillars destroyed");
-            hardShellTimer.SetTimer(12f, 1, OnPillarsRegenerationCallback);
+            hardShellTimer.SetTimer(12f, 1, OnReactorsRegenerationCallback);
         }
     }
 

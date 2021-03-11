@@ -21,7 +21,7 @@ public class LevelScenario_06 : MonoBehaviour
         BuildScenario();
 
         // Send mission instruction
-        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the core");
     }
 
     // Tutorial Level 6

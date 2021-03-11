@@ -124,7 +124,8 @@
         public const string Sphere_Medium_Red_HalfShell = "Enemy/Sphere_M_Red_HalfShell";
         public const string Cube_Medium_Black = "Enemy/Cube_M_Black";
         public const string Triangle_Medium_Black = "Enemy/Triangle_Medium_Black";
-        public const string PowerPillar = "Enemy/PowerPillar";
+        public const string Cylinder_Medium_Black = "Enemy/Cylinder_Medium_Black";
+        public const string PowerReactor = "Enemy/PowerPillar";
     }
 
     public static class EnemyName

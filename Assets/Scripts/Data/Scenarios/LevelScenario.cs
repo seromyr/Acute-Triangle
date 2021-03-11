@@ -7,6 +7,14 @@ using UnityEngine.SceneManagement;
 
 public class LevelScenario : MonoBehaviour
 {
+    private void Awake()
+    {
+        if (Player.main == null)
+        {
+            SceneManager.LoadScene("Preload");
+        }
+    }
+
     private void Start()
     {
         // Get current scene name to load level scenario

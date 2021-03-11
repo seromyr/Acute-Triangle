@@ -7,14 +7,36 @@ using Constants;
 public class LevelScenario_15 : MonoBehaviour
 {
     private EnemyEntity boss;
-    private Transform enemyContainer;
-    private int bossBlasterCount;
 
+    private Transform enemyContainer;
+
+    private Vector3[] minionSpawnSpots, pillarSpawnSpots;
 
     private void Awake()
     {
         // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
+
+        // Create a collection of spawning spots for minions
+        minionSpawnSpots = new Vector3[]
+        {
+            new Vector3(13.25f      ,   0    ,   0           ),
+            new Vector3(9.369165f   ,   0    ,   -9.369164f  ),
+            new Vector3(0           ,   0    ,   -13.25f     ),
+            new Vector3(-9.369167f  ,   0    ,   -9.369164f  ),
+            new Vector3(-13.25f     ,   0    ,   0           ),
+            new Vector3(-9.369169f  ,   0    ,   9.369162f   ),
+            new Vector3(0           ,   0    ,   13.25f      ),
+            new Vector3(9.369162f   ,   0    ,   9.369168f   )
+        };
+
+        // Create a collection of spawning spots for pillars
+        pillarSpawnSpots = new Vector3[]
+        {
+            new Vector3(17.41573f   + 0.25f   , -0.5f   ,   0   ),
+            new Vector3(0           + 0.25f   , -0.5f   ,   0   ),
+            new Vector3(-17.41573f  + 0.25f   , -0.5f   ,   0   ),
+        };
     }
 
     private void Start()
@@ -23,28 +45,25 @@ public class LevelScenario_15 : MonoBehaviour
         BuildScenario();
     }
 
-    // Scenario 05 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-5]
+    // Scenario 08 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-8]
     private void BuildScenario()
     {
-        //number of enemies
-        int enemyNum = 12;
-
         // Set player start position
-        Player.main.SetPosition(Vector3.zero);
+        Player.main.SetPosition(new Vector3(0, 0, -6));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Minotaur",
+            "Gearbox",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
-            // Boss placemenent
-            enemyContainer,
+            Enemy.Sphere_Medium_Red,
+            // Boss placemenent, needs to be placed at root for now
+            null,
             // Boss material
             "default",
             // Boss health
-            30,
+            50,
             // Register dead event action
             BossMonitor
         );
@@ -52,125 +71,60 @@ public class LevelScenario_15 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
+        // Activate Hard Shells mechanic
+        boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+
+        for (int i = 0; i < pillarSpawnSpots.Length; i++)
+        {
+            boss.Mechanics.CreatePillar(pillarSpawnSpots[i], GameObject.Find("PillarContainer").transform);
+        }
+
+        boss.Mechanics.OnReactorsRegenerationCallback += () => ActivateInvincibleState(null, null);
+
         // Set default position
-        boss.SetPosition(new Vector3(56.25f, 0.5f, 26.5f));
+        boss.SetPosition(new Vector3(0, 0.5f, 21));
+
+        boss.Transform.parent = GameObject.Find("RotaryRing").transform;
 
         // Add blasters to boss
-        bossBlasterCount = 4;
-        float cannonAngle = 90;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(bossBlasterCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
-        
-        bossBlasterCount = 4;
-        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, 4, BulletType.Destructible);
+
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(35f);
+        boss.Mechanics.SetLookingStatus(true);
+
+        // Activate Summon Minion mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
-        
-        boss.Mechanics.Add(Mechanic.SelfRotation);
-        boss.Mechanics.SetRotationParameters(true, 45f);
+        boss.Mechanics.DeactivateShield();
 
-        // Minion placements / summoning
-        boss.Mechanics.SetMaximumMinion(enemyNum);
-
-        boss.HitMonitor.SetDamageAcceptance(false);
-
-        GameObject[] spawnLocations = GameObject.FindGameObjectsWithTag("Enemy Spawn");
-
-        int index = UnityEngine.Random.Range(0, spawnLocations.Length);
-
-        List<int> selected = new List<int>();
-        for(int i = 0; i < enemyNum; i++)
-        {
-            index = DuplicateCatcher(UnityEngine.Random.Range(0, spawnLocations.Length), spawnLocations.Length, selected);
-            selected.Add(i);
-        }
-
-        for(int spot = 0; spot < enemyNum; spot++)
-        {
-            boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
-        }
-
-        
-
-        #region Create Destructible Obstacles / Blockades
-        List<EnemyEntity> obstacles = new List<EnemyEntity>();
-
-        for (int x = 0; x < 3; x++)
-        {
-            for(int y = 0; y < 7; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-1f + x, 0, 18.5f + y));
-            }
-        }
-
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 7; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
-            }
-        }
-
-        for (int x = 0; x < 7; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(74.5f + x, 0, 25.5f + y));
-            }
-        }
-        #endregion
     }
 
-    private int DuplicateCatcher(int number, int maxNum, List<int> list)
+    private void ActivateWeakenState(object sender, EventArgs e)
     {
-        if (list.Contains(number))
-        {
-            return DuplicateCatcher(UnityEngine.Random.Range(0, maxNum), maxNum, list);
-        }
+        isWeaken = true;
+        boss.HitMonitor.SetDamageAcceptance(true);
+        boss.Mechanics.SetShootingStatus(false);
 
-        else
-        {
-            return number;
-        }
+        // Local countdown tick for the timer to work
 
+        int tick = 8;
+        boss.Mechanics.SetMaximumMinion(tick);
+
+        boss.Mechanics.SummonTimer.SetTimer(0.1f, tick, () =>
+        {
+            boss.Mechanics.SpawnMinion(minionSpawnSpots[minionSpawnSpots.Length - tick], 1, 3, 6);
+            tick--;
+        });
+    }
+
+    private void ActivateInvincibleState(object sender, EventArgs e)
+    {
+        isWeaken = false;
+        boss.HitMonitor.SetDamageAcceptance(false);
+        boss.Mechanics.SetShootingStatus(true);
     }
 
     #region Scenario Stuff
@@ -181,6 +135,20 @@ public class LevelScenario_15 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
+        }
+    }
+
+    private bool isWeaken = false;
+
+    private void FixedUpdate()
+    {
+        if (isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.SplitShells(3f);
+        }
+        else if (!isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.CloseShells();
         }
     }
     #endregion
