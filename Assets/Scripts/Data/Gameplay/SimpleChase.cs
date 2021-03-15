@@ -17,7 +17,8 @@ public class SimpleChase : MonoBehaviour
     {
         if (isChasing)
         {
-            Vector3 direction = target.position - transform.position;
+            Vector3 direction = (target.position - transform.position);
+            direction.y = 0;
 
             Quaternion lookRotation = Quaternion.LookRotation(direction);
 

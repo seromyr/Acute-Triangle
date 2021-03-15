@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.3.0.2 Pre-Beta";
+        public const string CURRENTVERSION = "0.3.0.3 Pre-Beta";
         public const string BUILD = "1";
-        public const string DATE = "03102021";
+        public const string DATE = "03152021";
     }
 
     public enum GameState
@@ -31,7 +31,8 @@
     {
         Destructible,
         Indestructible,
-        Mixed
+        Mixed,
+        Explosive
     }
 
     public enum Mechanic
@@ -141,5 +142,7 @@
         public const string _03 = "Prefabs/Bullets/Bullet_03";
         public const string _04 = "Prefabs/Bullets/Bullet_04";
         public const string _05 = "Prefabs/Bullets/Bullet_05";
+        public const string _06 = "Prefabs/Bullets/Bullet_06";
+        public const string _07 = "Prefabs/Bullets/Bullet_07";
     }
 }

@@ -577,7 +577,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1165198
+  m_Name: pb_Mesh71264
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2364,7 +2364,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3097601642528260891}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2426,7 +2426,7 @@ Transform:
   m_GameObject: {fileID: 9022608298126878492}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.5, z: 9}
-  m_LocalScale: {x: 8, y: 1, z: 8}
+  m_LocalScale: {x: 6.5, y: 1, z: 6.5}
   m_Children: []
   m_Father: {fileID: 1538085253}
   m_RootOrder: 1

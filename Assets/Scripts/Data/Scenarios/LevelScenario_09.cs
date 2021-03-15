@@ -20,6 +20,9 @@ public class LevelScenario_09 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Ragazzino The Introvert");
     }
 
     // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
@@ -48,24 +51,31 @@ public class LevelScenario_09 : MonoBehaviour
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
         // Set boss default position
-        boss.SetPosition(new Vector3(24, 0.5f, 21.25f));
+        boss.SetPosition(new Vector3(15, 0.5f, 0));
+
+        // Activate Chase mechanic
+        boss.Mechanics.Add(Mechanic.Chase);
+        boss.Mechanics.SetChaseParams(true, -2);
 
         // Add blasters to boss
-        bossBlasterCount = 6;
-        float blasterAngle = 30;
+        bossBlasterCount = 1;
+        float blasterAngle = 180;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(bossBlasterCount, 195, blasterAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Indestructible);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Explosive);
 
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
+        //// Activate Patrol mechanic
+        //boss.Mechanics.Add(Mechanic.Patrol);
+        //boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
 
         #region Create Destructible Obstacles
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
-        // Cluster 01 - 2 rows 4 collumns
-        for (int i = 0; i < 4; i++)
+
+        // Cluster surrounds boss at starting point - 30 rows 30 collumns
+        int row = 10;
+        int column = 6;
+        for (int i = 0; i < column; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
@@ -80,20 +90,21 @@ public class LevelScenario_09 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        2,
+                        1,
                         null
                     )
                 );
 
                 // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-7.5f + i, 0, 4 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(14 + i, 0, 4 + j));
             }
         }
 
-        // Cluster 02 - 6 rows 7 collumns
-        for (int i = 0; i < 7; i++)
+        row = 10;
+        column = 6;
+        for (int i = 0; i < column; i++)
         {
-            for (int j = 0; j < 6; j++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
@@ -108,21 +119,21 @@ public class LevelScenario_09 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        2,
+                        1,
                         null
                     )
                 );
 
                 // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-16 + i, 0, 13 + j));
-
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(14 + i, 0, -14f + j));
             }
         }
 
-        // Cluster 03 - 5 rows 3 collumns
-        for (int i = 0; i < 3; i++)
+        row = 28;
+        column = 10;
+        for (int i = 0; i < column; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
@@ -137,17 +148,46 @@ public class LevelScenario_09 : MonoBehaviour
                         // Material
                         "default",
                         // Health
-                        2,
+                        1,
                         null
                     )
                 );
 
                 // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(8 + i, 0, 19 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(4 + i, 0, -14 + j));
+            }
+        }
 
+        row = 28;
+        column = 10;
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        1,
+                        null
+                    )
+                );
+
+                // Set default position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(20 + i, 0, -14 + j));
             }
         }
         #endregion
+
     }
 
     #region Scenario Stuff

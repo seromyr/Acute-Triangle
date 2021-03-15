@@ -9,6 +9,7 @@ public class LevelScenario_08 : MonoBehaviour
     private EnemyEntity boss;
     private Transform enemyContainer;
     private int blasterCount;
+    private float blasterAngle;
 
     private void Awake()
     {
@@ -20,6 +21,9 @@ public class LevelScenario_08 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Julliette The Dancer");
     }
 
     // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-1-boss-juliette]
@@ -54,6 +58,12 @@ public class LevelScenario_08 : MonoBehaviour
         // Set boss default position
         boss.SetPosition(new Vector3(0, 0.5f, 0));
 
+        // Activate Shooting mechanic
+        boss.Mechanics.Add(Mechanic.Shoot);
+
+        // Activate Chasing mechanic
+        boss.Mechanics.Add(Mechanic.ComplexeMovement);
+
         // Activate Aggressive Proximity mechanic
         boss.Mechanics.Add(Mechanic.AggressiveRadius);
         boss.Mechanics.SetAuraProximityIndicator(1);
@@ -61,91 +71,52 @@ public class LevelScenario_08 : MonoBehaviour
         boss.Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
         boss.Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
 
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.8f);
-
-        // Add blasters to boss
-        blasterCount = 6;
-        float cannonAngle = 60;
-        boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlasters(blasterCount, 0, cannonAngle, 0.1f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Mixed);
-
         // Set boss default state
         NonAggresiveState(null, null);
-
-        #region Create Sentries
-        List<Enemy_Default> sentries = new List<Enemy_Default>();
-        Vector3[] sentryPositions = new Vector3[]
-        {
-            new Vector3(-4,0.5f, 4),
-            //new Vector3(-2,0.5f, 4),
-            //new Vector3( 0,0.5f, 4),
-            //new Vector3( 2,0.5f, 4),
-            new Vector3( 4,0.5f, 4),
-            //new Vector3(-4,0.5f, 2),
-            //new Vector3( 4,0.5f, 2),
-            //new Vector3(-4,0.5f,-2),
-            //new Vector3( 4,0.5f,-2),
-            new Vector3(-4,0.5f,-4),
-            //new Vector3(-2,0.5f,-4),
-            //new Vector3( 0,0.5f,-4),
-            //new Vector3( 2,0.5f,-4),
-            new Vector3( 4,0.5f,-4),
-        };
-
-        for (int i = 0; i < sentryPositions.Length; i++)
-        {
-            sentries.Add
-                (
-                    new Enemy_Default
-                        (
-                            // Boss name
-                            "Sentry 0" + i,
-                            // Boss appearance
-                            Enemy.Cylinder_Medium_Black,
-                            // Boss placemenent
-                            enemyContainer,
-                            // Boss material
-                            "default",
-                            // Boss health
-                            10,
-                            // Register dead event action
-                            null
-                        )
-                );
-
-            // Set Sentry default position
-            sentries[i].SetPosition(sentryPositions[i]);
-            sentries[i].Mechanics.Add(Mechanic.Shoot);
-
-            blasterCount = 4;
-            float blasterAngle = 90;
-            sentries[i].Mechanics.CreateBlasters(blasterCount, 45, blasterAngle, 0.5f, 5, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Mixed);
-        }
-
-        #endregion
     }
 
     private void NonAggresiveState(object sender, EventArgs e)
     {
-        for (int i = 1; i < blasterCount; i++)
-        {
-            boss.Mechanics.Blasters[i].SetActive(false);
-        }
+        ActivateAttackPattern(1);
 
-        boss.Mechanics.SetRotationParameters(true, 100f);
-        boss.Mechanics.SetPatrollingStatus(true);
+        boss.Mechanics.SetRotationParameters(true, 180);
+        boss.Mechanics.SetRunningAroundParams(true, 15);
     }
 
     private void AggressiveState(object sender, EventArgs e)
     {
-        for (int i = 0; i < blasterCount; i++)
-        {
-            boss.Mechanics.Blasters[i].SetActive(true);
-        }
+        ActivateAttackPattern(2);
         boss.Mechanics.SetRotationParameters(true, 36f);
-        boss.Mechanics.SetPatrollingStatus(false);
+        boss.Mechanics.SetRunningAroundParams(true, 10f);
+    }
+
+    private void ActivateAttackPattern(int id)
+    {
+        // Clear all cannon objects
+        boss.Mechanics.DestroyAllCannons();
+
+        switch (id)
+        {
+            default:
+            case 1:
+                blasterCount = 1;
+                blasterAngle = 0;
+                boss.Mechanics.CreateBlasters(blasterCount, 0, blasterAngle, 0.01f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 2, BulletType.Indestructible);
+                boss.Mechanics.SetShootingDelay(0, 0.2f);
+                break;
+
+            case 2:
+                blasterCount = 6;
+                blasterAngle = 60;
+                boss.Mechanics.CreateBlasters(blasterCount, 0, blasterAngle, 0.02f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 2, BulletType.Destructible);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    boss.Mechanics.SetShootingDelay(i, 0.1f);
+                }
+
+                break;
+        }
     }
 
     #region Scenario Stuff

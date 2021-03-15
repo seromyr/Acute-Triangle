@@ -33,6 +33,11 @@ public class Blaster : MonoBehaviour
         //Debug.Log("Resume Shooting");
     }
 
+    public void DelayShooting(float delay)
+    {
+        timer.SetDelay(delay);
+    }
+
     private void StartShooting()
     {
         // Decide which type of bullet this shooter will fire
@@ -47,6 +52,9 @@ public class Blaster : MonoBehaviour
             case BulletType.Mixed:
                 if (Random.value == 0.5f) LoadBullet(Bullet._03, "Destructible");
                 else                      LoadBullet(Bullet._04, "Indestructible");
+                break;
+            case BulletType.Explosive:
+                LoadBullet(Bullet._07, "Explosive");
                 break;
         }
 
