@@ -9,46 +9,41 @@ public class LevelScenario_04 : MonoBehaviour
     private EnemyEntity boss;
     private Transform enemyContainer;
     private int bossBlasterCount;
-    private Vector3[] pillarPosition;
 
     private void Awake()
     {
         // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
-        pillarPosition = new Vector3[]
-        {
-            new Vector3( 10 , -0.5f ,  10 ),
-            new Vector3(-10 , -0.5f ,  10 ),
-            new Vector3( 10 , -0.5f , -10 ),
-            new Vector3(-10 , -0.5f , -10 )
-        };
     }
 
     private void Start()
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 04 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-4]
+    // Tutorial Level 4
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -10));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Navel",
+            "Boss",
             // Boss appearance
-            Enemy.Sphere_Medium_Red,
+            Enemy.Sphere_Large_Black,
             // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            100,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -56,70 +51,52 @@ public class LevelScenario_04 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
+
         // Add blasters to boss
-        bossBlasterCount = 9;
-        float cannonAngle = 12;
+        bossBlasterCount = 1;
+        float blasterAngle = 0;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, -48, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
-
-        bossBlasterCount = 2;
-        cannonAngle = 120;
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
-
-
-        // Activate Hard Shells mechanic
-        boss.Mechanics.Add(Mechanic.HardShells);
-        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
-        for (int i = 0; i < pillarPosition.Length; i++)
-        {
-            boss.Mechanics.CreatePillar(pillarPosition[i], enemyContainer);
-        }
-
-        boss.Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
-
-       // Set boss default position
-        boss.SetPosition(new Vector3(0, 0.5f, 0));
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 0.1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         // Activate Look At Player mechanic
         boss.Mechanics.Add(Mechanic.LookAtPlayer);
-        boss.Mechanics.SetLookingSpeed(50);
-
-        // Activate Minion Summoning mechanic
-        boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.DeactivateShield();
-
-        // Set boss default state
-        ActivateInvincibleState(null, null);
-    }
-
-    private void ActivateWeakenState(object sender, EventArgs e)
-    {
-        isWeaken = true;
-        boss.Mechanics.SetShootingStatus(true);
+        boss.Mechanics.SetLookingSpeed(40);
         boss.Mechanics.SetLookingStatus(true);
-        boss.HitMonitor.SetDamageAcceptance(true);
-    }
 
-    private void ActivateInvincibleState(object sender, EventArgs e)
-    {
-        isWeaken = false;
-        boss.Mechanics.SetShootingStatus(false);
-        boss.Mechanics.SetLookingStatus(false);
-        boss.HitMonitor.SetDamageAcceptance(false);
+        #region Create Obstacles
+        List<EnemyEntity> obstacles = new List<EnemyEntity>();
+        int row = 10;
+        int collumn = 5;
 
-        // Local countdown tick for the timer to work
-        boss.Mechanics.SetMaximumMinion(10);
-        int tick = 10;
-        boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
+        for (int i = 0; i < collumn; i++)
         {
-            tick--;
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
+                );
 
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
-            randomPositionAroundBoss.y = 0;
-
-            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
-        });
-
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 5 + j));
+            }
+        }
+        #endregion
     }
 
     #region Scenario Stuff
@@ -129,25 +106,7 @@ public class LevelScenario_04 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
-
-            boss.Mechanics.OnAllPillarsDestroyed -= ActivateWeakenState;
-            boss.Mechanics.OnPillarsRegenerationCallback = delegate { };
         }
     }
-
-    private bool isWeaken = false;
-
-    private void FixedUpdate()
-    {
-        if (isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.SplitShells(3f);
-        }
-        else if (!isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.CloseShells();
-        }
-    }
-    #endregion
 }
+#endregion

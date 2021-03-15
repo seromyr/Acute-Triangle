@@ -6,116 +6,95 @@ using Constants;
 
 public class LevelScenario_10 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
-
-    private GameObject enemyContainer;
-
-    private int bossCount, cannonCount;
+    private EnemyEntity boss;
+    private Transform enemyContainer;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
-        // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        // Create enemy container for organized objects managing
+        enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Warwick The Impostor King");
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 03 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
     private void BuildScenario()
     {
-        // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
-
-        // Add enemy into the list
-        _enemyList.Add
+        boss = new Enemy_Default
         (
-            new Enemy_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                30,
-                // Register dead event action
-                BossCountMonitor
-            )
+            // Boss name
+            "Warwick",
+            // Boss appearance
+            Enemy.Sphere_Large_Black,
+            // Boss container
+            enemyContainer.transform,
+            // Boss material
+            "default",
+            // Boss health
+            20,
+            // Boss dead event handler
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Enable self rotation mode
-        //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        // Set Boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
 
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        // Activate Chase mechanic
+        boss.Mechanics.Add(Mechanic.Chase);
+        boss.Mechanics.SetChaseParams(true, 2);
 
-        //// Set patrol parameter
-        //_enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        //_enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
+        // Activate Minion Summoning mechanic
+        boss.Mechanics.Add(Mechanic.SummonMinions);
+        boss.Mechanics.SetMaximumMinion(10);
 
-        //_enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += EnableAllShooters;
-        //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += EnableFistShooter;
+        // Boss takes no damage until the shield is down
+        boss.HitMonitor.SetDamageAcceptance(false);
 
-        //// Add cannons
-        //cannonCount = 6;
-        //float cannonAngle = 60;
-        //_enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        // Set local countdown tick for the timer to work
+        int tick = 10;
+        boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
+        {
+            tick--;
 
-        //// Default boss cannon state
-        //EnableFistShooter(null, null);
+            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
+            randomPositionAroundBoss.y = 0;
+
+            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 2.5f, 2, 10);
+        });
+
+        boss.Mechanics.OnAllMinionDieCallback += () =>
+        {
+            boss.Mechanics.SetChaseParams(true, -5);
+
+            boss.Mechanics.Add(Mechanic.Shoot);
+            Quaternion firstAngle = Quaternion.LookRotation(transform.position - Player.main.GetPosition);
+
+            boss.Mechanics.CreateBlasters(1, boss.Transform.rotation.eulerAngles.y, 0, 0.05f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE, BulletType.Destructible);
+            boss.Mechanics.SetShootingDelay(0, 1f);
+
+            boss.Mechanics.CreateBlasters(1, boss.Transform.rotation.eulerAngles.y, 0, 1.05f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 2, BulletType.Explosive);
+            boss.Mechanics.SetShootingDelay(0, 1f);
+        };
     }
 
-    //private void EnableFistShooter(object sender, EventArgs e)
-    //{
-    //    for (int i = 1; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
-    //}
-
-    //private void EnableAllShooters(object sender, EventArgs e)
-    //{
-    //    for (int i = 0; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
-    //}
-
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
-
-            //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
-            //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
-
-            _enemyList.Clear();
+            Debug.Log("No boss remaining");
         }
     }
     #endregion

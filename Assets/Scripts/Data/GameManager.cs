@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            nextLevel = 0;
+            nextLevel = 1;
         }
 
         // Subcribe to player died event
@@ -164,9 +164,6 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____NEW_____Routines()
     {
-        //// Next level reset
-        //nextLevel = 0;
-
         if (overrideMode)
         {
             nextLevel = overrideLevel;
@@ -174,7 +171,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // Next level reset
-            nextLevel = 0;
+            nextLevel = 1;
         }
 
         Perform_____NEXT____Routines();
@@ -184,7 +181,7 @@ public class GameManager : MonoBehaviour
     {
         // Load next level
         SceneManager.LoadScene(Map.NAME + nextLevel);
-        Debug.Log("Next level: Level_0" + nextLevel);
+        Debug.Log("Next level: Level_" + nextLevel);
 
         // Activate player
         //PlayerMonitor.main.gameObject.SetActive(true);
@@ -228,7 +225,7 @@ public class GameManager : MonoBehaviour
         nextLevel++;
 
         //Cheat
-        if (nextLevel == 8)
+        if (nextLevel == 16)
         {
             desinationState = GameState.START;
             StartCoroutine(SwitchState(GameState.LOADING, 2.5f));
@@ -258,8 +255,6 @@ public class GameManager : MonoBehaviour
 
     private void Perform__LOADLEVEL__Routines()
     {
-        //nextLevel = 0;
-
         Perform_____NEXT____Routines();
     }
 

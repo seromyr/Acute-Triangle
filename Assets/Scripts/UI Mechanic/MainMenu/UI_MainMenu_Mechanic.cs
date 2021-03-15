@@ -24,8 +24,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
 
     // Level Selection group
     private Image levelSelectBkg;
-    private Button level_1, level_2, level_3, level_4, level_5, level_6, level_7, level_8, level_9, level_10, levelBackToMain
-        ;
+    private Button level_1, level_2, level_3, level_4, level_5, level_6, level_7, level_8, level_9, level_10, level_11, level_12, level_13, level_14, level_15, level_16, level_17, level_18, level_19, level_20, levelBackToMain;
     // -------------------
 
     // Credits Screen group
@@ -179,8 +178,18 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         level_6 = levelSelectBkg.transform.Find("Level 6").GetComponent<Button>();
         level_7 = levelSelectBkg.transform.Find("Level 7").GetComponent<Button>();
         level_8 = levelSelectBkg.transform.Find("Level 8").GetComponent<Button>();
-        //level_9 = levelSelectBkg.transform.Find("Level 9").GetComponent<Button>();
-        //level_10 = levelSelectBkg.transform.Find("Level 10").GetComponent<Button>();
+        level_9 = levelSelectBkg.transform.Find("Level 9").GetComponent<Button>();
+        level_10 = levelSelectBkg.transform.Find("Level 10").GetComponent<Button>();
+        level_11 = levelSelectBkg.transform.Find("Level 11").GetComponent<Button>();
+        level_12 = levelSelectBkg.transform.Find("Level 12").GetComponent<Button>();
+        level_13 = levelSelectBkg.transform.Find("Level 13").GetComponent<Button>();
+        level_14 = levelSelectBkg.transform.Find("Level 14").GetComponent<Button>();
+        level_15 = levelSelectBkg.transform.Find("Level 15").GetComponent<Button>();
+        level_16 = levelSelectBkg.transform.Find("Level 16").GetComponent<Button>();
+        level_17 = levelSelectBkg.transform.Find("Level 17").GetComponent<Button>();
+        level_18 = levelSelectBkg.transform.Find("Level 18").GetComponent<Button>();
+        level_19 = levelSelectBkg.transform.Find("Level 19").GetComponent<Button>();
+        level_20 = levelSelectBkg.transform.Find("Level 20").GetComponent<Button>();
 
         level_1.onClick.AddListener(() => GoToLevel(1));
         level_2.onClick.AddListener(() => GoToLevel(2));
@@ -190,6 +199,18 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         level_6.onClick.AddListener(() => GoToLevel(6));
         level_7.onClick.AddListener(() => GoToLevel(7));
         level_8.onClick.AddListener(() => GoToLevel(8));
+        level_9.onClick.AddListener(() => GoToLevel(9));
+        level_10.onClick.AddListener(() => GoToLevel(10));
+        level_11.onClick.AddListener(() => GoToLevel(11));
+        level_12.onClick.AddListener(() => GoToLevel(12));
+        level_13.onClick.AddListener(() => GoToLevel(13));
+        level_14.onClick.AddListener(() => GoToLevel(14));
+        level_15.onClick.AddListener(() => GoToLevel(15));
+        level_16.onClick.AddListener(() => GoToLevel(16));
+        level_17.onClick.AddListener(() => GoToLevel(17));
+        level_18.onClick.AddListener(() => GoToLevel(18));
+        level_19.onClick.AddListener(() => GoToLevel(19));
+        level_20.onClick.AddListener(() => GoToLevel(20));
 
         // Add function to Back To Main Menu Button
         levelBackToMain = levelSelectBkg.transform.Find("BackToMainMenu").GetComponent<Button>();
@@ -199,7 +220,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     private void GoToLevel(int levelNumber)
     {
         //Debug.LogError(levelNumber);
-        GameManager.main.SetNextLevel(levelNumber - 1);
+        GameManager.main.SetNextLevel(levelNumber);
     }
 
 

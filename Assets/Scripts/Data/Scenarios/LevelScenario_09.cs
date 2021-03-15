@@ -6,116 +6,198 @@ using Constants;
 
 public class LevelScenario_09 : MonoBehaviour
 {
-    private List<EnemyEntity> _enemyList;
-
-    private GameObject enemyContainer;
-
-    private int bossCount, cannonCount;
+    private EnemyEntity boss;
+    private Transform enemyContainer;
+    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create a list of enemy to use in any level
-        _enemyList = new List<EnemyEntity>();
-
-        // Create enemy container for organized object managing
-        enemyContainer = new GameObject("EnemyContainer");
+        // Create enemy container for organized objects managing
+        enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
     private void Start()
     {
-        // Clear the enemy list to clean garbage
-        _enemyList.Clear();
-
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Ragazzino The Introvert");
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-1]
+    // Scenario 02 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-2]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(Vector3.zero);
 
-        // Add enemy into the list
-        _enemyList.Add
+        boss = new Enemy_Default
         (
-            new Enemy_Default
-            (
-                // Boss name
-                "Boss",
-                // Boss appearance
-                Enemy.Sphere_Large_Black,
-                // Boss placemenent
-                enemyContainer.transform,
-                // Boss material
-                "default",
-                // Boss health
-                30,
-                // Register dead event action
-                BossCountMonitor
-            )
+            // Boss name
+            "Ragazzino",
+            // Boss appearance
+            Enemy.Boss_02,
+            // Boss container
+            enemyContainer,
+            // Boss material
+            "default",
+            // Boss health
+            30,
+            // Boss dead event handler
+            BossMonitor
         );
 
-        // Because this level only has 1 boss, so the boss id automatically known as 0
-        bossCount = 1;
+        // *IMPORTANT* Get enemy container reference for features accessing
+        boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Enable self rotation mode
-        //_enemyList[0].Mechanics.Add(Mechanic.SelfRotation);
+        // Set boss default position
+        boss.SetPosition(new Vector3(15, 0.5f, 0));
 
-        // Set default position
-        _enemyList[0].SetPosition(new Vector3(0, 0.5f, 10));
+        // Activate Chase mechanic
+        boss.Mechanics.Add(Mechanic.Chase);
+        boss.Mechanics.SetChaseParams(true, -2);
 
-        //// Set patrol parameter
-        //_enemyList[0].Mechanics.Add(Mechanic.Patrol);
-        //_enemyList[0].Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.4f);
+        // Add blasters to boss
+        bossBlasterCount = 1;
+        float blasterAngle = 180;
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Explosive);
 
-        //_enemyList[0].Mechanics.Add(Mechanic.AggressiveRadius);
-        //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity += EnableAllShooters;
-        //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity += EnableFistShooter;
+        //// Activate Patrol mechanic
+        //boss.Mechanics.Add(Mechanic.Patrol);
+        //boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
 
-        //// Add cannons
-        //cannonCount = 6;
-        //float cannonAngle = 60;
-        //_enemyList[0].Mechanics.Add(Mechanic.Shoot);
-        //_enemyList[0].Mechanics.CreateMultipleCannons(cannonCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
+        #region Create Destructible Obstacles
+        List<EnemyEntity> obstacles = new List<EnemyEntity>();
 
-        //// Default boss cannon state
-        //EnableFistShooter(null, null);
+        // Cluster surrounds boss at starting point - 30 rows 30 collumns
+        int row = 10;
+        int column = 6;
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        1,
+                        null
+                    )
+                );
+
+                // Set default position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(14 + i, 0, 4 + j));
+            }
+        }
+
+        row = 10;
+        column = 6;
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        1,
+                        null
+                    )
+                );
+
+                // Set default position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(14 + i, 0, -14f + j));
+            }
+        }
+
+        row = 28;
+        column = 10;
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        1,
+                        null
+                    )
+                );
+
+                // Set default position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(4 + i, 0, -14 + j));
+            }
+        }
+
+        row = 28;
+        column = 10;
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        1,
+                        null
+                    )
+                );
+
+                // Set default position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(20 + i, 0, -14 + j));
+            }
+        }
+        #endregion
+
     }
 
-    //private void EnableFistShooter(object sender, EventArgs e)
-    //{
-    //    for (int i = 1; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(false);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(100f);
-    //}
-
-    //private void EnableAllShooters(object sender, EventArgs e)
-    //{
-    //    for (int i = 0; i < cannonCount; i++)
-    //    {
-    //        _enemyList[0].Mechanics.Cannons[i].SetActive(true);
-    //    }
-    //    _enemyList[0].Mechanics.SetRotationParameters(36f);
-    //}
-
     #region Scenario Stuff
-    private void BossCountMonitor(object sender, EventArgs e)
+    private void BossMonitor(object sender, EventArgs e)
     {
-        bossCount--;
-
         // Victory Condition
-        if (bossCount == 0)
+        if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss left");
-
-            //_enemyList[0].Mechanics.ProximityMonitor.OnEnterProximity -= EnableAllShooters;
-            //_enemyList[0].Mechanics.ProximityMonitor.OnExitProximity -= EnableFistShooter;
-
-            _enemyList.Clear();
+            Debug.Log("No boss remaining");
         }
     }
     #endregion

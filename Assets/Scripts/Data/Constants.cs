@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.3.0.1";
+        public const string CURRENTVERSION = "0.3.0.3 Pre-Beta";
         public const string BUILD = "1";
-        public const string DATE = "03082021";
+        public const string DATE = "03152021";
     }
 
     public enum GameState
@@ -30,7 +30,9 @@
     public enum BulletType 
     {
         Destructible,
-        Indestructible
+        Indestructible,
+        Mixed,
+        Explosive
     }
 
     public enum Mechanic
@@ -61,18 +63,28 @@
     }
     public static class Map
     {
-        public const string NAME = "Level 0";
+        public const string NAME = "Level ";
 
-        public const string LV000 = "Level 00";
-        public const string LV001 = "Level 01";
-        public const string LV002 = "Level 02";
-        public const string LV003 = "Level 03";
-        public const string LV004 = "Level 04";
-        public const string LV005 = "Level 05";
-        public const string LV006 = "Level 06";
-        public const string LV007 = "Level 07";
-        public const string LV008 = "Level 08";
-        public const string LV009 = "Level 09";
+        public const string LV001 = "Level 1";
+        public const string LV002 = "Level 2";
+        public const string LV003 = "Level 3";
+        public const string LV004 = "Level 4";
+        public const string LV005 = "Level 5";
+        public const string LV006 = "Level 6";
+        public const string LV007 = "Level 7";
+        public const string LV008 = "Level 8";
+        public const string LV009 = "Level 9";
+        public const string LV010 = "Level 10";
+        public const string LV011 = "Level 11";
+        public const string LV012 = "Level 12";
+        public const string LV013 = "Level 13";
+        public const string LV014 = "Level 14";
+        public const string LV015 = "Level 15";
+        public const string LV016 = "Level 16";
+        public const string LV017 = "Level 17";
+        public const string LV018 = "Level 18";
+        public const string LV019 = "Level 19";
+        public const string LV020 = "Level 20";
     }
 
     public static class GeneralConst
@@ -110,9 +122,11 @@
 
         public const string Sphere_Large_Black = "Enemy/Sphere_L_Black";
         public const string Sphere_Medium_Red = "Enemy/Sphere_M_Red";
+        public const string Sphere_Medium_Red_HalfShell = "Enemy/Sphere_M_Red_HalfShell";
         public const string Cube_Medium_Black = "Enemy/Cube_M_Black";
         public const string Triangle_Medium_Black = "Enemy/Triangle_Medium_Black";
-        public const string PowerPillar = "Enemy/PowerPillar";
+        public const string Cylinder_Medium_Black = "Enemy/Cylinder_Medium_Black";
+        public const string PowerReactor = "Enemy/PowerPillar";
     }
 
     public static class EnemyName
@@ -128,5 +142,7 @@
         public const string _03 = "Prefabs/Bullets/Bullet_03";
         public const string _04 = "Prefabs/Bullets/Bullet_04";
         public const string _05 = "Prefabs/Bullets/Bullet_05";
+        public const string _06 = "Prefabs/Bullets/Bullet_06";
+        public const string _07 = "Prefabs/Bullets/Bullet_07";
     }
 }

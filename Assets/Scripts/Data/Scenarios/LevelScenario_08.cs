@@ -7,63 +7,44 @@ using Constants;
 public class LevelScenario_08 : MonoBehaviour
 {
     private EnemyEntity boss;
-
     private Transform enemyContainer;
-
-    private Vector3[] minionSpawnSpots, pillarSpawnSpots;
+    private int blasterCount;
+    private float blasterAngle;
 
     private void Awake()
     {
-        // Create enemy container for organized object managing
+        // Create enemy container for organized objects managing
         enemyContainer = new GameObject("EnemyContainer").transform;
-
-        // Create a collection of spawning spots for minions
-        minionSpawnSpots = new Vector3[]
-        {
-            new Vector3(13.25f      ,   0    ,   0           ),
-            new Vector3(9.369165f   ,   0    ,   -9.369164f  ),
-            new Vector3(0           ,   0    ,   -13.25f     ),
-            new Vector3(-9.369167f  ,   0    ,   -9.369164f  ),
-            new Vector3(-13.25f     ,   0    ,   0           ),
-            new Vector3(-9.369169f  ,   0    ,   9.369162f   ),
-            new Vector3(0           ,   0    ,   13.25f      ),
-            new Vector3(9.369162f   ,   0    ,   9.369168f   )
-        };
-
-        // Create a collection of spawning spots for pillars
-        pillarSpawnSpots = new Vector3[]
-        {
-            new Vector3(17.41573f   + 0.25f   , -0.5f   ,   0   ),
-            new Vector3(0           + 0.25f   , -0.5f   ,   0   ),
-            new Vector3(-17.41573f  + 0.25f   , -0.5f   ,   0   ),
-        };
     }
 
     private void Start()
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Julliette The Dancer");
     }
 
-    // Scenario 08 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-8]
+    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-1-boss-juliette]
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -6));
+        Player.main.SetPosition(new Vector3(0, 0, -10));
 
-        // Add enemy into the list
+        // Create level boss
         boss = new Enemy_Default
         (
             // Boss name
-            "Gearbox",
+            "Julliette",
             // Boss appearance
-            Enemy.Sphere_Medium_Red,
-            // Boss placemenent, needs to be placed at root for now
-            null,
+            Enemy.Boss_01,
+            // Boss placemenent
+            enemyContainer,
             // Boss material
             "default",
             // Boss health
-            50,
+            30,
             // Register dead event action
             BossMonitor
         );
@@ -71,60 +52,71 @@ public class LevelScenario_08 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Activate Hard Shells mechanic
-        boss.Mechanics.Add(Mechanic.HardShells);
-        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+        // Activate Self Rotation mechanic
+        boss.Mechanics.Add(Mechanic.SelfRotation);
 
-        for (int i = 0; i < pillarSpawnSpots.Length; i++)
-        {
-            boss.Mechanics.CreatePillar(pillarSpawnSpots[i], GameObject.Find("PillarContainer").transform);
-        }
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 0));
 
-        boss.Mechanics.OnPillarsRegenerationCallback += () => ActivateInvincibleState(null, null);
-
-        // Set default position
-        boss.SetPosition(new Vector3(0, 0.5f, 21));
-
-        boss.Transform.parent = GameObject.Find("RotaryRing").transform;
-
-        // Add blasters to boss
+        // Activate Shooting mechanic
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, 1, 4, BulletType.Destructible);
 
-        // Activate Look At Player mechanic
-        boss.Mechanics.Add(Mechanic.LookAtPlayer);
-        boss.Mechanics.SetLookingSpeed(35f);
-        boss.Mechanics.SetLookingStatus(true);
+        // Activate Chasing mechanic
+        boss.Mechanics.Add(Mechanic.ComplexeMovement);
 
-        // Activate Summon Minion mechanic
-        boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.DeactivateShield();
+        // Activate Aggressive Proximity mechanic
+        boss.Mechanics.Add(Mechanic.AggressiveRadius);
+        boss.Mechanics.SetAuraProximityIndicator(1);
+        boss.Mechanics.SetAgressiveDiameteMutiplierr(7f);
+        boss.Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
+        boss.Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
 
+        // Set boss default state
+        NonAggresiveState(null, null);
     }
 
-    private void ActivateWeakenState(object sender, EventArgs e)
+    private void NonAggresiveState(object sender, EventArgs e)
     {
-        isWeaken = true;
-        boss.HitMonitor.SetDamageAcceptance(true);
-        boss.Mechanics.SetShootingStatus(false);
+        ActivateAttackPattern(1);
 
-        // Local countdown tick for the timer to work
+        boss.Mechanics.SetRotationParameters(true, 180);
+        boss.Mechanics.SetRunningAroundParams(true, 15);
+    }
 
-        int tick = 8;
-        boss.Mechanics.SetMaximumMinion(tick);
+    private void AggressiveState(object sender, EventArgs e)
+    {
+        ActivateAttackPattern(2);
+        boss.Mechanics.SetRotationParameters(true, 36f);
+        boss.Mechanics.SetRunningAroundParams(true, 10f);
+    }
 
-        boss.Mechanics.SummonTimer.SetTimer(0.1f, tick, () =>
+    private void ActivateAttackPattern(int id)
+    {
+        // Clear all cannon objects
+        boss.Mechanics.DestroyAllCannons();
+
+        switch (id)
         {
-            boss.Mechanics.SpawnMinion(minionSpawnSpots[minionSpawnSpots.Length - tick], 1, 3, 6);
-            tick--;
-        });
-    }
+            default:
+            case 1:
+                blasterCount = 1;
+                blasterAngle = 0;
+                boss.Mechanics.CreateBlasters(blasterCount, 0, blasterAngle, 0.01f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 2, BulletType.Indestructible);
+                boss.Mechanics.SetShootingDelay(0, 0.2f);
+                break;
 
-    private void ActivateInvincibleState(object sender, EventArgs e)
-    {
-        isWeaken = false;
-        boss.HitMonitor.SetDamageAcceptance(false);
-        boss.Mechanics.SetShootingStatus(true);
+            case 2:
+                blasterCount = 6;
+                blasterAngle = 60;
+                boss.Mechanics.CreateBlasters(blasterCount, 0, blasterAngle, 0.02f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 2, BulletType.Destructible);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    boss.Mechanics.SetShootingDelay(i, 0.1f);
+                }
+
+                break;
+        }
     }
 
     #region Scenario Stuff
@@ -135,20 +127,9 @@ public class LevelScenario_08 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
-        }
-    }
 
-    private bool isWeaken = false;
-
-    private void FixedUpdate()
-    {
-        if (isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.SplitShells(3f);
-        }
-        else if (!isWeaken && boss.IsAlive)
-        {
-            boss.Mechanics.CloseShells();
+            boss.Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
+            boss.Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
         }
     }
     #endregion
