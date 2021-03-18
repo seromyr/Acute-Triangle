@@ -21,6 +21,17 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     private Color hpOverlayColor, highlightColor;
     private float colorPulsingTimer;
 
+    //boss ingameHud
+    private Image currentBHealth, nextBHealth;
+    private Image julietteBossHealth;
+    private Image ragazzinoBossHealth;
+    private Image warwickBossHealth;
+    private Image navelBossHealth;
+    private Image minotaurBossHealth;
+    private Image pupuMoxieBossHealth;
+    private Image gearboxBossHealth;
+    private Image beholderBossHealth;
+
     private void Awake()
     {
         // Make the In Game Menu a Singleton
@@ -74,6 +85,15 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         hpFrameOverlay.color = hpOverlayColor;
         highlightColor = new Color(0.8f, 0, 0, 0);
         colorPulsingTimer = 0;
+
+        julietteBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        ragazzinoBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        warwickBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        navelBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        minotaurBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        pupuMoxieBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        gearboxBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        beholderBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
     }
 
     private void Update()
