@@ -231,7 +231,7 @@ public class Features
                     new Enemy_Minion
                     (
                         "Minion " + minionID,
-                        Enemy.Triangle_Medium_Black,
+                        Enemy.Minion,
                         enemyContainer,
                         "default",
                         5,
@@ -448,7 +448,7 @@ public class Features
 
     private void CreateHardShellsMechanic()
     {
-        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shells"));
+        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shell_02"));
         shells.transform.parent = body.transform;
 
         this.shells = new List<GameObject>();

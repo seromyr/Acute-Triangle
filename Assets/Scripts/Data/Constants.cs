@@ -4,7 +4,7 @@
     {
         public const string CURRENTVERSION = "0.3.0.3 Pre-Beta";
         public const string BUILD = "1";
-        public const string DATE = "03152021";
+        public const string DATE = "03182021";
     }
 
     public enum GameState
@@ -119,6 +119,7 @@
     {
         public const string Boss_01 = "Enemy/Boss_01";
         public const string Boss_02 = "Enemy/Boss_02";
+        public const string Minion = "Enemy/Minion";
 
         public const string Sphere_Large_Black = "Enemy/Sphere_L_Black";
         public const string Sphere_Medium_Red = "Enemy/Sphere_M_Red";

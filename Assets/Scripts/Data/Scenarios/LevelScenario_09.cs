@@ -55,7 +55,7 @@ public class LevelScenario_09 : MonoBehaviour
 
         // Activate Chase mechanic
         boss.Mechanics.Add(Mechanic.Chase);
-        boss.Mechanics.SetChaseParams(true, -2);
+        boss.Mechanics.SetChaseParams(true, -5);
 
         // Add blasters to boss
         bossBlasterCount = 1;
@@ -63,16 +63,12 @@ public class LevelScenario_09 : MonoBehaviour
         boss.Mechanics.Add(Mechanic.Shoot);
         boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Explosive);
 
-        //// Activate Patrol mechanic
-        //boss.Mechanics.Add(Mechanic.Patrol);
-        //boss.Mechanics.SetPatrolParams(true, Direction.Forward, 7, 1f);
-
         #region Create Destructible Obstacles
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
 
         // Cluster surrounds boss at starting point - 30 rows 30 collumns
         int row = 10;
-        int column = 6;
+        int column = 11;
         for (int i = 0; i < column; i++)
         {
             for (int j = 0; j < row; j++)
@@ -101,7 +97,7 @@ public class LevelScenario_09 : MonoBehaviour
         }
 
         row = 10;
-        column = 6;
+        column = 11;
         for (int i = 0; i < column; i++)
         {
             for (int j = 0; j < row; j++)
@@ -159,7 +155,7 @@ public class LevelScenario_09 : MonoBehaviour
         }
 
         row = 28;
-        column = 10;
+        column = 5;
         for (int i = 0; i < column; i++)
         {
             for (int j = 0; j < row; j++)
@@ -183,7 +179,7 @@ public class LevelScenario_09 : MonoBehaviour
                 );
 
                 // Set default position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(20 + i, 0, -14 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(25 + i, 0, -14 + j));
             }
         }
         #endregion
