@@ -87,13 +87,13 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         colorPulsingTimer = 0;
 
         julietteBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        ragazzinoBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        warwickBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        navelBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        minotaurBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        pupuMoxieBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        gearboxBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
-        beholderBossHealth = transform.Find("JulietteHP").GetComponentInChildren<Image>();
+        ragazzinoBossHealth = transform.Find("RagazzinoHP").GetComponentInChildren<Image>();
+        warwickBossHealth = transform.Find("WarwickHP").GetComponentInChildren<Image>();
+        navelBossHealth = transform.Find("NavelHP").GetComponentInChildren<Image>();
+        minotaurBossHealth = transform.Find("MinotaurHP").GetComponentInChildren<Image>();
+        pupuMoxieBossHealth = transform.Find("Pupu&MoxieHP").GetComponentInChildren<Image>();
+        gearboxBossHealth = transform.Find("GearboxHP").GetComponentInChildren<Image>();
+        beholderBossHealth = transform.Find("BeholderHP").GetComponentInChildren<Image>();
     }
 
     private void Update()
@@ -118,6 +118,10 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         //Activate Hp Overlay Pulsing
         colorPulsingTimer = 0.2f;
     }
+
+    //get boss hp bar and get image
+    //get bosses health (current and max)
+    //update it
 
     private void PauseGame()
     {
