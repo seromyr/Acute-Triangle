@@ -18,6 +18,8 @@ public abstract class EnemyEntity : Entity, IDamageable
     private Features mechanics;
     public Features Mechanics { get { return mechanics; } }
 
+    protected AudioSource sound;
+
     protected void CreateBody(string name, string prefabName, Transform parent, string material)
     {
         _name = name;
@@ -26,6 +28,7 @@ public abstract class EnemyEntity : Entity, IDamageable
         _body.name = _name;
 
         meshRenderer = _body.GetComponent<MeshRenderer>();
+        sound = _body.AddComponent<AudioSource>();
 
         if (material != "default")
         {

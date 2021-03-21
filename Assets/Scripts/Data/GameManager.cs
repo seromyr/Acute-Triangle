@@ -160,6 +160,9 @@ public class GameManager : MonoBehaviour
 
         // Activate Main Menu UI
         UI_MainMenu_Mechanic.main.SetActiveCanvas(true);
+        //SoundManager.sound.SetupMainMenuMusic();
+        //GameObject.FindGameObjectWithTag("BGM").GetComponent<AudioSource>().clip = SoundManager.sound.GetMainMenuBGM();
+
     }
 
     private void Perform_____NEW_____Routines()
@@ -189,6 +192,8 @@ public class GameManager : MonoBehaviour
 
         //player.Avatar.SetActive(true);
         //player.Reset();
+
+        //create audio source
 
         Player.main.Body.SetActive(true);
         Player.main.Reset();

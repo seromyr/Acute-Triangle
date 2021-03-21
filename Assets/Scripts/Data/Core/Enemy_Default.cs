@@ -24,6 +24,8 @@ public class Enemy_Default : EnemyEntity
         HitMonitor.OnBulletHit += TakeDamage;
         OnDestroy += DestroySelf;
         OnDestroy += OnDeadCallback;
+
+        sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_01_edited");
     }
 
     public override void TakeDamage(object sender, EventArgs e)
@@ -34,12 +36,14 @@ public class Enemy_Default : EnemyEntity
             ModifyHealth(-Player.main.GetDamage);
 
             //Debug.Log("hit");
+            sound.PlayOneShot(sound.clip);
         }
         else
         {
             // HP limiter
             SetHealth(0);
 
+            sound.PlayOneShot(sound.clip);
             // Fire up dead event
             OnDestroy?.Invoke(this, EventArgs.Empty);
         }
