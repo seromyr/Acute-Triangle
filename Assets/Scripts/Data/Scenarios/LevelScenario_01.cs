@@ -8,11 +8,10 @@ public class LevelScenario_01 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
-    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create enemy container for organized objects managing
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
@@ -20,27 +19,30 @@ public class LevelScenario_01 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 01 [https://sites.google.com/view/acutetriangle/game-design/enemy-design/level-1-boss-juliette]
+    // Tutorial Level 1
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Julliette",
+            "Boss",
             // Boss appearance
-            Enemy.Boss_01,
+            Enemy.Sphere_Large_Black,
             // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            30,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -48,52 +50,8 @@ public class LevelScenario_01 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Activate Self Rotation mechanic
-        boss.Mechanics.Add(Mechanic.SelfRotation);
-
         // Set boss default position
-        boss.SetPosition(new Vector3(0, 0.5f, 10));
-
-        // Activate Aggressive Proximity mechanic
-        boss.Mechanics.Add(Mechanic.AggressiveRadius);
-        boss.Mechanics.SetAuraProximityIndicator(1);
-        boss.Mechanics.SetAgressiveDiameteMutiplierr(7f);
-        boss.Mechanics.ProximityMonitor.OnEnterProximity += AggressiveState;
-        boss.Mechanics.ProximityMonitor.OnExitProximity += NonAggresiveState;
-
-        // Activate Patrol mechanic
-        boss.Mechanics.Add(Mechanic.Patrol);
-        boss.Mechanics.SetPatrolParams(true, Direction.Right, 8, 0.8f);
-
-        // Add blasters to boss
-        bossBlasterCount = 6;
-        float cannonAngle = 60;
-        boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, cannonAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_FAST, BulletType.Destructible);
-
-        // Set boss default state
-        NonAggresiveState(null, null);
-    }
-
-    private void NonAggresiveState(object sender, EventArgs e)
-    {
-        for (int i = 1; i < bossBlasterCount; i++)
-        {
-            boss.Mechanics.Blasters[i].SetActive(false);
-        }
-
-        boss.Mechanics.SetRotationParameters(true, 100f);
-        boss.Mechanics.SetPatrollingStatus(true);
-    }
-
-    private void AggressiveState(object sender, EventArgs e)
-    {
-        for (int i = 0; i < bossBlasterCount; i++)
-        {
-            boss.Mechanics.Blasters[i].SetActive(true);
-        }
-        boss.Mechanics.SetRotationParameters(true, 36f);
-        boss.Mechanics.SetPatrollingStatus(false);
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
     }
 
     #region Scenario Stuff
@@ -103,10 +61,6 @@ public class LevelScenario_01 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
-
-            boss.Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
-            boss.Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
         }
     }
     #endregion

@@ -7,60 +7,55 @@ using Constants;
 public class LevelScenario_07 : MonoBehaviour
 {
     private EnemyEntity boss;
-
     private Transform enemyContainer;
-
-    private int bossBlasterCount, bossStates, currentBossState;
-
-    private Timer bossStateTimer;
-
-    private float shootingAngle;
-
-    private Vector3[] localWaypoints;
+    private int bossBlasterCount;
+    private Vector3[] reactorPositions;
+    private List<EnemyEntity> obstacles;
 
     private void Awake()
     {
         // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
 
-        // Create timer to change boss state
-        bossStateTimer = gameObject.AddComponent<Timer>();
-
-        localWaypoints = new Vector3[]
+        // Create power reactor position
+        reactorPositions = new Vector3[]
         {
-            new Vector3(0.23f, 0.5f, 0.15f),
-            new Vector3(21.98f, 0.5f, 21.9f),
-            new Vector3(21.98f, 0.5f, -21.9f),
-            new Vector3(-21.98f, 0.5f, 21.9f),
-            new Vector3(-21.98f, 0.5f, -21.9f),
+            new Vector3( -9f , -0.5f , 10 ),
+            new Vector3(  9f , -0.5f , 10 ),
         };
+
+        // Create obstacle list
+        obstacles = new List<EnemyEntity>();
     }
 
     private void Start()
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 07 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-7]
+    // Tutorial Level 7
     private void BuildScenario()
     {
         // Set player start position
-        Player.main.SetPosition(new Vector3(0.23f, 0, -20));
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Beholder",
+            "Boss",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Sphere_Medium_Red,
             // Boss placemenent
             enemyContainer,
             // Boss material
             "default",
             // Boss health
-            100,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -68,128 +63,149 @@ public class LevelScenario_07 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // This boss has 3 states
-        bossStates = 3;
-        currentBossState = 0;
+        // Activate Hard Shells mechanic
+        boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
+        for (int i = 0; i < reactorPositions.Length; i++)
+        {
+            boss.Mechanics.CreatePillar(reactorPositions[i], enemyContainer);
+        }
 
-        // Set default position
-        boss.SetPosition(new Vector3(0.23f, 0.5f, 0.15f));
+        boss.Mechanics.OnReactorsRegenerationCallback += () => ActivateInvincibleState(null, null);
 
-        // Activate Shield mechanic
-        boss.Mechanics.Add(Mechanic.Shield);
-        boss.Mechanics.SwitchToVioletShield();
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 10f));
+
+        // Add blasters to boss
+        bossBlasterCount = 1;
+        float blasterAngle = 0;
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 0.5f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Mixed);
 
         // Activate Look At Player mechanic
         boss.Mechanics.Add(Mechanic.LookAtPlayer);
-        boss.Mechanics.SetLookingSpeed(360);
-
-        // Add blasters to boss
-        boss.Mechanics.Add(Mechanic.Shoot);
-       
-        // Activate Complex Movement mechanic
-        boss.Mechanics.Add(Mechanic.ComplexeMovement);
-
-        // Activate Self Rotation mechanic
-        boss.Mechanics.Add(Mechanic.SelfRotation);
-        boss.Mechanics.SetRotationParameters(false);
-
-        // Setup timer to change boss state after 10 seconds
-        bossStateTimer.SetTimer(10, 1, () =>
-        {
-            // Loop through boss state
-            currentBossState = (currentBossState + 1) % bossStates;
-            boss.Transform.rotation = Quaternion.identity;
-            switch (currentBossState)
-            {
-                default:
-                case 0:
-                    ActivateStateOne();
-                    break;
-                case 1:
-                    ActivateStateTwo();
-                    break;
-                case 2:
-                    ActivateStateThree();
-                    break;
-            }
-        });
-
-        // Keep boss state switching recurring
-        bossStateTimer.SetLoop(true);
-
-        // Default state
-        ActivateStateOne();
-    }
-
-    private void ActivateStateOne()
-    {
-        Debug.Log("I - State " + currentBossState);
-       
-        ActivateAttackPattern(1);
-
-        boss.HitMonitor.SetDamageAcceptance(false);
-        boss.Mechanics.ActivateShield();
-        boss.Mechanics.SetRotationStatus(false);
+        boss.Mechanics.SetLookingSpeed(18);
         boss.Mechanics.SetLookingStatus(true);
-        boss.Mechanics.SetRunningAroundParams(true, 6);
 
+        // Set boss default state
+        ActivateInvincibleState(null, null);
+        CreateObstacles();
     }
 
-    private void ActivateStateTwo()
+    private void ActivateWeakenState(object sender, EventArgs e)
     {
-        Debug.Log("II - State " + currentBossState);
-        ActivateAttackPattern(2);
-
+        isWeaken = true;
         boss.HitMonitor.SetDamageAcceptance(true);
-        boss.Mechanics.DeactivateShield();
-        boss.Mechanics.SetLookingStatus(false);
-        boss.Mechanics.SetGoToWayPointParams(true, localWaypoints[UnityEngine.Random.Range(0,4)], 8);
+
+        CreateObstacles();
     }
 
-    private void ActivateStateThree()
+    private void CreateObstacles()
     {
-        Debug.Log("III - State " + currentBossState);
-        ActivateAttackPattern(3);
-
-        boss.Mechanics.SetRotationStatus(true);
-    }
-
-    private void ActivateAttackPattern(int id)
-    {
-        // Clear all cannon objects
-        boss.Mechanics.DestroyAllCannons();
-
-        switch (id)
+        foreach (EnemyEntity obstacle in obstacles)
         {
-            default:
-            case 1:
-                bossBlasterCount = 1;
-                shootingAngle = 0;
-                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 0.45f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1, BulletType.Destructible);
-                break;
-
-            case 2:
-                bossBlasterCount = 8;
-                shootingAngle = 45;
-                boss.Mechanics.Add(Mechanic.Shoot);
-                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 3.25f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 3, BulletType.Destructible);
-
-                bossBlasterCount = 180;
-                shootingAngle = 2;
-                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
-                break;
-
-            case 3:
-                bossBlasterCount = 4;
-                shootingAngle = 90;
-                boss.Mechanics.Add(Mechanic.Shoot);
-                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 45, shootingAngle, 0.2f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE - 4, BulletType.Destructible);
-
-                bossBlasterCount = 4;
-                boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, shootingAngle, (2 / 3f), 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Indestructible);
-
-                break;
+            Destroy(obstacle.Body);
         }
+        obstacles.Clear();
+
+        //Cluster 01
+        int row = 2;
+        int collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
+                );
+
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 5 + j));
+            }
+        }
+
+        //Cluster 02
+        row = 2;
+        collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
+                );
+
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-11 + i, 0, 5 + j));
+            }
+        }
+
+        //Cluster 03
+        row = 2;
+        collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
+                );
+
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(7 + i, 0, 5 + j));
+            }
+        }
+    }
+
+    private void ActivateInvincibleState(object sender, EventArgs e)
+    {
+        isWeaken = false;
+         boss.HitMonitor.SetDamageAcceptance(false);
     }
 
     #region Scenario Stuff
@@ -199,8 +215,22 @@ public class LevelScenario_07 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
+
+    private bool isWeaken = false;
+
+    private void FixedUpdate()
+    {
+        if (isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.SplitShells(3f);
+        }
+        else if (!isWeaken && boss.IsAlive)
+        {
+            boss.Mechanics.CloseShells();
+        }
+    }
+
     #endregion
 }

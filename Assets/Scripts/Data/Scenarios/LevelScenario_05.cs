@@ -10,7 +10,6 @@ public class LevelScenario_05 : MonoBehaviour
     private Transform enemyContainer;
     private int bossBlasterCount;
 
-
     private void Awake()
     {
         // Create enemy container for organized object managing
@@ -21,22 +20,22 @@ public class LevelScenario_05 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 05 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-5]
+    // Tutorial Level 5
     private void BuildScenario()
     {
-        //number of enemies
-        int enemyNum = 12;
-
         // Set player start position
-        Player.main.SetPosition(Vector3.zero);
+        Player.main.SetPosition(new Vector3(0, 0, 0));
 
         // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Minotaur",
+            "Boss",
             // Boss appearance
             Enemy.Sphere_Large_Black,
             // Boss placemenent
@@ -44,7 +43,7 @@ public class LevelScenario_05 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            30,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -52,125 +51,140 @@ public class LevelScenario_05 : MonoBehaviour
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
-        // Set default position
-        boss.SetPosition(new Vector3(56.25f, 0.5f, 26.5f));
+        // Set boss default position
+        boss.SetPosition(new Vector3(0, 0.5f, 20));
 
         // Add blasters to boss
-        bossBlasterCount = 4;
-        float cannonAngle = 90;
+        bossBlasterCount = 1;
+        float blasterAngle = 0;
         boss.Mechanics.Add(Mechanic.Shoot);
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 45, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
-        
-        bossBlasterCount = 4;
-        boss.Mechanics.CreateMultipleBlasters(bossBlasterCount, 0, cannonAngle, 1f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 0, blasterAngle, 0.5f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Mixed);
+
+        // Activate Look At Player mechanic
+        boss.Mechanics.Add(Mechanic.LookAtPlayer);
+        boss.Mechanics.SetLookingSpeed(180);
+        boss.Mechanics.SetLookingStatus(true);
+
+        // Activate Minion Summoning mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
-        
-        boss.Mechanics.Add(Mechanic.SelfRotation);
-        boss.Mechanics.SetRotationParameters(true, 45f);
+        boss.Mechanics.SetMaximumMinion(2);
 
-        // Minion placements / summoning
-        boss.Mechanics.SetMaximumMinion(enemyNum);
-
+        // Boss takes no damage until the shield is down
         boss.HitMonitor.SetDamageAcceptance(false);
 
-        GameObject[] spawnLocations = GameObject.FindGameObjectsWithTag("Enemy Spawn");
-
-        int index = UnityEngine.Random.Range(0, spawnLocations.Length);
-
-        List<int> selected = new List<int>();
-        for(int i = 0; i < enemyNum; i++)
+        // Minion position
+        Vector3[] minionPositions = new Vector3[]
         {
-            index = DuplicateCatcher(UnityEngine.Random.Range(0, spawnLocations.Length), spawnLocations.Length, selected);
-            selected.Add(i);
-        }
+            new Vector3(-10, 0, 20),
+            new Vector3(10, 0, 20)
+        };
 
-        for(int spot = 0; spot < enemyNum; spot++)
+        // Set local countdown tick for the timer to work
+        int tick = minionPositions.Length;
+
+        boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
         {
-            boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
-        }
+            boss.Mechanics.SpawnMinion(minionPositions[minionPositions.Length - tick], 0, 2, 10);
+            tick--;
 
-        
+        });
 
-        #region Create Destructible Obstacles / Blockades
+        #region Create Obstacles
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
 
-        for (int x = 0; x < 3; x++)
+        //Cluster 01
+        int row = 5;
+        int collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
         {
-            for(int y = 0; y < 7; y++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
                 );
 
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-1f + x, 0, 18.5f + y));
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 10 + j));
             }
         }
 
-        for (int x = 0; x < 3; x++)
+        //Cluster 02
+        row = 5;
+        collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
         {
-            for (int y = 0; y < 7; y++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
                 );
 
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-7 + i, 0, 18 + j));
             }
         }
 
-        for (int x = 0; x < 7; x++)
+        //Cluster 03
+        row = 5;
+        collumn = 5;
+
+        for (int i = 0; i < collumn; i++)
         {
-            for (int y = 0; y < 3; y++)
+            for (int j = 0; j < row; j++)
             {
                 obstacles.Add
                 (
                     new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
                 );
 
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(74.5f + x, 0, 25.5f + y));
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(3 + i, 0, 18 + j));
             }
         }
         #endregion
-    }
-
-    private int DuplicateCatcher(int number, int maxNum, List<int> list)
-    {
-        if (list.Contains(number))
-        {
-            return DuplicateCatcher(UnityEngine.Random.Range(0, maxNum), maxNum, list);
-        }
-
-        else
-        {
-            return number;
-        }
-
     }
 
     #region Scenario Stuff
@@ -180,8 +194,7 @@ public class LevelScenario_05 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
-    #endregion
 }
+#endregion

@@ -8,10 +8,11 @@ public class LevelScenario_03 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
+    private int bossBlasterCount;
 
     private void Awake()
     {
-        // Create enemy container for organized objects managing
+        // Create enemy container for organized object managing
         enemyContainer = new GameObject("EnemyContainer").transform;
     }
 
@@ -19,54 +20,79 @@ public class LevelScenario_03 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Destroy the sphere");
     }
 
-    // Scenario 03 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
+    // Tutorial Level 3
     private void BuildScenario()
     {
+        // Set player start position
+        Player.main.SetPosition(new Vector3(0, 0, 0));
+
+        // Add enemy into the list
         boss = new Enemy_Default
         (
             // Boss name
-            "Warwick",
+            "Boss",
             // Boss appearance
             Enemy.Sphere_Large_Black,
-            // Boss container
-            enemyContainer.transform,
+            // Boss placemenent
+            enemyContainer,
             // Boss material
             "default",
             // Boss health
-            30,
-            // Boss dead event handler
+            10,
+            // Register dead event action
             BossMonitor
         );
 
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
+        // Set boss default position
         boss.SetPosition(new Vector3(0, 0.5f, 20));
 
-        // Activate Chase mechanic
-        boss.Mechanics.Add(Mechanic.Chase);
-        boss.Mechanics.SetChaseParams(true, 2);
+        // Add blasters to boss
+        bossBlasterCount = 1;
+        float blasterAngle = 0;
+        boss.Mechanics.Add(Mechanic.Shoot);
+        boss.Mechanics.CreateBlasters(bossBlasterCount, 180, blasterAngle, 0.5f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
 
-        // Activate Minion Summoning mechanic
-        boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.SetMaximumMinion(10);
+        #region Create Obstacles
+        List<EnemyEntity> obstacles = new List<EnemyEntity>();
+        int row = 10;
+        int collumn = 5;
 
-        // Boss takes no damage until the shield is down
-        boss.HitMonitor.SetDamageAcceptance(false);
-
-        // Set local countdown tick for the timer to work
-        int tick = 10;
-        boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
+        for (int i = 0; i < collumn; i++)
         {
-            tick--;
+            for (int j = 0; j < row; j++)
+            {
+                obstacles.Add
+                (
+                    new Enemy_Default
+                    (
+                        // Name
+                        EnemyName.Cube_Small + " " + (i + j),
+                        // Appearance
+                        Enemy.Cube_Medium_Black,
+                        // Container
+                        enemyContainer,
+                        // Material
+                        "default",
+                        // Health
+                        2,
+                        null
+                    )
+                );
 
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
-            randomPositionAroundBoss.y = 0;
+                // Set position
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 5 + j));
+            }
+        }
+        #endregion
 
-            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
-        });
     }
 
     #region Scenario Stuff
@@ -76,7 +102,6 @@ public class LevelScenario_03 : MonoBehaviour
         if (!boss.IsAlive)
         {
             GameManager.main.WinGame();
-            Debug.Log("No boss remaining");
         }
     }
     #endregion

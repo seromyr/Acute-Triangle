@@ -203,6 +203,9 @@ public class Features
     private List<EnemyEntity> minionList;
     private int minionCount;
 
+    //Extra callback action to use incase of need
+    public Action OnAllMinionDieCallback;
+
     private void CreateMinionSummoningMechanic()
     {
         // Automatically create shield if a boss has minions
@@ -228,7 +231,7 @@ public class Features
                     new Enemy_Minion
                     (
                         "Minion " + minionID,
-                        Enemy.Triangle_Medium_Black,
+                        Enemy.Minion,
                         enemyContainer,
                         "default",
                         5,
@@ -241,33 +244,9 @@ public class Features
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
         minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 1, bulletSpeed, BulletType.Destructible);
+        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, bulletSpeed, BulletType.Destructible);
     }
-
-    public void SpawnStationaryMinion(Vector3 minionPosition, float minionFireRate = 2, float bulletSpeed = 5)
-    {
-        int minionID = minionList.Count;
-
-        minionList.Add
-                (
-                    new Enemy_Minion
-                    (
-                        "Minion " + minionID,
-                        Enemy.Triangle_Medium_Black,
-                        enemyContainer,
-                        "default",
-                        5,
-                        // Register dead event action
-                        OnMinionDeath
-                    )
-                );
-
-        minionList[minionID].SetPosition(minionPosition);
-        minionList[minionID].Mechanics.Add(Mechanic.Shoot);
-        minionList[minionID].Mechanics.Add(Mechanic.LookAtPlayer);
-        minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, 0.5f, bulletSpeed, BulletType.Destructible);
-    }
-
+    
     private void OnMinionDeath(object sender, EventArgs e)
     {
         minionCount--;
@@ -279,6 +258,7 @@ public class Features
             Debug.Log("All minions killed");
             DeactivateShield();
             body.GetComponent<Enemy_HitMonitor>().SetDamageAcceptance(true);
+            OnAllMinionDieCallback();
         }
     }
 
@@ -362,20 +342,20 @@ public class Features
 
     // Shooting parameter setting used in level scenario
     // This method create enemy blasters
-    public void CreateBlaster(Quaternion pointingAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateBlaster(Quaternion pointingAngle, float fireRate, float bulletSpeed, BulletType bulletType)
     {
         blasters.Add(UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Blaster"), body.transform.position, pointingAngle, body.transform));
-        blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSize, bulletSpeed, bulletType);
+        blasters[blasters.Count - 1].GetComponent<Blaster>().SetShootingParameters(fireRate, bulletSpeed, bulletType);
     }
 
-    public void CreateMultipleBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
+    public void CreateBlasters(int cannonCount, float _initialAngle, float cannonAngle, float fireRate, float bulletSize, float bulletSpeed, BulletType bulletType)
     {
         this.blasterCount = cannonCount;
         this.blasterAngle = cannonAngle;
         float initialAngle = _initialAngle;
         for (int i = 0; i < this.blasterCount; i++)
         {
-            CreateBlaster(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSize, bulletSpeed, bulletType);
+            CreateBlaster(Quaternion.Euler(new Vector3(0, initialAngle, 0)), fireRate, bulletSpeed, bulletType);
             initialAngle += this.blasterAngle;
         }
     }
@@ -403,9 +383,14 @@ public class Features
         {
             GameObject.Destroy(blasters[i]);
         }
-            blasters.Clear();
+
+        blasters.Clear();
     }
 
+    public void SetShootingDelay(int blasterID, float delay)
+    {
+        blasters[blasterID].GetComponent<Blaster>().DelayShooting(delay);
+    }
     #endregion
 
     #region Phase In / Phase Out
@@ -459,11 +444,11 @@ public class Features
     private Timer hardShellTimer;
 
     // Callback action when it's time to regenerate pillars
-    public Action OnPillarsRegenerationCallback;
+    public Action OnReactorsRegenerationCallback;
 
     private void CreateHardShellsMechanic()
     {
-        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shells"));
+        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shell_02"));
         shells.transform.parent = body.transform;
 
         this.shells = new List<GameObject>();
@@ -475,7 +460,7 @@ public class Features
         pillars = new List<EnemyEntity>();
         pillarsPosition = new List<Vector3>();
         hardShellTimer = body.AddComponent<Timer>();
-        OnPillarsRegenerationCallback += ReGeneratePillars;
+        OnReactorsRegenerationCallback += ReGeneratePillars;
     }
 
     public void SplitShells(float distance)
@@ -509,7 +494,7 @@ public class Features
                 new Enemy_Minion
                 (
                     "Power Pillar " + pillarID,
-                    Enemy.PowerPillar,
+                    Enemy.PowerReactor,
                     enemyContainer,
                     "default",
                     15,
@@ -537,7 +522,7 @@ public class Features
             OnAllPillarsDestroyed?.Invoke(this, EventArgs.Empty);
             pillars.Clear();
             //Debug.LogError("All pillars destroyed");
-            hardShellTimer.SetTimer(12f, 1, OnPillarsRegenerationCallback);
+            hardShellTimer.SetTimer(12f, 1, OnReactorsRegenerationCallback);
         }
     }
 
@@ -586,6 +571,10 @@ public class Features
             complexMovement.StartRunningAround();
             complexMovement.SetRunSpeed(speed);
         }
+        //else
+        //{
+        //    complexMovement.SetRunSpeed(speed);
+        //}
     }
 
     public void SetGoToWayPointParams(bool isGoingToWayPoint, Vector3 destination, float speed)
@@ -607,9 +596,10 @@ public class Timer : MonoBehaviour
     private Action timerCallback;
     private float timer, referenceTimer;
     private bool loop;
-    private int count;
+    private int count, pauseCount;
 
-    private int pauseCount;
+    private float delay, referenceDelay;
+    private int turn;
 
     public void SetLoop(bool value)
     {
@@ -628,7 +618,14 @@ public class Timer : MonoBehaviour
         pauseCount = count;
     }
 
-    public void SetTimer(float delay, int count, Action timerCallback)
+    public void SetDelay(float delay)
+    {
+        this.delay = delay;
+        this.referenceDelay = delay;
+        turn = 0;
+    }
+
+    public void SetTimer(float delay, int count, Action timerCallback, float delayAtLoopEnd = 0)
     {
         // Set delay between each tick
         this.timer = referenceTimer = delay;
@@ -641,15 +638,18 @@ public class Timer : MonoBehaviour
 
         // Set call back action
         this.timerCallback = timerCallback;
+
+        // Set delay at the end of the loop
+        this.delay = delayAtLoopEnd;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (timer > 0 && count > 0)
         {
             timer -= Time.deltaTime;
             
-            if (IsTimerElapsed)
+            if (timer <= 0)
             {
                 // Call back action
                 timerCallback();
@@ -663,11 +663,23 @@ public class Timer : MonoBehaviour
                 timer = referenceTimer;
             }
         }
-    }
 
-    public bool IsTimerElapsed
-    {
-        get { return timer <= 0f; }
+        if (delay > 0)
+        {
+            delay -= Time.deltaTime;
+
+            if (delay <= 0)
+            {
+                delay = referenceDelay;
+
+                turn = (turn + 1) % 2;
+
+                if (turn == 1)
+                {
+                    timer = referenceTimer + delay;
+                }
+            }
+        }
     }
 }
 
@@ -780,8 +792,8 @@ public class ComplexMovement : MonoBehaviour
         {
             Vector3 direction = (transform.position - target.position).normalized;
             direction.y = 0;
-
-            transform.Translate(direction * Time.deltaTime * moveSpeed);
+            //transform.Translate(direction * Time.deltaTime * moveSpeed);
+            transform.Translate(direction * Time.deltaTime * UnityEngine.Random.Range(1,moveSpeed));
         }
     }
 

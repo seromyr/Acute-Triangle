@@ -34,7 +34,7 @@ public class HotWall : MonoBehaviour
     {
         if (other.name == Player.main.Name)
         {
-            Player.main.PushPlayer(transform.position, 500);
+            Player.main.PushPlayer(transform.position, 3000);
         }
     }
 

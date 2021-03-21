@@ -51,9 +51,9 @@ public class Player : Entity
     // Initialize player game object
     private void CreateBody()
     {
-        _name = GeneralConst.PLAYER;
-        _body = UnityEngine.Object.Instantiate(GetBodyPrefab(_name));
-        _body.name = "Player";
+        _name = "Player";
+        _body = UnityEngine.Object.Instantiate(GetBodyPrefab(GeneralConst.PLAYER));
+        _body.name = _name;
     }
 
     // Load player visual
