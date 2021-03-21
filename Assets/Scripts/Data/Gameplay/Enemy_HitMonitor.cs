@@ -10,16 +10,19 @@ public class Enemy_HitMonitor : MonoBehaviour
     public event EventHandler OnBulletHit;
 
     private bool acceptDamage;
+    private AudioSource sound;
 
     private void Awake()
     {
         // All enemies accept damage by default
         SetDamageAcceptance(true);
+        //sound = GetComponent<AudioSource>();
     }
 
     void Start()
     {
         transform.Find("DamageParticle").TryGetComponent(out takeDamageFX);
+        //sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_02");
     }
 
     private void OnParticleCollision(GameObject other)
@@ -27,6 +30,9 @@ public class Enemy_HitMonitor : MonoBehaviour
         if (acceptDamage)
         {
             takeDamageFX.Play();
+
+            GameObject audio = new GameObject();
+            audio.AddComponent<AudioPlayer>();
 
             // Fire up the bullet hit event
             OnBulletHit?.Invoke(this, EventArgs.Empty);
