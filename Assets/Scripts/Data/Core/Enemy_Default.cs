@@ -25,7 +25,7 @@ public class Enemy_Default : EnemyEntity
         OnDestroy += DestroySelf;
         OnDestroy += OnDeadCallback;
 
-        sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_01");
+        sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_01_edited");
     }
 
     public override void TakeDamage(object sender, EventArgs e)
@@ -36,7 +36,6 @@ public class Enemy_Default : EnemyEntity
             ModifyHealth(-Player.main.GetDamage);
 
             //Debug.Log("hit");
-            if(!sound.isPlaying)
             sound.PlayOneShot(sound.clip);
         }
         else
