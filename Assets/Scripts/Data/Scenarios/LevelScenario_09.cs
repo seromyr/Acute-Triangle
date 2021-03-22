@@ -34,7 +34,7 @@ public class LevelScenario_09 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Ragazzino",
+            "Boss_Ragazzino",
             // Boss appearance
             Enemy.Boss_02,
             // Boss container
@@ -42,7 +42,7 @@ public class LevelScenario_09 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            30,
+            20,
             // Boss dead event handler
             BossMonitor
         );

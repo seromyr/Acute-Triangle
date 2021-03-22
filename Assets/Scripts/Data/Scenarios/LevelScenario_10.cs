@@ -8,11 +8,17 @@ public class LevelScenario_10 : MonoBehaviour
 {
     private EnemyEntity boss;
     private Transform enemyContainer;
+    private int maxMinion;
+    private Timer timer;
+    private float shootingAngle;
 
     private void Awake()
     {
         // Create enemy container for organized objects managing
         enemyContainer = new GameObject("EnemyContainer").transform;
+
+        // Create timer to change boss state
+        timer = gameObject.AddComponent<Timer>();
     }
 
     private void Start()
@@ -27,10 +33,13 @@ public class LevelScenario_10 : MonoBehaviour
     // Scenario 03 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-3]
     private void BuildScenario()
     {
+        // Set player start position
+        Player.main.SetPosition(new Vector3(0, 0, 0));
+
         boss = new Enemy_Default
         (
             // Boss name
-            "Warwick",
+            "Boss_Warwick",
             // Boss appearance
             Enemy.Sphere_Large_Black,
             // Boss container
@@ -47,44 +56,78 @@ public class LevelScenario_10 : MonoBehaviour
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
         // Set Boss default position
-        boss.SetPosition(new Vector3(0, 0.5f, 20));
+        boss.SetPosition(new Vector3(0, 0.5f, 15));
 
         // Activate Chase mechanic
         boss.Mechanics.Add(Mechanic.Chase);
-        boss.Mechanics.SetChaseParams(true, 2);
+
+        // Activate Shoot mechanic
+        boss.Mechanics.Add(Mechanic.Shoot);
 
         // Activate Minion Summoning mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
-        boss.Mechanics.SetMaximumMinion(10);
+        maxMinion = 6;
+
+
+        // Setup Retreat state
+        boss.Mechanics.OnAllMinionDieCallback += () => ActivateRetreatState();
+
+        // Activate default state
+        ActivateSwarmingState();
+    }
+
+    private void ActivateSwarmingState()
+    {
+        // Set chasing params
+        boss.Mechanics.SetChaseParams(true, 2);
 
         // Boss takes no damage until the shield is down
         boss.HitMonitor.SetDamageAcceptance(false);
+        boss.Mechanics.ActivateShield();
+
+        // Summon minions
+        SummonMinion();
+    }
+
+    private void SummonMinion()
+    {
+        // Stop shooting
+        boss.Mechanics.DestroyAllCannons();
+
+        boss.Mechanics.SetMaximumMinion(maxMinion);
 
         // Set local countdown tick for the timer to work
-        int tick = 10;
-        boss.Mechanics.SummonTimer.SetTimer(0.5f, tick, () =>
+        int tick = maxMinion;
+        boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
         {
-            tick--;
-
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
+            Vector3 randomPositionAroundBoss = boss.GetPosition + (Player.main.GetPosition - boss.GetPosition) / 2 + UnityEngine.Random.insideUnitSphere * 2;
             randomPositionAroundBoss.y = 0;
 
-            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 2.5f, 2, 10);
+            boss.Mechanics.SpawnMinion(randomPositionAroundBoss, 2.5f, 2, 10);
+
+            tick--;
         });
+    }
 
-        boss.Mechanics.OnAllMinionDieCallback += () =>
-        {
-            boss.Mechanics.SetChaseParams(true, -5);
+    private void ActivateRetreatState()
+    {
+        boss.Mechanics.SetChaseParams(true, -7);
 
-            boss.Mechanics.Add(Mechanic.Shoot);
-            Quaternion firstAngle = Quaternion.LookRotation(transform.position - Player.main.GetPosition);
+        Quaternion firstAngle = Quaternion.LookRotation(transform.position - Player.main.GetPosition);
 
-            boss.Mechanics.CreateBlasters(1, boss.Transform.rotation.eulerAngles.y, 0, 0.05f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE, BulletType.Destructible);
-            boss.Mechanics.SetShootingDelay(0, 1f);
+        boss.Mechanics.CreateBlasters(1, boss.Transform.rotation.eulerAngles.y, 0, 0.1f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 1 , BulletType.Destructible);
+        boss.Mechanics.SetShootingDelay(0, 0.5f);
 
-            boss.Mechanics.CreateBlasters(1, boss.Transform.rotation.eulerAngles.y, 0, 1.05f, 1, GeneralConst.ENEMY_BULLET_SPEED_MODERATE + 2, BulletType.Explosive);
-            boss.Mechanics.SetShootingDelay(0, 1f);
-        };
+
+        shootingAngle = 30;
+        boss.Mechanics.CreateBlasters(4, boss.Transform.rotation.eulerAngles.y -45, shootingAngle, 0.4f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW + 2, BulletType.Indestructible);
+        boss.Mechanics.SetShootingDelay(1, 0.5f);
+        boss.Mechanics.SetShootingDelay(2, 0.5f);
+        boss.Mechanics.SetShootingDelay(3, 0.5f);
+        boss.Mechanics.SetShootingDelay(4, 0.5f);
+
+        // Return to Swarming state after 15 seconds
+        timer.SetTimer(15, 1, () => ActivateSwarmingState());
     }
 
     #region Scenario Stuff

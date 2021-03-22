@@ -35,7 +35,7 @@ public class LevelScenario_13 : MonoBehaviour
         pupu = new Enemy_Default
         (
             // Boss name
-            "Pupu",
+            "Boss_Pupu",
             // Boss appearance
             Enemy.Sphere_Medium_Red,
             // Boss placemenent
@@ -43,7 +43,7 @@ public class LevelScenario_13 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            1,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -85,7 +85,7 @@ public class LevelScenario_13 : MonoBehaviour
         moxie = new Enemy_Default
         (
             // Boss name
-            "Moxie",
+            "Boss_Moxie",
             // Boss appearance
             Enemy.Sphere_Large_Black,
             // Boss placemenent
@@ -93,7 +93,7 @@ public class LevelScenario_13 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            1,
+            10,
             // Register dead event action
             BossMonitor
         );
@@ -113,18 +113,18 @@ public class LevelScenario_13 : MonoBehaviour
 
         // Activate Summon Minion mechanic
         moxie.Mechanics.Add(Mechanic.SummonMinions);
-        moxie.Mechanics.SetMaximumMinion(30);
+        moxie.Mechanics.SetMaximumMinion(15);
 
         // Local countdown tick for the timer to work
-        int tick = 30;
+        int tick = 15;
         moxie.Mechanics.SummonTimer.SetTimer(0.75f, tick, () =>
         {
             tick--;
 
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 10;
+            Vector3 randomPositionAroundBoss = moxie.GetPosition + (Player.main.GetPosition - moxie.GetPosition) / 2 + UnityEngine.Random.insideUnitSphere * 2;
             randomPositionAroundBoss.y = 0;
 
-            moxie.Mechanics.SpawnMinion(moxie.GetPosition + randomPositionAroundBoss, 6, 2, 6);
+            moxie.Mechanics.SpawnMinion(randomPositionAroundBoss, 6, 2, 6);
         });
 
         // Add blasters to boss

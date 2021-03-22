@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4776653709342072}
   - component: {fileID: 198563236803704106}
   - component: {fileID: 199255154450070170}
+  - component: {fileID: 3771331255742430556}
   m_Layer: 0
   m_Name: DirectionArrowsVFX
   m_TagString: Untagged
@@ -4763,3 +4764,15 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &3771331255742430556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294733841131794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74c1e0245cf244244acf1d9ee95e0cf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

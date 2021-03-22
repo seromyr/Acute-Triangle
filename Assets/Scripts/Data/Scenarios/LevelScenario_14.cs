@@ -52,7 +52,7 @@ public class LevelScenario_14 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Beholder",
+            "Boss_Beholder",
             // Boss appearance
             Enemy.Sphere_Large_Black,
             // Boss placemenent
@@ -60,7 +60,7 @@ public class LevelScenario_14 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            100,
+            80,
             // Register dead event action
             BossMonitor
         );

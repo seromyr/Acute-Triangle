@@ -40,7 +40,7 @@ public class LevelScenario_11 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Navel",
+            "Boss_Navel",
             // Boss appearance
             Enemy.Sphere_Medium_Red,
             // Boss placemenent
@@ -48,7 +48,7 @@ public class LevelScenario_11 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            100,
+            80,
             // Register dead event action
             BossMonitor
         );

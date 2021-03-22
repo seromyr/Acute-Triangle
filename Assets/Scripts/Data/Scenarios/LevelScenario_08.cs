@@ -36,7 +36,7 @@ public class LevelScenario_08 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Julliette",
+            "Boss_Julliette",
             // Boss appearance
             Enemy.Boss_01,
             // Boss placemenent
@@ -44,7 +44,7 @@ public class LevelScenario_08 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            30,
+            20,
             // Register dead event action
             BossMonitor
         );

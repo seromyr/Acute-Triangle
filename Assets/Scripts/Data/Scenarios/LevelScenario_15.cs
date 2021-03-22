@@ -55,7 +55,7 @@ public class LevelScenario_15 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Gearbox",
+            "Boss_Gearbox",
             // Boss appearance
             Enemy.Sphere_Medium_Red,
             // Boss placemenent, needs to be placed at root for now
@@ -63,7 +63,7 @@ public class LevelScenario_15 : MonoBehaviour
             // Boss material
             "default",
             // Boss health
-            50,
+            30,
             // Register dead event action
             BossMonitor
         );

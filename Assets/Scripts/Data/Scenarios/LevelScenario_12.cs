@@ -36,7 +36,7 @@ public class LevelScenario_12 : MonoBehaviour
         boss = new Enemy_Default
         (
             // Boss name
-            "Minotaur",
+            "Boss_Minotaur",
             // Boss appearance
             Enemy.Sphere_Large_Black,
             // Boss placemenent

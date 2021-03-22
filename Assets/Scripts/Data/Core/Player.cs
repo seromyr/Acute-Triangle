@@ -114,7 +114,7 @@ public class Player : Entity
 
         OnDamage?.Invoke(this, EventArgs.Empty);
 
-        ModifyHealth(-damageTaken);
+        //ModifyHealth(-damageTaken);
 
         _mechanic.PlayHitFX();
 

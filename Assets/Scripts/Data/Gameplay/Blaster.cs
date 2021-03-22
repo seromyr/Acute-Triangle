@@ -65,8 +65,11 @@ public class Blaster : MonoBehaviour
                 if (bullet.name == "Destructible") LoadBullet(Bullet._04, "Indestructible");
                 else LoadBullet(Bullet._03, "Destructible");
             }
+
             InstantiatBullet();
+
         });
+
         timer.SetLoop(true);
     }
 

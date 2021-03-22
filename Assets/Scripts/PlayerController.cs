@@ -32,15 +32,12 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         // Move player
-        //transform.Translate(transform.InverseTransformDirection(Vector3.forward) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Vertical"));
-        //transform.Translate(transform.InverseTransformDirection(Vector3.right) * Time.deltaTime * PlayerAttributes.PLAYER_MOVESPEED * Input.GetAxis("Horizontal"));
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        Vector3 tempVect = new Vector3(h, 0, v);
-        tempVect = tempVect.normalized * PlayerAttributes.PLAYER_MOVESPEED * Time.fixedDeltaTime;
-        rigidBody.MovePosition(rigidBody.position + tempVect);
+        Vector3 direction = new Vector3(h, 0, v);
+        direction = direction.normalized * PlayerAttributes.PLAYER_MOVESPEED * Time.fixedDeltaTime;
+        rigidBody.MovePosition(rigidBody.position + direction);
     }
 
     private void Aim()
@@ -48,11 +45,8 @@ public class PlayerController : MonoBehaviour
         // Create a ray from the mouse cursor on the screen in the direction of the camera
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // Create a ray cast hit to store info about what was hit by the ray
-        RaycastHit hit;
-
         // Perform the raycast and see if it hits something on the floorlayer
-        if (Physics.Raycast(ray, out hit, rayCastMaxRange, LayerMask.GetMask("Floor")))
+        if (Physics.Raycast(ray, out RaycastHit hit, rayCastMaxRange, LayerMask.GetMask("Floor")))
         {
             // Create a vector from the player to the point on the floor the raycast from the mouse hit.
             Vector3 playerToMouse = hit.point - transform.position;
