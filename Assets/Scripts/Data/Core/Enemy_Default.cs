@@ -25,25 +25,28 @@ public class Enemy_Default : EnemyEntity
         OnDestroy += DestroySelf;
         OnDestroy += OnDeadCallback;
 
-        sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_01_edited");
+        //sound.clip = Resources.Load<AudioClip>("SFX/enemy_taking_damage_01_edited");
+        //sound.time = 3f;
     }
 
     public override void TakeDamage(object sender, EventArgs e)
     {
+        //
         if (_health > 0)
         {
             // Enemy takes damage from player only (might change later)
             ModifyHealth(-Player.main.GetDamage);
 
+            //sound.PlayOneShot(sound.clip);
             //Debug.Log("hit");
-            sound.PlayOneShot(sound.clip);
         }
         else
         {
             // HP limiter
             SetHealth(0);
 
-            sound.PlayOneShot(sound.clip);
+            //StartCoroutine();
+            //sound.PlayOneShot(sound.clip);
             // Fire up dead event
             OnDestroy?.Invoke(this, EventArgs.Empty);
         }
@@ -79,9 +82,11 @@ public class Enemy_Default : EnemyEntity
         // Clear event subscriptions
         HitMonitor.OnBulletHit -= TakeDamage;
         OnDestroy = delegate { };
-
+        
         // Self-destruct and set dead state
         Suicide();
         HitMonitor.SelfDestruct();
+
     }
+
 }
