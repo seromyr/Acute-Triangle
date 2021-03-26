@@ -17,10 +17,10 @@ public class LevelScenario_11 : MonoBehaviour
         enemyContainer = new GameObject("EnemyContainer").transform;
         reactorPositions = new Vector3[]
         {
-            new Vector3( 10 , -0.5f ,  10 ),
-            new Vector3(-10 , -0.5f ,  10 ),
-            new Vector3( 10 , -0.5f , -10 ),
-            new Vector3(-10 , -0.5f , -10 )
+            new Vector3( 8 , -0.5f ,  8 ),
+            new Vector3(-8 , -0.5f ,  8 ),
+            new Vector3( 8 , -0.5f , -8 ),
+            new Vector3(-8 , -0.5f , -8 )
         };
     }
 
@@ -28,6 +28,9 @@ public class LevelScenario_11 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Navel The Hoarder");
     }
 
     // Scenario 04 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-4]
@@ -66,9 +69,9 @@ public class LevelScenario_11 : MonoBehaviour
         cannonAngle = 120;
         boss.Mechanics.CreateBlasters(bossBlasterCount, -60, cannonAngle, 0.6f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Indestructible);
 
-
         // Activate Hard Shells mechanic
         boss.Mechanics.Add(Mechanic.HardShells);
+        boss.Mechanics.CreateShells("Shell_02");
         boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
         for (int i = 0; i < reactorPositions.Length; i++)
         {
@@ -87,6 +90,7 @@ public class LevelScenario_11 : MonoBehaviour
         // Activate Minion Summoning mechanic
         boss.Mechanics.Add(Mechanic.SummonMinions);
         boss.Mechanics.DeactivateShield();
+        boss.Mechanics.OnAllMinionDieCallback += () => boss.HitMonitor.SetDamageAcceptance(false); ;
 
         // Set boss default state
         ActivateInvincibleState(null, null);
@@ -108,16 +112,16 @@ public class LevelScenario_11 : MonoBehaviour
         boss.HitMonitor.SetDamageAcceptance(false);
 
         // Local countdown tick for the timer to work
-        boss.Mechanics.SetMaximumMinion(10);
-        int tick = 10;
+        boss.Mechanics.SetMaximumMinion(6);
+        int tick = 6;
         boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
         {
             tick--;
 
-            Vector3 randomPositionAroundBoss = UnityEngine.Random.insideUnitSphere * 15;
-            randomPositionAroundBoss.y = 0;
+            Vector3 minionSpawnSpot = reactorPositions[UnityEngine.Random.Range(0, 4)] + UnityEngine.Random.insideUnitSphere * 2;
+            minionSpawnSpot.y = 0;
 
-            boss.Mechanics.SpawnMinion(boss.GetPosition + randomPositionAroundBoss, 4, 2, 10);
+            boss.Mechanics.SpawnMinion(minionSpawnSpot, 4, 2, 10);
         });
 
     }

@@ -40,6 +40,9 @@ public class LevelScenario_14 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Beholder The Void Watcher");
     }
 
     // Scenario 07 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-7]

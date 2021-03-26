@@ -21,6 +21,10 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     private Color hpOverlayColor, highlightColor;
     private float colorPulsingTimer;
 
+
+    // Cheat box
+    private Toggle godMode;
+
     private void Awake()
     {
         // Make the In Game Menu a Singleton
@@ -74,6 +78,11 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         hpFrameOverlay.color = hpOverlayColor;
         highlightColor = new Color(0.8f, 0, 0, 0);
         colorPulsingTimer = 0;
+
+        // Remember to remove cheat
+        godMode = inGameMenuScreen.transform.Find("GodMode").GetComponentInChildren<Toggle>();
+        godMode.isOn = false;
+        godMode.onValueChanged.AddListener(delegate { SwitchGodMode(godMode); });
     }
 
     private void Update()
@@ -134,5 +143,10 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         hpOverlayColor.a = 1 - playerHealth.fillAmount;
         hpFrameOverlay.color = hpOverlayColor;
         colorPulsingTimer = 0;
+    }
+
+    private void SwitchGodMode(Toggle change)
+    {
+        Player.main.MakePlayerInvincile(godMode.isOn);
     }
 }

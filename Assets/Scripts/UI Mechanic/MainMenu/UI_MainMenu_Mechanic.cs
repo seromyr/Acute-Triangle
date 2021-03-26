@@ -118,7 +118,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         //mainMenuBkg.color = Color.black;
 
         // Display title
-        mainMenuTitle.text = "v" + Version.CURRENTVERSION + "b" + Version.BUILD + "." + Version.DATE;
+        mainMenuTitle.text = "v" + Version.CURRENTVERSION + "build" + Version.BUILD + "." + Version.DATE;
         mainMenuTitle.color = Color.gray;
 
         // Add function to New Game Button

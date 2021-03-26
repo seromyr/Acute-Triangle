@@ -68,7 +68,6 @@ public class LevelScenario_10 : MonoBehaviour
         boss.Mechanics.Add(Mechanic.SummonMinions);
         maxMinion = 6;
 
-
         // Setup Retreat state
         boss.Mechanics.OnAllMinionDieCallback += () => ActivateRetreatState();
 
@@ -79,7 +78,7 @@ public class LevelScenario_10 : MonoBehaviour
     private void ActivateSwarmingState()
     {
         // Set chasing params
-        boss.Mechanics.SetChaseParams(true, 2);
+        boss.Mechanics.SetChaseParams(true, 2, 12f);
 
         // Boss takes no damage until the shield is down
         boss.HitMonitor.SetDamageAcceptance(false);
@@ -100,10 +99,13 @@ public class LevelScenario_10 : MonoBehaviour
         int tick = maxMinion;
         boss.Mechanics.SummonTimer.SetTimer(1f, tick, () =>
         {
-            Vector3 randomPositionAroundBoss = boss.GetPosition + (Player.main.GetPosition - boss.GetPosition) / 2 + UnityEngine.Random.insideUnitSphere * 2;
-            randomPositionAroundBoss.y = 0;
+            //Vector3 randomPositionAroundBoss = boss.GetPosition + (Player.main.GetPosition - boss.GetPosition) / 2 + UnityEngine.Random.insideUnitSphere * 10;
+            //randomPositionAroundBoss.y = 0;
 
-            boss.Mechanics.SpawnMinion(randomPositionAroundBoss, 2.5f, 2, 10);
+            Vector3 minionSpawnPoint = boss.GetPosition + (Player.main.GetPosition - boss.GetPosition).normalized * 2;
+            minionSpawnPoint.y = 0;
+
+            boss.Mechanics.SpawnMinion(minionSpawnPoint, 2.5f, 2, 10);
 
             tick--;
         });

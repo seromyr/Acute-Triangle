@@ -132,12 +132,13 @@ public class Features
     }
 
     // Chase parameter setup if used in Level Scenario
-    public void SetChaseParams(bool isChasing, float speed)
+    public void SetChaseParams(bool isChasing, float speed, float stopDistance = 0)
     {
         if (isChasing)
         {
-            simpleChase.StarChase();
+            simpleChase.StartChase();
             simpleChase.SetChaseSpeed(speed);
+            simpleChase.SetStopDistance(stopDistance);
         }
     }
     #endregion
@@ -242,7 +243,7 @@ public class Features
 
         minionList[minionID].SetPosition(minionPosition);
         minionList[minionID].Mechanics.Add(Mechanic.Chase);
-        minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed);
+        minionList[minionID].Mechanics.SetChaseParams(true, minionSpeed, 5f);
         minionList[minionID].Mechanics.Add(Mechanic.Shoot);
         minionList[minionID].Mechanics.CreateBlaster(Quaternion.identity, minionFireRate, bulletSpeed, BulletType.Destructible);
     }
@@ -448,7 +449,16 @@ public class Features
 
     private void CreateHardShellsMechanic()
     {
-        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/Shell_02"));
+
+        pillars = new List<EnemyEntity>();
+        pillarsPosition = new List<Vector3>();
+        hardShellTimer = body.AddComponent<Timer>();
+        OnReactorsRegenerationCallback += ReGeneratePillars;
+    }
+
+    public void CreateShells(string shellName = "Shell_01")
+    {
+        GameObject shells = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy/" + shellName));
         shells.transform.parent = body.transform;
 
         this.shells = new List<GameObject>();
@@ -457,10 +467,6 @@ public class Features
             this.shells.Add(child.gameObject);
         }
 
-        pillars = new List<EnemyEntity>();
-        pillarsPosition = new List<Vector3>();
-        hardShellTimer = body.AddComponent<Timer>();
-        OnReactorsRegenerationCallback += ReGeneratePillars;
     }
 
     public void SplitShells(float distance)

@@ -12,7 +12,7 @@ public class Player : Entity
     public event EventHandler OnDamage,OnZeroHealth;
 
     private PlayerMechanic _mechanic;
-    private bool           _allowPlayerControl;
+    private bool           _invincible;
     private AudioSource    _soundplayer;
     private Vector3        startPosition;
 
@@ -114,7 +114,11 @@ public class Player : Entity
 
         OnDamage?.Invoke(this, EventArgs.Empty);
 
-        //ModifyHealth(-damageTaken);
+        // Switch this in GameManager in Editor before starting the game
+        if (!_invincible)
+        {
+            ModifyHealth(-damageTaken);
+        }
 
         _mechanic.PlayHitFX();
 
@@ -140,5 +144,10 @@ public class Player : Entity
     {
         // Player take damage sound effect
         _soundplayer.PlayOneShot(_soundplayer.clip);
+    }
+
+    public void MakePlayerInvincile(bool value)
+    {
+        _invincible = value;
     }
 }

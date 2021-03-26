@@ -2,7 +2,7 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.3.0.3 Pre-Beta";
+        public const string CURRENTVERSION = "0.3.0.4 Pre-Beta ";
         public const string BUILD = "1";
         public const string DATE = "03182021";
     }

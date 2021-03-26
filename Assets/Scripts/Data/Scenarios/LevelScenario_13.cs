@@ -22,6 +22,9 @@ public class LevelScenario_13 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Pupu & Moxie The Ladies");
     }
 
     // Scenario 06 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-6]
@@ -59,10 +62,11 @@ public class LevelScenario_13 : MonoBehaviour
 
         bossBlasterCount = 180;
         shootingAngle = 2;
-        pupu.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, 2f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
+        pupu.Mechanics.CreateBlasters(bossBlasterCount, 0, shootingAngle, 2.5f, 1, GeneralConst.ENEMY_BULLET_SPEED_SLOW - 1, BulletType.Destructible);
 
         // Activate Hard Shells mechanic
         pupu.Mechanics.Add(Mechanic.HardShells);
+        pupu.Mechanics.CreateShells();
         pupu.Mechanics.OnAllPillarsDestroyed += ActivatePupuWeakenState;
         pupu.Mechanics.CreatePillar(new Vector3(12, -0.5f, 15.5f), enemyContainer.transform);
         pupu.Mechanics.CreatePillar(new Vector3(-12, -0.5f, 6.5f), enemyContainer.transform);
@@ -113,10 +117,10 @@ public class LevelScenario_13 : MonoBehaviour
 
         // Activate Summon Minion mechanic
         moxie.Mechanics.Add(Mechanic.SummonMinions);
-        moxie.Mechanics.SetMaximumMinion(15);
+        moxie.Mechanics.SetMaximumMinion(6);
 
         // Local countdown tick for the timer to work
-        int tick = 15;
+        int tick = 6;
         moxie.Mechanics.SummonTimer.SetTimer(0.75f, tick, () =>
         {
             tick--;
@@ -124,7 +128,7 @@ public class LevelScenario_13 : MonoBehaviour
             Vector3 randomPositionAroundBoss = moxie.GetPosition + (Player.main.GetPosition - moxie.GetPosition) / 2 + UnityEngine.Random.insideUnitSphere * 2;
             randomPositionAroundBoss.y = 0;
 
-            moxie.Mechanics.SpawnMinion(randomPositionAroundBoss, 6, 2, 6);
+            moxie.Mechanics.SpawnMinion(randomPositionAroundBoss, 2.5f, 2, 10);
         });
 
         // Add blasters to boss

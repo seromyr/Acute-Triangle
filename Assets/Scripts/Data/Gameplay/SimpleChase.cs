@@ -5,7 +5,7 @@ using UnityEngine;
 // This component is used to chase player
 public class SimpleChase : MonoBehaviour
 {
-    private float chaseSpeed;
+    private float chaseSpeed, stopDistance;
     private bool isChasing;
 
     private void FixedUpdate()
@@ -24,8 +24,16 @@ public class SimpleChase : MonoBehaviour
 
             transform.rotation = lookRotation;
 
-            transform.Translate(Vector3.forward * Time.deltaTime * chaseSpeed);
+            if (direction.magnitude >= stopDistance)
+            {
+                transform.Translate(Vector3.forward * Time.deltaTime * chaseSpeed);
+            }
         }
+    }
+
+    public void SetStopDistance(float stopDistance)
+    {
+        this.stopDistance = stopDistance;
     }
 
     public void SetChaseSpeed(float chaseSpeed)
@@ -33,7 +41,7 @@ public class SimpleChase : MonoBehaviour
         this.chaseSpeed = chaseSpeed;
     }
 
-    public void StarChase()
+    public void StartChase()
     {
         isChasing = true;
     }

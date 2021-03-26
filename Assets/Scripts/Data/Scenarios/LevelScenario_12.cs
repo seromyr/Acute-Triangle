@@ -10,7 +10,6 @@ public class LevelScenario_12 : MonoBehaviour
     private Transform enemyContainer;
     private int bossBlasterCount;
 
-
     private void Awake()
     {
         // Create enemy container for organized object managing
@@ -21,6 +20,9 @@ public class LevelScenario_12 : MonoBehaviour
     {
         // Instantiate level scenario
         BuildScenario();
+
+        // Send mission instruction
+        UI_InGameMenu_Mechanic.main.SendInstruction("Defeat Minotaur The Labyrinth Keeper");
     }
 
     // Scenario 05 [https://sites.google.com/view/acutetriangle/game-design/level-design/level-5]
@@ -88,73 +90,6 @@ public class LevelScenario_12 : MonoBehaviour
         {
             boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
         }
-
-        #region Create Destructible Obstacles / Blockades
-        List<EnemyEntity> obstacles = new List<EnemyEntity>();
-
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 7; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-1f + x, 0, 18.5f + y));
-            }
-        }
-
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 7; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(37.75f + x, 0, -18.5f + y));
-            }
-        }
-
-        for (int x = 0; x < 7; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                obstacles.Add
-                (
-                    new Enemy_Default
-                        (
-                            EnemyName.Cube_Small + " " + (x + y),
-                            Enemy.Cube_Medium_Black,
-                            enemyContainer,
-                            "default",
-                            10,
-                            null
-                        )
-                );
-
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(74.5f + x, 0, 25.5f + y));
-            }
-        }
-        #endregion
     }
 
     private int DuplicateCatcher(int number, int maxNum, List<int> list)
@@ -168,7 +103,6 @@ public class LevelScenario_12 : MonoBehaviour
         {
             return number;
         }
-
     }
 
     #region Scenario Stuff
