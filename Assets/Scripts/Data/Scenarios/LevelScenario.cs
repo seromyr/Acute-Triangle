@@ -44,27 +44,35 @@ public class LevelScenario : MonoBehaviour
                 break;
             case Map.LV008:
                 gameObject.AddComponent<LevelScenario_08>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(1);
                 break;
             case Map.LV009:
                 gameObject.AddComponent<LevelScenario_09>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(2);
                 break;
             case Map.LV010:
                 gameObject.AddComponent<LevelScenario_10>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(3);
                 break;
             case Map.LV011:
                 gameObject.AddComponent<LevelScenario_11>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(4);
                 break;
             case Map.LV012:
                 gameObject.AddComponent<LevelScenario_12>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(5);
                 break;
             case Map.LV013:
                 gameObject.AddComponent<LevelScenario_13>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(6);
                 break;
             case Map.LV014:
                 gameObject.AddComponent<LevelScenario_14>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(7);
                 break;
             case Map.LV015:
                 gameObject.AddComponent<LevelScenario_15>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(8);
                 break;
             case Map.LV016:
                 gameObject.AddComponent<LevelScenario_16>();
