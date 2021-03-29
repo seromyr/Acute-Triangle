@@ -54,6 +54,7 @@ public class LevelScenario_16 : MonoBehaviour
         boss.SetPosition(new Vector3(0, 0.5f, 20));
     }
 
+
     #region Scenario Stuff
     private void BossMonitor(object sender, EventArgs e)
     {
