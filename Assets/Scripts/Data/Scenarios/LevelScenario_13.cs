@@ -136,6 +136,11 @@ public class LevelScenario_13 : MonoBehaviour
         moxie.Mechanics.CreateBlaster(Quaternion.identity, 0.2f, GeneralConst.ENEMY_BULLET_SPEED_SLOW, BulletType.Destructible);
 
         #endregion
+
+        UI_InGameMenu_Mechanic.main.SetBossHPMax(20);
+        UI_InGameMenu_Mechanic.main.SetBossHPCurrent(20);
+        UI_InGameMenu_Mechanic.main.UpdateBossHPCounter(0);
+
     }
 
     private void ActivatePupuWeakenState(object sender, EventArgs e)

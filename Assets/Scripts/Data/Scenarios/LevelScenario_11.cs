@@ -56,6 +56,10 @@ public class LevelScenario_11 : MonoBehaviour
             BossMonitor
         );
 
+        UI_InGameMenu_Mechanic.main.SetBossHPMax(80);
+        UI_InGameMenu_Mechanic.main.SetBossHPCurrent(80);
+        UI_InGameMenu_Mechanic.main.UpdateBossHPCounter(0);
+
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
 
