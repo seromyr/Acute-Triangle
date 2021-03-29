@@ -39,6 +39,10 @@ public class Enemy_Default : EnemyEntity
 
             //sound.PlayOneShot(sound.clip);
             //Debug.Log("hit");
+            if (_name.Contains("Boss"))
+            {
+                UI_InGameMenu_Mechanic.main.UpdateBossHPCounter(Player.main.GetDamage);
+            }
         }
         else
         {

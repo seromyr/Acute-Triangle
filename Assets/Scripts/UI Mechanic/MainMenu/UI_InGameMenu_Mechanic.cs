@@ -32,6 +32,8 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     private Image gearboxHP;
     private Image currentBossHP;
 
+    private float bossMaxHealth;
+    private float bossCurrentHealth;
     // Cheat box
     private Toggle godMode;
 
@@ -174,6 +176,23 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         }
     }
 
+    public void SetBossHPMax(float max)
+    {
+        bossMaxHealth = max;
+    }
+    public void SetBossHPCurrent(float current)
+    {
+        bossCurrentHealth = current;
+    }
+
+    public void UpdateBossHPCounter(float damage)
+    {
+        bossCurrentHealth -= damage;
+        if (bossCurrentHealth < 0f) bossCurrentHealth = 0f;
+
+        currentBossHP.fillAmount = bossCurrentHealth / bossMaxHealth;
+    }
+
     private void UpdateGameplayUI(object sender, EventArgs e)
     {
         playerHealth.fillAmount = Player.main.Health / Player.main.MaxHealth;
@@ -182,6 +201,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         colorPulsingTimer = 0.2f;
     }
 
+    
 
     private void PauseGame()
     {

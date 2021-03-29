@@ -46,6 +46,10 @@ public class LevelScenario_09 : MonoBehaviour
             // Boss dead event handler
             BossMonitor
         );
+        
+        UI_InGameMenu_Mechanic.main.SetBossHPMax(20);
+        UI_InGameMenu_Mechanic.main.SetBossHPCurrent(20);
+        UI_InGameMenu_Mechanic.main.UpdateBossHPCounter(0);
 
         // *IMPORTANT* Get enemy container reference for features accessing
         boss.Mechanics.GetEnemyContainerReference(enemyContainer);
