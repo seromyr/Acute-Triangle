@@ -32,6 +32,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     private Button creditsBackToMain;
     // -------------------
 
+    private AudioSource menuSelect;
     private void Awake()
     {
         // Make the Main Menu a Singleton
@@ -39,6 +40,9 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
 
         // Canvas
         canvas = GetComponent<Canvas>();
+
+        // AudioSource 
+        menuSelect = GetComponent<AudioSource>();
 
         // Set up screens
         SplashScreenSetup();
@@ -145,20 +149,24 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     private void StartNewGame()
     {
         GameManager.main.StartNewGame();
+        PlaySound();
     }
 
     private void SelectLevel()
     {
         levelSelectBkg.gameObject.SetActive(true);
+        PlaySound();
     }
 
     private void ViewCredits()
     {
         creditsBkg.gameObject.SetActive(true);
+        PlaySound();
     }
 
     private void QuitGame()
     {
+        PlaySound();
         GameManager.main.QuitGame();
     }
 
@@ -221,12 +229,14 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     {
         //Debug.LogError(levelNumber);
         GameManager.main.SetNextLevel(levelNumber);
+        PlaySound();
     }
 
 
     private void LevelSelectBackToMainMenu()
     {
         levelSelectBkg.gameObject.SetActive(false);
+        PlaySound();
     }
     #endregion
 
@@ -243,6 +253,7 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     private void CreditsBackToMainMenu()
     {
         creditsBkg.gameObject.SetActive(false);
+        PlaySound();
     }
     #endregion
 
@@ -250,6 +261,10 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     {
         SplashTextPulsing();
         SplashScreenInputReading(KeyCode.Return);
+    }
+    private void PlaySound()
+    {
+        menuSelect.PlayOneShot(menuSelect.clip);
     }
 
     public void SetActiveCanvas(bool value)
