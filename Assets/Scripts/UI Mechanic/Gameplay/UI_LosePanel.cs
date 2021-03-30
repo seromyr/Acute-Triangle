@@ -43,11 +43,13 @@ public class UI_LosePanel : MonoBehaviour
 
     private void Retry()
     {
+        UI_InGameMenu_Mechanic.main.PlaySound();
         GameManager.main.RetryLevel();
     }
 
     private void ReturnToMainMenu()
     {
+        UI_InGameMenu_Mechanic.main.PlaySound();
         GameManager.main.GoToMainMenu();
     }
 }

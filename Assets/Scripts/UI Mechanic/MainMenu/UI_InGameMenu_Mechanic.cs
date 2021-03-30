@@ -207,7 +207,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         colorPulsingTimer = 0.2f;
     }
 
-    private void PlaySound()
+    public void PlaySound()
     {
         menuSelect.PlayOneShot(menuSelect.clip);
     }
