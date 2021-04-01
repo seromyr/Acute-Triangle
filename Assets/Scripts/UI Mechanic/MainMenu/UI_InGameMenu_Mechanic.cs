@@ -34,6 +34,10 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
 
     private float bossMaxHealth;
     private float bossCurrentHealth;
+
+    //AudioSource
+    private AudioSource menuSelect;
+
     // Cheat box
     private Toggle godMode;
 
@@ -53,7 +57,9 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     {
         Player.main.OnDamage += UpdateGameplayUI;
         inGameMenuScreen.SetActive(false);
+        menuSelect = GetComponent<AudioSource>();
     }
+
     private void SingletonMaker()
     {
         if (main == null)
@@ -201,24 +207,30 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         colorPulsingTimer = 0.2f;
     }
 
-    
+    public void PlaySound()
+    {
+        menuSelect.PlayOneShot(menuSelect.clip);
+    }
 
     private void PauseGame()
     {
         GameManager.main.PauseGame();
         inGameMenuScreen.SetActive(true);
+        PlaySound();
     }
 
     private void ResumeGame()
     {
         GameManager.main.ResumeGame();
         inGameMenuScreen.SetActive(false);
+        PlaySound();
     }
 
     private void GoToMainMenu()
     {
         inGameMenuScreen.SetActive(false);
         GameManager.main.GoToMainMenu();
+        PlaySound();
     }
     public void SetActiveCanvas(bool value)
     {
