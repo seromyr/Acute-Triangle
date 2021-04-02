@@ -243,6 +243,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     }
 
     public void UsePause() => PauseGame();
+    public void UseResume() => ResumeGame();
 
     public void ResetPlayerHUD()
     {

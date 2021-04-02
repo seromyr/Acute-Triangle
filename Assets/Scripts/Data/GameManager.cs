@@ -155,6 +155,7 @@ public class GameManager : MonoBehaviour
 
     private void Perform____START____Routines()
     {
+        GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
         SceneManager.LoadScene(SceneName.MAINMENU);
         //Time.timeScale = 1;
 
@@ -214,6 +215,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         UI_Control.main.gameObject.SetActive(true);
+        GameObject.Find("Player").GetComponent<PlayerController>().EnablePause();
     }
 
     private void Perform____PAUSE____Routines()
@@ -224,6 +226,9 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____WIN_____Routines()
     {
+        //find player and disable pause
+        GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
+
         // Show win panel
         UI_WinPanel.main.gameObject.SetActive(true);
 
@@ -356,5 +361,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SwitchState(GameState.LOADING, 1));
 
         Debug.LogWarning(levelNumber);
+    }
+
+    public bool IsPaused()
+    {
+        if(gameState == GameState.PAUSE)
+        {
+            return true;
+        }
+        else { return false; }
     }
 }
