@@ -156,6 +156,9 @@ public class LevelScenario_11 : MonoBehaviour
         {
             boss.Mechanics.CloseShells();
         }
+
+        // Unlock next level
+        UI_MainMenu_Mechanic.main.UnlockLevel(12);
     }
     #endregion
 }

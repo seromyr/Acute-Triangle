@@ -134,6 +134,9 @@ public class LevelScenario_08 : MonoBehaviour
 
             boss.Mechanics.ProximityMonitor.OnEnterProximity -= AggressiveState;
             boss.Mechanics.ProximityMonitor.OnExitProximity -= NonAggresiveState;
+
+            // Unlock next level
+            UI_MainMenu_Mechanic.main.UnlockLevel(9);
         }
     }
     #endregion

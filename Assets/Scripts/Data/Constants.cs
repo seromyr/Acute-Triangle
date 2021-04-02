@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.3.0.4 Pre-Beta ";
-        public const string BUILD = "1";
-        public const string DATE = "03182021";
+        public const string CURRENTVERSION = "0.3.0.7 Beta ";
+        public const string BUILD = "2";
+        public const string DATE = "04022021";
     }
 
     public enum GameState
@@ -119,6 +119,7 @@
     {
         public const string Boss_01 = "Enemy/Boss_01";
         public const string Boss_02 = "Enemy/Boss_02";
+        public const string Boss_03 = "Enemy/Boss_03";
         public const string Minion = "Enemy/Minion";
 
         public const string Sphere_Large_Black = "Enemy/Sphere_L_Black";

@@ -41,7 +41,7 @@ public class LevelScenario_10 : MonoBehaviour
             // Boss name
             "Boss_Warwick",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Boss_03,
             // Boss container
             enemyContainer.transform,
             // Boss material
@@ -144,6 +144,9 @@ public class LevelScenario_10 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
+
+            // Unlock next level
+            UI_MainMenu_Mechanic.main.UnlockLevel(11);
         }
     }
     #endregion

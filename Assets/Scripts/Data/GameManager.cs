@@ -54,7 +54,6 @@ public class GameManager : MonoBehaviour
 
         // Subcribe to player died event
         Player.main.OnZeroHealth += LoseGame;
-
     }
 
     private void SingletonizeGameManager()
@@ -82,9 +81,6 @@ public class GameManager : MonoBehaviour
     private void InitialGameSetup()
     {
         // Load camera in scene
-        //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (PlayerMonitor.main.transform);
-        //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (PlayerMonitor.main.transform);
-
         GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (Player.main.Body.transform);
         GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (Player.main.Body.transform);
 
@@ -100,11 +96,6 @@ public class GameManager : MonoBehaviour
             desinationState = GameState.START;
         }
     }
-
-    //private void OnLevelWasLoaded()
-    //{
-    //    UI_InGameMenu_Mechanic.main.SendInstruction(SceneManager.GetActiveScene().name);
-    //}
 
     private void Update()
     {
@@ -155,6 +146,7 @@ public class GameManager : MonoBehaviour
 
     private void Perform____START____Routines()
     {
+        //GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
         SceneManager.LoadScene(SceneName.MAINMENU);
         //Time.timeScale = 1;
 
@@ -215,6 +207,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         UI_Control.main.gameObject.SetActive(true);
         Player.main.SetPause(true);
+
+        //GameObject.Find("Player").GetComponent<PlayerController>().EnablePause();
+
     }
 
     private void Perform____PAUSE____Routines()
@@ -226,6 +221,10 @@ public class GameManager : MonoBehaviour
     private void Perform_____WIN_____Routines()
     {
         Player.main.SetPause(false);
+
+        //find player and disable pause
+        //GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
+
         // Show win panel
         UI_WinPanel.main.gameObject.SetActive(true);
 
@@ -358,5 +357,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SwitchState(GameState.LOADING, 1));
 
         Debug.LogWarning(levelNumber);
+    }
+
+    public bool IsPaused()
+    {
+        if(gameState == GameState.PAUSE)
+        {
+            return true;
+        }
+        else { return false; }
     }
 }

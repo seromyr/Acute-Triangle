@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rigidBody;
 
+    //private bool canPause;
     private void Awake()
     {
         transform.TryGetComponent(out rigidBody);
@@ -79,11 +80,23 @@ public class PlayerController : MonoBehaviour
 
     private void Pause()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape))
         {
             if(Player.main.CheckPauseEnabled())
             UI_InGameMenu_Mechanic.main.UsePause();
         }
     }
+
+
+
+    //public void EnablePause()
+    //{
+        //canPause = true;
+    //}
+
+    //public void DisablePause()
+    //{
+        //canPause = false;
+    //}
 
 }
