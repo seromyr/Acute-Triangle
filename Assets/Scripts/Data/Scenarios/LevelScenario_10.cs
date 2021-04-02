@@ -144,6 +144,9 @@ public class LevelScenario_10 : MonoBehaviour
         {
             GameManager.main.WinGame();
             Debug.Log("No boss remaining");
+
+            // Unlock next level
+            UI_MainMenu_Mechanic.main.UnlockLevel(11);
         }
     }
     #endregion

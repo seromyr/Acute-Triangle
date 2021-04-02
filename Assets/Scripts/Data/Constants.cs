@@ -2,8 +2,8 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.3.0.6 Beta ";
-        public const string BUILD = "1";
+        public const string CURRENTVERSION = "0.3.0.7 Beta ";
+        public const string BUILD = "2";
         public const string DATE = "04022021";
     }
 

@@ -220,6 +220,16 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         level_19.onClick.AddListener(() => GoToLevel(19));
         level_20.onClick.AddListener(() => GoToLevel(20));
 
+        // Lock levels
+        level_9.interactable = false;
+        level_10.interactable = false;
+        level_11.interactable = false;
+        level_12.interactable = false;
+        level_13.interactable = false;
+        level_14.interactable = false;
+        level_15.interactable = false;
+
+
         // Add function to Back To Main Menu Button
         levelBackToMain = levelSelectBkg.transform.Find("BackToMainMenu").GetComponent<Button>();
         levelBackToMain.onClick.AddListener(LevelSelectBackToMainMenu);
@@ -270,5 +280,34 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
     public void SetActiveCanvas(bool value)
     {
         canvas.enabled = value;
+    }
+
+    public void UnlockLevel(int levelID)
+    {
+        switch (levelID)
+        {
+            default:
+            case 9:
+                level_9.interactable = true;
+                break;
+            case 10:
+                level_10.interactable = true;
+                break;
+            case 11:
+                level_11.interactable = true;
+                break;
+            case 12:
+                level_12.interactable = true;
+                break;
+            case 13:
+                level_13.interactable = true;
+                break;
+            case 14:
+                level_14.interactable = true;
+                break;
+            case 15:
+                level_15.interactable = true;
+                break;
+        }
     }
 }
