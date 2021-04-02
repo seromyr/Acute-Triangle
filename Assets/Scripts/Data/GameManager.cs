@@ -82,9 +82,6 @@ public class GameManager : MonoBehaviour
     private void InitialGameSetup()
     {
         // Load camera in scene
-        //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (PlayerMonitor.main.transform);
-        //GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (PlayerMonitor.main.transform);
-
         GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().LookAt = (Player.main.Body.transform);
         GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().Follow = (Player.main.Body.transform);
 
@@ -100,11 +97,6 @@ public class GameManager : MonoBehaviour
             desinationState = GameState.START;
         }
     }
-
-    //private void OnLevelWasLoaded()
-    //{
-    //    UI_InGameMenu_Mechanic.main.SendInstruction(SceneManager.GetActiveScene().name);
-    //}
 
     private void Update()
     {
@@ -155,7 +147,7 @@ public class GameManager : MonoBehaviour
 
     private void Perform____START____Routines()
     {
-        GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
+        //GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
         SceneManager.LoadScene(SceneName.MAINMENU);
         //Time.timeScale = 1;
 

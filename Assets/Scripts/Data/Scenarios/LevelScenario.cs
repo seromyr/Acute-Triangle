@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelScenario : MonoBehaviour
 {
+    private GameObject boss;
+
     private void Awake()
     {
         if (Player.main == null)
@@ -91,4 +93,10 @@ public class LevelScenario : MonoBehaviour
                 break;
         }
     }
+
+    public void GetBoss()
+    {
+
+    }
 }
+

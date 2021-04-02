@@ -41,7 +41,7 @@ public class LevelScenario_10 : MonoBehaviour
             // Boss name
             "Boss_Warwick",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Boss_03,
             // Boss container
             enemyContainer.transform,
             // Boss material
