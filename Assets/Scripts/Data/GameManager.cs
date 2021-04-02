@@ -214,6 +214,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         UI_Control.main.gameObject.SetActive(true);
+        Player.main.SetPause(true);
     }
 
     private void Perform____PAUSE____Routines()
@@ -224,6 +225,7 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____WIN_____Routines()
     {
+        Player.main.SetPause(false);
         // Show win panel
         UI_WinPanel.main.gameObject.SetActive(true);
 

@@ -81,7 +81,9 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if(Player.main.CheckPauseEnabled())
             UI_InGameMenu_Mechanic.main.UsePause();
         }
     }
+
 }
