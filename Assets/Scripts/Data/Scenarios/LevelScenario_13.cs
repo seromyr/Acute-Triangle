@@ -66,7 +66,7 @@ public class LevelScenario_13 : MonoBehaviour
 
         // Activate Hard Shells mechanic
         pupu.Mechanics.Add(Mechanic.HardShells);
-        pupu.Mechanics.CreateShells();
+        pupu.Mechanics.CreateShells("Shell_03");
         pupu.Mechanics.OnAllPillarsDestroyed += ActivatePupuWeakenState;
         pupu.Mechanics.CreatePillar(new Vector3(12, -0.5f, 15.5f), enemyContainer.transform);
         pupu.Mechanics.CreatePillar(new Vector3(-12, -0.5f, 6.5f), enemyContainer.transform);
@@ -91,7 +91,7 @@ public class LevelScenario_13 : MonoBehaviour
             // Boss name
             "Boss_Moxie",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Boss_06b,
             // Boss placemenent
             enemyContainer.transform,
             // Boss material

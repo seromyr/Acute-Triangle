@@ -221,13 +221,13 @@ public class UI_MainMenu_Mechanic : MonoBehaviour
         level_20.onClick.AddListener(() => GoToLevel(20));
 
         // Lock levels
-        level_9.interactable = false;
-        level_10.interactable = false;
-        level_11.interactable = false;
-        level_12.interactable = false;
-        level_13.interactable = false;
-        level_14.interactable = false;
-        level_15.interactable = false;
+        level_9.interactable = true;
+        level_10.interactable = true;
+        level_11.interactable = true;
+        level_12.interactable = true;
+        level_13.interactable = true;
+        level_14.interactable = true;
+        level_15.interactable = true;
 
 
         // Add function to Back To Main Menu Button
