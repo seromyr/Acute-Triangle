@@ -178,6 +178,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
                 break;
             default:
                 currentBossHP.gameObject.SetActive(false);
+                currentBossHP = null;
                 break;
         }
     }
@@ -190,6 +191,8 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     {
         bossCurrentHealth = current;
     }
+
+    public Image currentBHP() => currentBossHP;
 
     public void UpdateBossHPCounter(float damage)
     {

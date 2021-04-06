@@ -206,7 +206,10 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         UI_Control.main.gameObject.SetActive(true);
-        GameObject.Find("Player").GetComponent<PlayerController>().EnablePause();
+        Player.main.SetPause(true);
+
+        //GameObject.Find("Player").GetComponent<PlayerController>().EnablePause();
+
     }
 
     private void Perform____PAUSE____Routines()
@@ -217,8 +220,10 @@ public class GameManager : MonoBehaviour
 
     private void Perform_____WIN_____Routines()
     {
+        Player.main.SetPause(false);
+
         //find player and disable pause
-        GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
+        //GameObject.Find("Player").GetComponent<PlayerController>().DisablePause();
 
         // Show win panel
         UI_WinPanel.main.gameObject.SetActive(true);

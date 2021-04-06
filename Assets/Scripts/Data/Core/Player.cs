@@ -17,6 +17,7 @@ public class Player : Entity
     private Vector3        startPosition;
 
     private Rigidbody      _rigidbody;
+    bool pause_enable;
 
     // Player constructor
     public Player()
@@ -150,4 +151,12 @@ public class Player : Entity
     {
         _invincible = value;
     }
+
+
+    public bool SetPause(bool value)
+    {
+        return pause_enable = value;
+    }
+
+    public bool CheckPauseEnabled() => pause_enable;
 }
