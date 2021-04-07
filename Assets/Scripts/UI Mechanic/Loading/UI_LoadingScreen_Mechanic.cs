@@ -24,7 +24,7 @@ public class UI_LoadingScreen_Mechanic : MonoBehaviour
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
         canvas.sortingOrder = 3;
-        canvasGroup.alpha = 1;
+        canvasGroup.alpha = 0;
         canvasGroup.blocksRaycasts = false;
         fadeIn = false;
         fadeOut = false;
