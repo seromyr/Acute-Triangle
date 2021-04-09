@@ -151,7 +151,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.5
+      value: 15.25
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -613,7 +613,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 9.5
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -688,7 +688,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -838,7 +838,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -894,6 +894,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cube_M_RedStripe (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7030469608507672746, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -1213,7 +1218,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 9
+      value: 10.25
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -1264,7 +1269,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-644554
+  m_Name: pb_Mesh62436
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1508,6 +1513,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube_M_RedStripe (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7030469608507672746, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_RootOrder
@@ -1676,7 +1686,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12
+      value: 15.75
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -2114,7 +2124,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-641776
+  m_Name: pb_Mesh62478
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2352,7 +2362,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh95078
+  m_Name: pb_Mesh62320
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2515,7 +2525,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh95194
+  m_Name: pb_Mesh62402
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3954,6 +3964,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube_M_RedStripe (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 7030469608507672746, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_RootOrder
@@ -3972,7 +3987,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.5
+      value: 15.75
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -4037,7 +4052,7 @@ PrefabInstance:
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5
+      value: -4.75
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -4103,6 +4118,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cube_M_RedStripe (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7030469608507672746, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7030469608507672784, guid: 0d3eeb1dcf7b4b24ea5a8d5afaf5be14,
         type: 3}
@@ -5389,7 +5409,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh95292
+  m_Name: pb_Mesh62498
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5881,7 +5901,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh98250
+  m_Name: pb_Mesh62336
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
