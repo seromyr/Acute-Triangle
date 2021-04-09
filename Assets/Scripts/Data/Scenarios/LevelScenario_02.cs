@@ -55,7 +55,7 @@ public class LevelScenario_02 : MonoBehaviour
 
         #region Create Obstacles
         List<EnemyEntity> obstacles = new List<EnemyEntity>();
-        int row = 10;
+        int row = 5;
         int collumn = 5;
 
         for (int i = 0; i < collumn; i++)
@@ -81,7 +81,7 @@ public class LevelScenario_02 : MonoBehaviour
                 );
 
                 // Set position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 5 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(-2 + i, 0, 8 + j));
             }
         }
         #endregion

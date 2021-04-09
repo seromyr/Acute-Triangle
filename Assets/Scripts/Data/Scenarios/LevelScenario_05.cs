@@ -125,7 +125,7 @@ public class LevelScenario_05 : MonoBehaviour
 
         //Cluster 02
         row = 5;
-        collumn = 5;
+        collumn = 3;
 
         for (int i = 0; i < collumn; i++)
         {
@@ -156,7 +156,7 @@ public class LevelScenario_05 : MonoBehaviour
 
         //Cluster 03
         row = 5;
-        collumn = 5;
+        collumn = 3;
 
         for (int i = 0; i < collumn; i++)
         {
@@ -181,7 +181,7 @@ public class LevelScenario_05 : MonoBehaviour
                 );
 
                 // Set position
-                obstacles[obstacles.Count - 1].SetPosition(new Vector3(3 + i, 0, 18 + j));
+                obstacles[obstacles.Count - 1].SetPosition(new Vector3(6 + i, 0, 18 + j));
             }
         }
         #endregion
