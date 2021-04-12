@@ -92,7 +92,7 @@ public class LevelScenario_12 : MonoBehaviour
 
         for (int spot = 0; spot < enemyNum; spot++)
         {
-            boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f);
+            boss.Mechanics.SpawnMinion(spawnLocations[selected[spot]].transform.position, 0f, 4, 7.5f, Enemy.Sentry);
         }
     }
 

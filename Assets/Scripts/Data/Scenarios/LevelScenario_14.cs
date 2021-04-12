@@ -57,7 +57,7 @@ public class LevelScenario_14 : MonoBehaviour
             // Boss name
             "Boss_Beholder",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Boss_07,
             // Boss placemenent
             enemyContainer,
             // Boss material

@@ -223,7 +223,7 @@ public class Features
         minionList = new List<EnemyEntity>();
     }
 
-    public void SpawnMinion(Vector3 minionPosition, float minionSpeed = 1, float minionFireRate = 2, float bulletSpeed = 5)
+    public void SpawnMinion(Vector3 minionPosition, float minionSpeed = 1, float minionFireRate = 2, float bulletSpeed = 5, string minionModel = Enemy.Minion)
     {
         int minionID = minionList.Count;
 
@@ -232,7 +232,7 @@ public class Features
                     new Enemy_Minion
                     (
                         "Minion " + minionID,
-                        Enemy.Minion,
+                        minionModel,
                         enemyContainer,
                         "default",
                         5,

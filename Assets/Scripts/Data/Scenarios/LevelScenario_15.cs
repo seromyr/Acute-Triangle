@@ -80,7 +80,7 @@ public class LevelScenario_15 : MonoBehaviour
 
         // Activate Hard Shells mechanic
         boss.Mechanics.Add(Mechanic.HardShells);
-        boss.Mechanics.CreateShells();
+        boss.Mechanics.CreateShells("Shell_04");
         boss.Mechanics.OnAllPillarsDestroyed += ActivateWeakenState;
 
         for (int i = 0; i < pillarSpawnSpots.Length; i++)
