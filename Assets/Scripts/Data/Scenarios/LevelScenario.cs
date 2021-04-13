@@ -25,6 +25,7 @@ public class LevelScenario : MonoBehaviour
         {
             case Map.LV001:
                 gameObject.AddComponent<LevelScenario_01>();
+                UI_InGameMenu_Mechanic.main.ChangeBossHPBars(0);
                 break;
             case Map.LV002:
                 gameObject.AddComponent<LevelScenario_02>();
