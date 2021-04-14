@@ -1555,7 +1555,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameState: 0
   desinationState: 0
-  overrideMode: 0
+  overrideMode: 1
   overrideLevel: 1
 --- !u!4 &306092288
 Transform:
