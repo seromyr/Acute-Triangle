@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "0.4.0.0 ";
-        public const string BUILD = "4";
-        public const string DATE = "04122021";
+        public const string CURRENTVERSION = "1.0.1.1";
+        //public const string BUILD = null;//"1";
+        public const string DATE = "04152021";
     }
 
     public enum GameState
@@ -120,6 +120,7 @@
         public const string Boss_01 = "Enemy/Boss_01";
         public const string Boss_02 = "Enemy/Boss_02";
         public const string Boss_03 = "Enemy/Boss_03";
+        public const string Boss_05 = "Enemy/Boss_05";
         public const string Boss_06a = "Enemy/Boss_06a";
         public const string Boss_06b = "Enemy/Boss_06b";
         public const string Boss_07 = "Enemy/Boss_07";

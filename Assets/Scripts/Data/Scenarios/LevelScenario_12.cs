@@ -40,7 +40,7 @@ public class LevelScenario_12 : MonoBehaviour
             // Boss name
             "Boss_Minotaur",
             // Boss appearance
-            Enemy.Sphere_Large_Black,
+            Enemy.Boss_05,
             // Boss placemenent
             enemyContainer,
             // Boss material
