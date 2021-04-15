@@ -2,9 +2,9 @@
 {
     public static class Version
     {
-        public const string CURRENTVERSION = "1.0.1.1";
+        public const string CURRENTVERSION = "1.0.1.2";
         //public const string BUILD = null;//"1";
-        public const string DATE = "04152021";
+        public const string DATE = " 04152021";
     }
 
     public enum GameState

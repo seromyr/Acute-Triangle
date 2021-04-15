@@ -68,8 +68,8 @@ public class LevelScenario_13 : MonoBehaviour
         pupu.Mechanics.Add(Mechanic.HardShells);
         pupu.Mechanics.CreateShells("Shell_03");
         pupu.Mechanics.OnAllPillarsDestroyed += ActivatePupuWeakenState;
-        pupu.Mechanics.CreatePillar(new Vector3(12, -0.5f, 15.5f), enemyContainer.transform);
-        pupu.Mechanics.CreatePillar(new Vector3(-12, -0.5f, 6.5f), enemyContainer.transform);
+        pupu.Mechanics.CreatePillar(new Vector3(-10.5f, -0.5f, 22.75f), enemyContainer.transform);
+        pupu.Mechanics.CreatePillar(new Vector3(-31, -0.5f, 5f), enemyContainer.transform);
         pupu.Mechanics.OnReactorsRegenerationCallback += () => ActivatePupuInvincibleState(null, null);
 
         // Set Pupu default position

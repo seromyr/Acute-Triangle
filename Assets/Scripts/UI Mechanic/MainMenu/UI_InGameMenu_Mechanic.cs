@@ -39,7 +39,7 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
     private AudioSource menuSelect;
 
     // Cheat box
-    private Toggle godMode;
+    //private Toggle godMode;
 
     private void Awake()
     {
@@ -107,9 +107,9 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         gearboxHP = transform.Find("GearboxHP").GetComponentInChildren<Image>();
 
         // Remember to remove cheat
-        godMode = inGameMenuScreen.transform.Find("GodMode").GetComponentInChildren<Toggle>();
-        godMode.isOn = false;
-        godMode.onValueChanged.AddListener(delegate { SwitchGodMode(godMode); });
+        //godMode = inGameMenuScreen.transform.Find("GodMode").GetComponentInChildren<Toggle>();
+        //godMode.isOn = false;
+        //godMode.onValueChanged.AddListener(delegate { SwitchGodMode(godMode); });
     }
 
     private void Update()
@@ -256,8 +256,8 @@ public class UI_InGameMenu_Mechanic : MonoBehaviour
         colorPulsingTimer = 0;
     }
 
-    private void SwitchGodMode(Toggle change)
-    {
-        Player.main.MakePlayerInvincile(godMode.isOn);
-    }
+    //private void SwitchGodMode(Toggle change)
+    //{
+    //    Player.main.MakePlayerInvincile(godMode.isOn);
+    //}
 }
